@@ -2958,6 +2958,19 @@
     if (link) { e.preventDefault(); location.hash = link.getAttribute("href"); }
   });
 
+  // ---------- shared pieces for the React pages (web/src/shared/) ----------
+  // The one copy of each piece stays here; the React wrappers render through these same functions inside #view,
+  // so the delegated handlers above (schema panel, workspace, cards, confirm) and their API calls apply unchanged.
+  window.SQLDrillsShared = {
+    askConfirm: askConfirm, confirmClick: confirmClick,
+    schemaPanel: schemaPanel, schemaMount: schemaMount, tablesPanel: tablesPanel,
+    sqlWorkspace: sqlWorkspace, wsMount: wsMount, lessonExample: lessonExample,
+    resultTable: resultTable, diffTables: diffTables, miniTable: miniTable,
+    xcardHtml: xcardHtml, cardsInProgress: cardsInProgress,
+    highlight: highlight, icon: icon, esc: esc,
+    get booted() { return booted; },
+  };
+
   // ---------- boot ----------
   // the React bundle loads after this script: if it owns the page already on screen, hand that page over
   var booted = false;
@@ -2974,6 +2987,7 @@
       window.addEventListener("hashchange", render);
       if (!location.hash) history.replaceState(null, "", "#/home");
       booted = true;
+      window.dispatchEvent(new Event("sqldrills:booted"));
       render();
     })
     .catch(function (e) { view.innerHTML = '<div class="page full"><div class="err">Could not load the exercises: ' + esc(e.message) + ". Is sql-drills-server running (npm start)?</div></div>"; });
