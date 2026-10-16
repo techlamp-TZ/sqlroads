@@ -1,0 +1,69 @@
+{
+  "_about": "SQL Drills' layer on top of the Waffles tokens (waffles/). Fonts replace Waffles' font (never copied). themes.light / themes.dark map the roles pages use to colours; a value naming a Waffles colour (\"navy\", \"grey100\", \"blueText\") is taken from waffles/color, a hex value is ours. textVariants.dark gives every colour family a text colour that reads on the dark surfaces (Waffles only defines them for light). tools/contrast-audit.mjs checks every text role against every surface in both themes.",
+  "font": {
+    "sans": "\"IBM Plex Sans\", Arial, sans-serif",
+    "mono": "\"IBM Plex Mono\", ui-monospace, Menlo, Consolas, monospace"
+  },
+  "fontWeight": { "bold": 700, "_note": "Waffles' bold is 800; IBM Plex is loaded up to 700." },
+  "surfaces": ["bg", "surface", "surface-raised"],
+  "textRoles": ["text", "text-muted", "accent-text", "ok-text", "bad-text", "warn-text"],
+  "fills": [["accent", "on-accent"], ["ok", "on-ok"], ["bad", "on-bad"]],
+  "themes": {
+    "light": {
+      "bg": "grey100",
+      "surface": "white",
+      "surface-raised": "grey200",
+      "border": "grey400",
+      "border-strong": "#8C94A3",
+      "text": "navy",
+      "text-muted": "#4D5868",
+      "accent": "#0069A0",
+      "on-accent": "white",
+      "accent-text": "#00689E",
+      "focus": "blueDark",
+      "ok": "greenText",
+      "on-ok": "white",
+      "ok-text": "greenText",
+      "bad": "redText",
+      "on-bad": "white",
+      "bad-text": "redText",
+      "warn-text": "orangeText",
+      "shadow-color": "rgba(5, 25, 45, 0.3)",
+      "code-bg": "grey100"
+    },
+    "dark": {
+      "bg": "navyDark",
+      "surface": "navy",
+      "surface-raised": "navyLight",
+      "border": "#2E4260",
+      "border-strong": "#5D7090",
+      "text": "#F2F4F8",
+      "text-muted": "#B3BDCC",
+      "accent": "#0069A0",
+      "on-accent": "white",
+      "accent-text": "blueLight",
+      "focus": "blue",
+      "ok": "#00752E",
+      "on-ok": "white",
+      "ok-text": "greenLight",
+      "bad": "#B8240B",
+      "on-bad": "white",
+      "bad-text": "#FF9A70",
+      "warn-text": "orangeLight",
+      "shadow-color": "rgba(0, 0, 0, 0.5)",
+      "code-bg": "navyDark"
+    }
+  },
+  "textVariants": {
+    "dark": {
+      "blue": "blueLight",
+      "green": "greenLight",
+      "navy": "#E8EBF2",
+      "orange": "orangeLight",
+      "pink": "pinkLight",
+      "purple": "#C4A8FF",
+      "red": "#FF9A70",
+      "yellow": "yellowLight"
+    }
+  }
+}
