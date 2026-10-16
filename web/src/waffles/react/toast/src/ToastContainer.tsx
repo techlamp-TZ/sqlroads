@@ -1,11 +1,11 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import tokens from '@waffles/tokens/future-tokens';
 import { ClassNames, keyframes } from '@emotion/react';
 import React from 'react';
 import {
   cssTransition,
   ToastContainer as ToastifyContainer,
   ToastContainerProps,
-} from 'react-toastify';
+} from 'react-toastify/unstyled';
 // needed for invisible progress bar timing
 const linearProgress = keyframes({
   '0%': {
@@ -42,13 +42,17 @@ const toastExit = keyframes({
 const ToastContainer = (props: ToastContainerProps): React.ReactElement => (
   <ClassNames>
     {({ css }) => {
+      // react-toastify 11: the durations moved from cssTransition({ duration }) into the animation classes
       const transition = cssTransition({
-        duration: [500, 500],
         enter: css({
+          animationDuration: '500ms',
+          animationFillMode: 'both',
           animationName: toastEnter,
           animationTimingFunction: 'cubic-bezier(0.23, 1, 0.32, 1)',
         }),
         exit: css({
+          animationDuration: '500ms',
+          animationFillMode: 'both',
           animationName: toastExit,
           animationTimingFunction: 'cubic-bezier(0.755, 0.05, 0.855, 0.06)',
         }),

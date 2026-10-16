@@ -1,6 +1,6 @@
-import { HiddenIcon, VisibleIcon } from '@datacamp/waffles-icons';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { computeDataAttributes } from '@datacamp/waffles-utils';
+import { HiddenIcon, VisibleIcon } from '@waffles/icons';
+import tokens from '@waffles/tokens/future-tokens';
+import { computeDataAttributes } from '@waffles/utils';
 import { ClassNames, css } from '@emotion/react';
 import React, { forwardRef, ReactElement, Ref } from 'react';
 
@@ -50,7 +50,7 @@ interface InputProps {
   htmlRequired?: boolean;
   /**
    * When an icon is provided it will render inside the input. This can only be
-   * an component from the @datacamp/waffles-icons package.
+   * an component from the @waffles/icons package.
    */
   icon?: ReactElement;
   /**

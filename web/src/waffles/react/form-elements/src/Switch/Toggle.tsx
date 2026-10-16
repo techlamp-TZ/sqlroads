@@ -1,5 +1,5 @@
-import { CheckmarkIcon } from '@datacamp/waffles-icons';
-import tokens from '@datacamp/waffles-tokens';
+import { CheckmarkIcon } from '@waffles/icons';
+import tokens from '@waffles/tokens';
 import { css } from '@emotion/react';
 
 import { SwitchProps } from './index';

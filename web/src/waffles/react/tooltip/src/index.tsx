@@ -1,8 +1,8 @@
 /* eslint-disable filenames/match-exported */
-import Card from '@datacamp/waffles-card';
-import { usePositioner } from '@datacamp/waffles-positioner';
-import { Text } from '@datacamp/waffles-text';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import Card from '@waffles/card';
+import { usePositioner } from '@waffles/positioner';
+import { Text } from '@waffles/text';
+import tokens from '@waffles/tokens/future-tokens';
 import { css } from '@emotion/react';
 import React, { MutableRefObject, ReactElement } from 'react';
 

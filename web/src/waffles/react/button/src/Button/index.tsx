@@ -1,11 +1,9 @@
-import * as Icons from '@datacamp/waffles-icons';
-import { Text } from '@datacamp/waffles-text';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import Tooltip from '@datacamp/waffles-tooltip';
-import { childrenOfType, computeDataAttributes } from '@datacamp/waffles-utils';
+import type * as Icons from '@waffles/icons';
+import { Text } from '@waffles/text';
+import tokens from '@waffles/tokens/future-tokens';
+import Tooltip from '@waffles/tooltip';
+import { computeDataAttributes } from '@waffles/utils';
 import { css, SerializedStyles } from '@emotion/react';
-import { nChildren, ReactTypeLike } from 'airbnb-prop-types';
-import PropTypes from 'prop-types';
 import React, {
   ComponentProps,
   ReactElement,
@@ -120,7 +118,7 @@ interface IconChildProps {
   ariaLabel: string;
   /**
    * When providing a react element as a child, it can only be one of the Icon
-   * components exposed by @datacamp/waffles-icons
+   * components exposed by @waffles/icons
    */
   children: IconElement;
 }
@@ -169,10 +167,15 @@ const InternalButton = (
 
   const uidSeed = useUIDSeed();
   const tooltipId = uidSeed('button-tooltip');
+  // SQL Drills: text on the navy fill uses the white token (navy fill and white swap in dark mode), inverted
+  // buttons sit on dark backgrounds (fixed white), text on the bright intent fills stays navy in both themes
   const textColor =
-    (appearance === 'primary' && intent === 'neutral') ||
     appearance === 'inverted'
-      ? 'white'
+      ? 'var(--wf-w-on-dark)'
+      : appearance === 'primary' && intent === 'neutral'
+      ? tokens.color.primary.white.value.hex
+      : appearance === 'primary'
+      ? 'var(--wf-w-on-fill)'
       : tokens.color.primary.navyText.value.hex;
   const iconColor = appearance === 'primary' ? textColor : 'currentColor';
 
@@ -308,67 +311,6 @@ const InternalButton = (
       )}
     </>
   );
-};
-
-// additional prop-types validation that the child is either icon or string
-// this is a function so the Icons import is removed with the prop types in production
-const getIconValidator = (
-  icons: Record<string, ReactTypeLike>,
-): PropTypes.Requireable<unknown> => childrenOfType(...Object.values(icons));
-
-InternalButton.propTypes = {
-  /**
-   * Set the aria-label on the rendered element. This is required when using a single icon as a child.
-   */
-  ariaLabel: PropTypes.string,
-  /**
-   * The content of the button. This can either be text, and icon, or a
-   * combination of the two. When this is one of the components exposed by
-   * @datacamp/waffles-icons, the button will render as a square. In this
-   * situation ariaLabel is required.
-   */
-  children: PropTypes.oneOfType([
-    nChildren(
-      2,
-      PropTypes.arrayOf(
-        PropTypes.oneOfType([PropTypes.string, getIconValidator(Icons)]),
-      ),
-    ),
-    PropTypes.string,
-    getIconValidator(Icons),
-  ]).isRequired,
-  /**
-   * The destination of the link. Only available when type="link".
-   */
-  href: PropTypes.string,
-  /**
-   * The callback fired when the button is clicked. Only available when
-   * type="button".
-   */
-  onClick: PropTypes.func,
-  /**
-   * Specifies where to open the linked document. Only available when
-   * type="link".
-   */
-  target: PropTypes.string,
-  /**
-   * Determines what is rendered, and what other props are available. The type
-   * "submit" should be used for form submissions. The type "link" will render
-   * an <a> tag, and should be used with an 'href'. And the type "button" should
-   * be used with the 'onClick' prop.
-   */
-  type: PropTypes.oneOf(['button', 'link', 'submit']),
-};
-
-InternalButton.defaultProps = {
-  appearance: 'default',
-  disabled: false,
-  intent: 'neutral',
-  loading: false,
-  size: 'medium',
-  tooltipAppearance: 'dark',
-  tooltipPosition: 'bottom',
-  type: 'button',
 };
 
 const Button = React.forwardRef<any, ButtonProps>((props, ref) => (

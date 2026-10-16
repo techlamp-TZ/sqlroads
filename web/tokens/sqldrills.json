@@ -99,5 +99,40 @@
       "red": "#FF9A70",
       "yellow": "yellowLight"
     }
+  },
+  "wafflesPalette": {
+    "_note": "The Waffles components name palette colours directly (navy text, white surfaces, beige borders). They get --wf-w-<name> variables: light = the Waffles value (with the Phase 1 text-colour fixes), dark = remapped so the same names stay readable: white becomes the dark surface, navy becomes light text, the neutrals become dark surfaces and borders, the Text variants become the dark text variants. Bright fills keep their colour; text on them uses on-fill (navy in both themes).",
+    "light": {
+      "blueText": "#0072A9",
+      "greenText": "#007F00",
+      "orangeText": "#AC5400",
+      "yellowText": "#876900"
+    },
+    "dark": {
+      "white": "#05192D",
+      "navy": "#F2F4F8",
+      "navyText": "#F2F4F8",
+      "navyDark": "#FFFFFF",
+      "navyLight": "#B3BDCC",
+      "grey100": "#000820",
+      "grey200": "#0B2236",
+      "grey300": "#213147",
+      "grey400": "#2E4260",
+      "beige100": "#071E33",
+      "beige200": "#0B2236",
+      "beige300": "#213147",
+      "beige400": "#2E4260",
+      "blueText": "blueLight",
+      "greenText": "greenLight",
+      "orangeText": "orangeLight",
+      "pinkText": "pinkLight",
+      "purpleText": "#C4A8FF",
+      "redText": "#FF9A70",
+      "yellowText": "yellowLight"
+    },
+    "fixed": {
+      "on-fill": "navy",
+      "on-dark": "white"
+    }
   }
 }

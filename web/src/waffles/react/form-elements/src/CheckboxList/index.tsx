@@ -1,5 +1,3 @@
-import { childrenOfType } from '@datacamp/waffles-utils';
-import PropTypes from 'prop-types';
 import React, { ReactElement } from 'react';
 
 import Label from '../Label';
@@ -95,13 +93,6 @@ const CheckboxList = ({
       </div>
     </Label>
   );
-};
-
-CheckboxList.propTypes = {
-  /**
-   * Takes multiple `Checkbox` components as children.
-   */
-  children: PropTypes.arrayOf(childrenOfType(Checkbox).isRequired).isRequired,
 };
 
 export default CheckboxList;

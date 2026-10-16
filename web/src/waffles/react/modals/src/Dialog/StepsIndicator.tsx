@@ -1,4 +1,4 @@
-import { ssrSafeNotFirstChildSelector } from '@datacamp/waffles-utils';
+import { hexToRgbaColor, ssrSafeNotFirstChildSelector } from '@waffles/utils';
 import { css } from '@emotion/react';
 import React from 'react';
 
@@ -30,7 +30,7 @@ const StepsIndicator: React.FC<StepsIndicatorProps> = ({
         <div
           css={css(indicatorStyle, {
             backgroundColor:
-              step >= currentStep ? 'rgba(255, 255, 255, 0.3)' : 'white',
+              step >= currentStep ? hexToRgbaColor('var(--wf-w-on-dark)', 0.3) : 'var(--wf-w-on-dark)',
           })}
           key={step}
         />

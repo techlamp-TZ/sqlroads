@@ -1,8 +1,8 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import tokens from '@waffles/tokens/future-tokens';
 import {
   computeDataAttributes,
   ssrSafeNotFirstChildSelector,
-} from '@datacamp/waffles-utils';
+} from '@waffles/utils';
 import { css, SerializedStyles } from '@emotion/react';
 import React, { ReactElement, ReactNode } from 'react';
 
@@ -109,7 +109,5 @@ const Heading = ({
     </Element>
   );
 };
-
-Heading.defaultProps = { multiLine: false };
 
 export default Heading;

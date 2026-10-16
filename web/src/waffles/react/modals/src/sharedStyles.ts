@@ -1,5 +1,5 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { hexToRgbaColor } from '@datacamp/waffles-utils';
+import tokens from '@waffles/tokens/future-tokens';
+import { hexToRgbaColor } from '@waffles/utils';
 import { css } from '@emotion/react';
 
 export const bodyOpenStyle = css({ overflow: 'hidden' });

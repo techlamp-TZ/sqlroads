@@ -1,9 +1,13 @@
+import { isPaletteVar } from './resolveColor';
+
 const hexRegex = /^#([a-fA-F0-9]{3}){1,2}$/;
 
 /**
  * Converts HEX color to RGBA counterpart, with optional alpha setting
  */
 const hexToRgbaColor = (hexColor: string, alpha = 1): string => {
+  // SQL Drills: a palette variable stays a variable (so it follows dark mode), mixed with transparency
+  if (isPaletteVar(hexColor)) return `color-mix(in srgb, ${hexColor} ${Math.round(alpha * 100)}%, transparent)`;
   if (!hexRegex.test(hexColor)) {
     throw new Error(
       "Couldn't parse the color string. Please provide the color as a string in HEX notation.",

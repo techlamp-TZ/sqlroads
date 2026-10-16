@@ -1,14 +1,14 @@
 /* eslint-disable filenames/match-exported */
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { computeDataAttributes } from '@datacamp/waffles-utils';
+import tokens from '@waffles/tokens/future-tokens';
+import { computeDataAttributes } from '@waffles/utils';
 import { css } from '@emotion/react';
 
 export const elevationMap = {
-  0: '0 0 2px 0 rgba(5, 25, 45, 0.25)',
-  1: `0 0 2px 0 rgba(5, 25, 45, 0.25), ${tokens.shadow.sm.value}`,
-  2: `0 0 2px 0 rgba(5, 25, 45, 0.25), ${tokens.shadow.md.value}`,
-  3: `0 0 2px 0 rgba(5, 25, 45, 0.25), ${tokens.shadow.lg.value}`,
-  4: `0 0 2px 0 rgba(5, 25, 45, 0.25), ${tokens.shadow.xl.value}`,
+  0: '0 0 2px 0 var(--wf-shadow-color)',
+  1: `0 0 2px 0 var(--wf-shadow-color), ${tokens.shadow.sm.value}`,
+  2: `0 0 2px 0 var(--wf-shadow-color), ${tokens.shadow.md.value}`,
+  3: `0 0 2px 0 var(--wf-shadow-color), ${tokens.shadow.lg.value}`,
+  4: `0 0 2px 0 var(--wf-shadow-color), ${tokens.shadow.xl.value}`,
 };
 
 const cardStyle = css({
@@ -103,21 +103,5 @@ function Card({
     </Element>
   );
 }
-
-Card.propTypes = {
-  /**
-   * The border/shadow to use when the Card is hovered. Accepts the same values
-   * as elevation, and must also be greater than the elevation level provided.
-   */
-  hoverElevation(props: CardProps) {
-    const { elevation, hoverElevation } = props;
-    if (hoverElevation !== undefined && hoverElevation <= (elevation ?? 0)) {
-      return new Error(
-        'Invalid prop `hoverElevation` supplied to `Card`. hoverElevation must be greater than elevation',
-      );
-    }
-    return null;
-  },
-};
 
 export default Card;

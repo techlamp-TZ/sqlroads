@@ -1,5 +1,5 @@
-import { CrossIcon } from '@datacamp/waffles-icons';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import { CrossIcon } from '@waffles/icons';
+import tokens from '@waffles/tokens/future-tokens';
 import { css } from '@emotion/react';
 import React from 'react';
 
@@ -14,14 +14,14 @@ const CloseButton: React.FC<{
     className={className}
     css={css({
       ':active': { color: tokens.color.primary.green.value.rgb },
-      ':disabled': { color: '#D1D3D8' },
+      ':disabled': { color: tokens.color.neutral.grey400.value.hex },
       ':disabled:hover, :disabled:focus': { backgroundColor: 'transparent' },
       ':focus': {
         backgroundColor: tokens.color.neutral.grey200.value.rgb,
       },
       ':hover': { backgroundColor: tokens.color.neutral.grey200.value.rgb },
       alignItems: 'center',
-      backgroundColor: 'white',
+      backgroundColor: tokens.color.primary.white.value.hex,
       border: 'none',
       borderRadius: 2,
       color: tokens.color.primary.navyText.value.rgb,

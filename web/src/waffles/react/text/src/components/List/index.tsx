@@ -1,7 +1,7 @@
 import {
   computeDataAttributes,
   ssrSafeNotFirstChildSelector,
-} from '@datacamp/waffles-utils';
+} from '@waffles/utils';
 import { css } from '@emotion/react';
 import React, { ReactElement, ReactNode } from 'react';
 

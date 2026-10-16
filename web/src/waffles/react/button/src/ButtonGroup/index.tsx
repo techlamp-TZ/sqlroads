@@ -1,7 +1,6 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { childrenOfType, isChildType } from '@datacamp/waffles-utils';
+import tokens from '@waffles/tokens/future-tokens';
+import { isChildType } from '@waffles/utils';
 import { ClassNames } from '@emotion/react';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import Button from '../Button';
@@ -68,24 +67,6 @@ const ButtonGroup = ({
       </ClassNames>
     </div>
   );
-};
-
-ButtonGroup.propTypes = {
-  /**
-   * The content of the ButtonGroup to render. This must be a set of Button
-   * and/or CompactButtonGroup components. All Buttons within a ButtonGroup must
-   * be the same size.
-   */
-  children: PropTypes.arrayOf(
-    PropTypes.oneOfType([
-      childrenOfType(Button),
-      childrenOfType(FacebookButton),
-      childrenOfType(GoogleButton),
-      childrenOfType(LinkedinButton),
-      childrenOfType(TwitterButton),
-      childrenOfType(CompactButtonGroup),
-    ]),
-  ).isRequired,
 };
 
 export default ButtonGroup;

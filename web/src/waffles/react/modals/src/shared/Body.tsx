@@ -1,4 +1,4 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import tokens from '@waffles/tokens/future-tokens';
 import React, { ReactElement, ReactNode } from 'react';
 
 export interface BodyProps {

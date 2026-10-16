@@ -1,5 +1,5 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { computeDataAttributes } from '@datacamp/waffles-utils';
+import tokens from '@waffles/tokens/future-tokens';
+import { computeDataAttributes } from '@waffles/utils';
 import { css } from '@emotion/react';
 import React, { ReactElement } from 'react';
 

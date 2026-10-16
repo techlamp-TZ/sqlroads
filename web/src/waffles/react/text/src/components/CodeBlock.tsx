@@ -1,8 +1,8 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import tokens from '@waffles/tokens/future-tokens';
 import {
   computeDataAttributes,
   ssrSafeNotFirstChildSelector,
-} from '@datacamp/waffles-utils';
+} from '@waffles/utils';
 import { css } from '@emotion/react';
 import React, { ReactElement } from 'react';
 

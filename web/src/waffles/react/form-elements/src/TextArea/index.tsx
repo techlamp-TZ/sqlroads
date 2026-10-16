@@ -1,4 +1,4 @@
-import { computeDataAttributes } from '@datacamp/waffles-utils';
+import { computeDataAttributes } from '@waffles/utils';
 import { css } from '@emotion/react';
 import React, { forwardRef, ReactElement, Ref } from 'react';
 

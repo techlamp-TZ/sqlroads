@@ -1,5 +1,5 @@
-import { CheckmarkIcon } from '@datacamp/waffles-icons';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import { CheckmarkIcon } from '@waffles/icons';
+import tokens from '@waffles/tokens/future-tokens';
 import { css } from '@emotion/react';
 import React from 'react';
 

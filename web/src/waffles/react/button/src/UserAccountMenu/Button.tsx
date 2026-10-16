@@ -1,5 +1,5 @@
-import { ChevronDownIcon, ChevronUpIcon } from '@datacamp/waffles-icons';
-import tokens from '@datacamp/waffles-tokens';
+import { ChevronDownIcon, ChevronUpIcon } from '@waffles/icons';
+import tokens from '@waffles/tokens';
 import { css } from '@emotion/react';
 import { useFocusRing } from '@react-aria/focus';
 import { forwardRef } from 'react';

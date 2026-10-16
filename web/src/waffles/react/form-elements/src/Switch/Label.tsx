@@ -1,4 +1,4 @@
-import tokens from '@datacamp/waffles-tokens';
+import tokens from '@waffles/tokens';
 import { css } from '@emotion/react';
 
 import { SwitchProps } from './index';

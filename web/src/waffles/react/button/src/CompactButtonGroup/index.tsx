@@ -1,6 +1,6 @@
-import { childrenOfType } from '@datacamp/waffles-utils';
+import tokens from '@waffles/tokens/future-tokens';
+import { hexToRgbaColor } from '@waffles/utils';
 import { ClassNames } from '@emotion/react';
-import PropTypes from 'prop-types';
 import React from 'react';
 
 import Button, { ButtonProps } from '../Button';
@@ -66,7 +66,7 @@ const CompactButtonGroup = ({
                 ':focus': { boxShadow: 'none' },
                 borderLeft:
                   index > 0 && isPrimaryButtonGroup
-                    ? '1px solid rgba(5, 25, 45, 0.3)'
+                    ? `1px solid ${hexToRgbaColor(tokens.color.primary.navy.value.hex, 0.3)}`
                     : undefined,
                 borderRadius: radii[index] || '0px', // only round corners on first & last child
                 margin: 0,
@@ -80,16 +80,5 @@ const CompactButtonGroup = ({
   );
 };
 
-CompactButtonGroup.propTypes = {
-  children: PropTypes.arrayOf(
-    PropTypes.oneOfType([
-      childrenOfType(Button),
-      childrenOfType(FacebookButton),
-      childrenOfType(GoogleButton),
-      childrenOfType(LinkedinButton),
-      childrenOfType(TwitterButton),
-    ]).isRequired,
-  ).isRequired,
-} as React.WeakValidationMap<CompactButtonGroupProps>;
 
 export default CompactButtonGroup;

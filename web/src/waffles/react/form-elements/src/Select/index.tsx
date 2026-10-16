@@ -1,8 +1,7 @@
-import { ChevronDownIcon } from '@datacamp/waffles-icons';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { childrenOfType, computeDataAttributes } from '@datacamp/waffles-utils';
+import { ChevronDownIcon } from '@waffles/icons';
+import tokens from '@waffles/tokens/future-tokens';
+import { computeDataAttributes } from '@waffles/utils';
 import { css } from '@emotion/react';
-import PropTypes from 'prop-types';
 import React, { Component, forwardRef, ReactElement, Ref } from 'react';
 
 import {
@@ -102,10 +101,6 @@ class InternalSelect extends Component<
   SelectProps & { innerRef?: Ref<HTMLSelectElement> },
   SelectState
 > {
-  public static propTypes = {
-    children: PropTypes.arrayOf(childrenOfType(Option)).isRequired,
-  };
-
   public constructor(props: SelectProps) {
     super(props);
     this.state = { focus: false };
@@ -206,13 +201,6 @@ class InternalSelect extends Component<
     );
   }
 }
-
-InternalSelect.propTypes = {
-  /**
-   * Takes multiple SelectOption components as children.
-   */
-  children: PropTypes.arrayOf(childrenOfType(Option)).isRequired,
-};
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => (
   <InternalSelect {...props} innerRef={ref} />

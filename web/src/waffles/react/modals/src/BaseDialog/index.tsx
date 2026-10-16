@@ -1,9 +1,9 @@
-import { CloseButton } from '@datacamp/waffles-button';
-import Card from '@datacamp/waffles-card';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import { CloseButton } from '@waffles/button';
+import Card from '@waffles/card';
+import tokens from '@waffles/tokens/future-tokens';
 import { ClassNames } from '@emotion/react';
 import React from 'react';
-import ReactModal from 'react-modal';
+import ReactModal from '../NativeDialog';
 
 import {
   bodyOpenStyle,
@@ -45,6 +45,10 @@ interface DialogProps {
    */
   hideCloseButton: boolean;
   /**
+   * id of the <dialog> element (SQL Drills: "confirmDlg" for the in-page confirm)
+   */
+  id?: string;
+  /**
    * Show or hide the dialog
    */
   isOpen: boolean;
@@ -80,6 +84,7 @@ const BaseDialog: React.FC<DialogProps> = ({
   contentLabel,
   dataAttributes,
   hideCloseButton,
+  id,
   isOpen,
   onAfterOpen,
   onClose,
@@ -119,6 +124,7 @@ const BaseDialog: React.FC<DialogProps> = ({
             closeTimeoutMS={animationTime}
             contentLabel={contentLabel}
             data={dataAttributes}
+            id={id}
             isOpen={isOpen}
             onAfterOpen={onAfterOpen}
             onRequestClose={onRequestClose}

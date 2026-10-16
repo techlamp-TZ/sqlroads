@@ -1,5 +1,5 @@
-import { Heading } from '@datacamp/waffles-text';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
+import { Heading } from '@waffles/text';
+import tokens from '@waffles/tokens/future-tokens';
 import React from 'react';
 
 export interface HeaderProps {

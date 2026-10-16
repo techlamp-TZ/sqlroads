@@ -1,5 +1,5 @@
-import Button, { ButtonGroup } from '@datacamp/waffles-button';
-import { Heading, Paragraph } from '@datacamp/waffles-text';
+import Button, { ButtonGroup } from '@waffles/button';
+import { Heading, Paragraph } from '@waffles/text';
 import { css } from '@emotion/react';
 import React, { createRef } from 'react';
 
@@ -23,6 +23,7 @@ interface AlertDialogProps {
    * The body text to render in the Dialog.
    */
   description: string;
+  id?: string;
   /**
    * The main intention of the Dialog. This is used to set the button colors and
    * provide a default focus when the Dialog opens.
@@ -64,6 +65,7 @@ const AlertDialog = ({
   confirmButtonText = 'Confirm',
   dataAttributes,
   description,
+  id,
   intent = 'neutral',
   isOpen,
   loading = false,
@@ -93,6 +95,7 @@ const AlertDialog = ({
       contentLabel="Alert dialog"
       dataAttributes={dataAttributes}
       hideCloseButton={false}
+      id={id}
       isOpen={isOpen}
       onAfterOpen={onAfterOpen}
       onClose={onClose}
@@ -107,6 +110,7 @@ const AlertDialog = ({
         <Paragraph>{description}</Paragraph>
         <ButtonGroup css={{ marginTop: 24 }}>
           <Button
+            dataAttributes={{ confirm: 'cancel' }}
             disabled={loading}
             onClick={onCancelButton}
             ref={cancelButtonRef}
@@ -115,6 +119,7 @@ const AlertDialog = ({
           </Button>
           <Button
             appearance="primary"
+            dataAttributes={{ confirm: 'ok' }}
             intent={intent}
             loading={loading}
             onClick={onConfirm}

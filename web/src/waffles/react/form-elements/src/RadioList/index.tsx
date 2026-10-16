@@ -1,5 +1,3 @@
-import { childrenOfType } from '@datacamp/waffles-utils';
-import PropTypes from 'prop-types';
 import React, { ReactElement } from 'react';
 
 import Label from '../Label';
@@ -82,12 +80,5 @@ const RadioList = ({
     </div>
   </Label>
 );
-
-RadioList.propTypes = {
-  /**
-   * Takes multiple `Radio` components as children.
-   */
-  children: PropTypes.arrayOf(childrenOfType(Radio).isRequired).isRequired,
-};
 
 export default RadioList;

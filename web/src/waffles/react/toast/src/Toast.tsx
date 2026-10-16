@@ -1,15 +1,15 @@
-import { CloseButton } from '@datacamp/waffles-button';
+import { CloseButton } from '@waffles/button';
 import {
   CheckmarkCircleInvertedIcon,
   CrossCircleInvertedIcon,
-} from '@datacamp/waffles-icons';
-import { Heading, Paragraph } from '@datacamp/waffles-text';
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { computeDataAttributes } from '@datacamp/waffles-utils';
+} from '@waffles/icons';
+import { Heading, Paragraph } from '@waffles/text';
+import tokens from '@waffles/tokens/future-tokens';
+import { computeDataAttributes } from '@waffles/utils';
 import { css } from '@emotion/react';
 
 // TODO(blurbyte) Remove when it will be added to design tokens
-const EXTRA_TEXT_COLOR = '#65707c';
+const EXTRA_TEXT_COLOR = 'var(--wf-text-muted)'; // SQL Drills: the muted text role (4.5:1 in both themes)
 
 const colors = {
   error: tokens.color.primary.red.value.hex,
@@ -23,12 +23,12 @@ const icons = {
 
 const wrapperStyle = css({
   alignItems: 'flex-start',
-  background: 'white',
+  background: tokens.color.primary.white.value.hex,
   borderLeftStyle: 'solid',
   borderLeftWidth: 4,
   borderRadius: 4,
   boxShadow:
-    '0px 0px 1px 0px rgba(5, 25, 45, 0.3), 0px 8px 12px -4px rgba(5, 25, 45, 0.3)',
+    `0px 0px 1px 0px var(--wf-shadow-color), ${tokens.shadow.xl.value}`,
   display: 'flex',
   justifyContent: 'space-between',
   maxWidth: 512,

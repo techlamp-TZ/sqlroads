@@ -1,5 +1,5 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { hexToRgbaColor } from '@datacamp/waffles-utils';
+import tokens from '@waffles/tokens/future-tokens';
+import { hexToRgbaColor } from '@waffles/utils';
 import { css, SerializedStyles } from '@emotion/react';
 
 interface IntentMap {
@@ -129,13 +129,13 @@ const getInvertedStyle = (intent: Intent, enabled: boolean): SerializedStyles =>
     ? css(
         {
           backgroundColor: 'transparent',
-          borderColor: 'white',
-          color: 'white',
+          borderColor: 'var(--wf-w-on-dark)',
+          color: 'var(--wf-w-on-dark)',
         },
         enabled && {
           ':hover': {
             backgroundColor: hexToRgbaColor(
-              tokens.color.primary.white.value.hex,
+              'var(--wf-w-on-dark)',
               0.15,
             ),
           },
@@ -167,7 +167,7 @@ const getDisabledStyle = (
     },
     appearance === 'inverted' &&
       intent === 'neutral' && {
-        borderColor: 'white',
+        borderColor: 'var(--wf-w-on-dark)',
       },
   );
 

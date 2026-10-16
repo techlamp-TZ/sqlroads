@@ -1,5 +1,5 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { hexColorLuminance } from '@datacamp/waffles-utils';
+import tokens from '@waffles/tokens/future-tokens';
+import { hexColorLuminance } from '@waffles/utils';
 import { css } from '@emotion/react';
 import React from 'react';
 
@@ -16,7 +16,7 @@ interface BadgeProps {
   className?: string;
   /**
    * The colour of the Badge. This can be any HEX color, but it is recommended
-   * to use a color from @datacamp/waffles-tokens. The text color will be set
+   * to use a color from @waffles/tokens. The text color will be set
    * automatically.
    */
   color: string;
@@ -47,14 +47,16 @@ const sizeStyles = {
   },
 };
 
-const getTextColor = (backgroundColor: string): string => {
+// SQL Drills: the background may be a palette variable whose colour changes in dark mode, so the text colour is
+// chosen for each theme from that theme's real colour (navy on light backgrounds, white on dark ones).
+const textFor = (backgroundColor: string, theme: 'light' | 'dark'): string =>
   // Compare to luminance of neutral grey color in the middle of the RGB scale
-  const isColorLight = hexColorLuminance(backgroundColor) > 0.179;
+  hexColorLuminance(backgroundColor, theme) > 0.179 ? 'var(--wf-w-on-fill)' : 'var(--wf-w-on-dark)';
 
-  return isColorLight
-    ? tokens.color.primary.navyText.value.hex
-    : tokens.color.primary.white.value.hex;
-};
+const getTextColor = (backgroundColor: string) => ({
+  ':root[data-theme="dark"] &': { color: textFor(backgroundColor, 'dark') },
+  color: textFor(backgroundColor, 'light'),
+});
 
 const Badge = ({
   children,
@@ -66,7 +68,7 @@ const Badge = ({
     className={className}
     css={css(
       baseStyle,
-      { backgroundColor: color, color: getTextColor(color) },
+      { backgroundColor: color, ...getTextColor(color) },
       sizeStyles[size],
     )}
   >

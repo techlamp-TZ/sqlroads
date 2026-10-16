@@ -1,12 +1,13 @@
 import hexToRgbaColor from './hexToRgbaColor';
+import resolveColor from './resolveColor';
 
 const rgbaRegex = /^rgba\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*([-+]?[0-9]*[.]?[0-9]+)\s*\)$/i;
 
 /**
  * Calculates HEX color luminance
  */
-function hexColorLuminance(hexColor: string): number {
-  const rgbaColor = hexToRgbaColor(hexColor);
+function hexColorLuminance(hexColor: string, theme: 'light' | 'dark' = 'light'): number {
+  const rgbaColor = hexToRgbaColor(resolveColor(hexColor, theme));
   const rgbaMatched = rgbaRegex.exec(rgbaColor);
 
   if (!rgbaMatched) {

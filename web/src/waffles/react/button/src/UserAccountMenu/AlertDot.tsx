@@ -1,4 +1,4 @@
-import wafflesTokens from '@datacamp/waffles-tokens';
+import wafflesTokens from '@waffles/tokens';
 import { css } from '@emotion/react';
 
 const dotStyle = css({

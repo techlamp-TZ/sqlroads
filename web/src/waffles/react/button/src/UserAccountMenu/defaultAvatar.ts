@@ -1,4 +1,10 @@
-const defaultAvatar =
-  'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjIiIGhlaWdodD0iNjIiIHZpZXdCb3g9IjAgMCA2MiA2MiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+CiAgPGRlZnM+CiAgICA8Y2lyY2xlIGlkPSJhIiBjeD0iMzEiIGN5PSIzMSIgcj0iMzEiLz4KICA8L2RlZnM+CiAgPGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgIDxtYXNrIGlkPSJiIiBmaWxsPSIjZmZmIj4KICAgICAgPHVzZSB4bGluazpocmVmPSIjYSIvPgogICAgPC9tYXNrPgogICAgPHVzZSBmaWxsPSIjNzkzM0ZGIiB4bGluazpocmVmPSIjYSIvPgogICAgPHBhdGggZmlsbD0iIzAzRUY2MiIgbWFzaz0idXJsKCNiKSIgZD0iTTI1Ljc2NCAyMkw3NyA1MS41NzYgMTMuMjM2IDE2Mi0zOCAxMzIuNDI0eiIvPgogICAgPHBhdGggZD0iTTczLjk0OC0xMkw5NyAxLjM5OCA0OS4wNTIgODUgMjYgNzEuNjAzIDczLjk0OC0xMnoiIGZpbGw9IiMwMEM1M0IiIG1hc2s9InVybCgjYikiLz4KICA8L2c+Cjwvc3ZnPgo=';
+// SQL Drills: Waffles' default avatar was brand artwork; this is a neutral one (a person on a grey circle),
+// coloured from the palette tokens.
+import palette from '../../../../tokens/palette.js';
+
+const bg = palette.light['--wf-w-grey-400'];
+const fg = palette.light['--wf-w-navy'];
+const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="62" height="62" viewBox="0 0 62 62"><circle cx="31" cy="31" r="31" fill="${bg}"/><circle cx="31" cy="24" r="10" fill="${fg}" fill-opacity="0.55"/><path d="M12 52c3-10 11-15 19-15s16 5 19 15" fill="${fg}" fill-opacity="0.55"/></svg>`;
+const defaultAvatar = 'data:image/svg+xml,' + encodeURIComponent(svg);
 
 export default defaultAvatar;

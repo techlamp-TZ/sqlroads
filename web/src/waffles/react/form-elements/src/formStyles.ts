@@ -1,5 +1,5 @@
-import tokens from '@datacamp/waffles-tokens/lib/future-tokens.json';
-import { hexToRgbaColor } from '@datacamp/waffles-utils';
+import tokens from '@waffles/tokens/future-tokens';
+import { hexToRgbaColor } from '@waffles/utils';
 import { css } from '@emotion/react';
 
 const placeholderColor = hexToRgbaColor(
@@ -16,7 +16,7 @@ const baseFormStyle = css({
     boxShadow: `inset 0 0 0 2px ${tokens.color.primary.blueDark.value.rgb}`,
     outline: 'none',
   },
-  background: 'white',
+  background: tokens.color.primary.white.value.hex,
   border: 0,
   borderRadius: tokens.radii.small.value,
   boxShadow: `inset 0 0 0 2px ${tokens.color.neutral.beige400.value.rgb}`,

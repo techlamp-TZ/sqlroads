@@ -1,3 +1,4 @@
+import tokens from '@waffles/tokens/future-tokens';
 import { css } from '@emotion/react';
 import React, { useCallback } from 'react';
 
@@ -195,9 +196,9 @@ const ResizableElements = ({
                   },
                   draggingState &&
                     draggingState.draggingIndex === index && {
-                      backgroundColor: '#e5e1da',
+                      backgroundColor: tokens.color.neutral.beige400.value.hex,
                     },
-                  { ':hover': { backgroundColor: '#e5e1da' } },
+                  { ':hover': { backgroundColor: tokens.color.neutral.beige400.value.hex } },
                 )}
                 onMouseDown={startDragging(index)}
                 role="separator"

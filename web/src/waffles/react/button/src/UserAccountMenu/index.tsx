@@ -1,5 +1,5 @@
-import { CogIcon, ExitIcon, UserIcon } from '@datacamp/waffles-icons';
-import tokens from '@datacamp/waffles-tokens';
+import { CogIcon, ExitIcon, UserIcon } from '@waffles/icons';
+import tokens from '@waffles/tokens';
 import { css } from '@emotion/react';
 
 import Menu from './Menu';

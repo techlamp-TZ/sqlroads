@@ -1,4 +1,4 @@
-import Card from '@datacamp/waffles-card';
+import Card from '@waffles/card';
 import { css } from '@emotion/react';
 import { Children, cloneElement } from 'react';
 
