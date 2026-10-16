@@ -1,0 +1,48 @@
+// The catalog's page styles, plus every Waffles stylesheet compiled under its own scope class, so the
+// stylesheets (some of which style html/body and define the same classes) cannot clash with each other.
+@use "sass:meta";
+@use "../sqldrills/focus";
+
+html { background: var(--wf-bg); }
+body { margin: 0; background: var(--wf-bg); }
+
+.wf-catalog {
+  background: var(--wf-bg);
+  color: var(--wf-text);
+  font-family: var(--wf-font-sans);
+  min-height: 100vh;
+  padding: 24px;
+  box-sizing: border-box;
+  @include focus.keyboard-focus;
+  @media (max-width: 767.98px) { padding: 16px; }
+}
+
+// a section of a story: heading, then a wrapping row of examples
+.cat-h { font-size: 1.25rem; line-height: 1.2; margin: 0 0 12px; color: var(--wf-text); }
+.cat-h2 { font-size: 1rem; line-height: 1.2; margin: 24px 0 8px; color: var(--wf-text-muted); font-weight: 700; }
+.cat-row { display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+.cat-col { display: flex; flex-direction: column; gap: 12px; }
+.cat-cell { display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.cat-label { font: 0.75rem/1.4 var(--wf-font-mono); color: var(--wf-text-muted); }
+.cat-surface { background: var(--wf-surface); padding: 16px; border-radius: 4px; box-shadow: 0 0 0 1px var(--wf-border); }
+.cat-dark-band { background: var(--wf-color-navy); color: var(--wf-w-on-dark); padding: 16px; border-radius: 4px; }
+.cat-dark-band .cat-h2, .cat-on-dark { color: var(--wf-w-on-dark); }
+.cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 12px; }
+.cat-icon { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 4px; border-radius: 4px; background: var(--wf-surface); box-shadow: 0 0 0 1px var(--wf-border); color: var(--wf-text); }
+.cat-icon span { font: 0.75rem/1.3 var(--wf-font-mono); color: var(--wf-text-muted); text-align: center; overflow-wrap: anywhere; }
+.cat-box { background: var(--wf-surface-raised); color: var(--wf-text); padding: 12px; border-radius: 4px; min-height: 40px; box-sizing: border-box; }
+
+// the stylesheets, one scope each
+.wf-css-core { @include meta.load-css("../stylesheets/core/scss/ingredients"); }
+.wf-css-normalize { @include meta.load-css("../stylesheets/core/scss/normalize"); }
+.wf-css-count-indicator { @include meta.load-css("../stylesheets/count-indicator/count-indicator"); }
+.wf-css-dropdown { @include meta.load-css("../stylesheets/dropdown/dropdown"); }
+.wf-css-flash-banner { @include meta.load-css("../stylesheets/flash-banner/flash-banner"); }
+.wf-css-icon { @include meta.load-css("../stylesheets/icon/icon"); }
+.wf-css-pagination { @include meta.load-css("../stylesheets/pagination/pagination"); }
+.wf-css-progress-bar { @include meta.load-css("../stylesheets/progress-bar/progress-bar"); }
+.wf-css-table { @include meta.load-css("../stylesheets/table/table"); }
+.wf-css-tabs { @include meta.load-css("../stylesheets/tabs/tabs"); }
+.wf-css-button { @include meta.load-css("../react/button/legacy/button"); }
+.wf-css-card { @include meta.load-css("../react/card/legacy/card"); }
+.wf-css-tag { @include meta.load-css("../react/tag/legacy/tag"); }

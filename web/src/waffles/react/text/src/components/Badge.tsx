@@ -54,7 +54,8 @@ const textFor = (backgroundColor: string, theme: 'light' | 'dark'): string =>
   hexColorLuminance(backgroundColor, theme) > 0.179 ? 'var(--wf-w-on-fill)' : 'var(--wf-w-on-dark)';
 
 const getTextColor = (backgroundColor: string) => ({
-  ':root[data-theme="dark"] &': { color: textFor(backgroundColor, 'dark') },
+  // (html, not :root: Emotion would read a leading ':' as a pseudo-class of the badge itself)
+  'html[data-theme="dark"] &': { color: textFor(backgroundColor, 'dark') },
   color: textFor(backgroundColor, 'light'),
 });
 

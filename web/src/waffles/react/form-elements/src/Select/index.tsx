@@ -175,6 +175,7 @@ class InternalSelect extends Component<
           {children}
         </select>
         <ChevronDownIcon
+          aria-hidden // SQL Drills: decorative (the label names the select)
           color={
             focus ? tokens.color.primary.blueDark.value.rgb : 'currentColor'
           }
@@ -190,7 +191,7 @@ class InternalSelect extends Component<
       <Label
         description={description}
         errorMessage={errorMessage}
-        htmlFor={name}
+        htmlFor={id} // SQL Drills: was {name}, which pointed at no element (the select only has an id when one is passed), so the label was not linked
         label={label}
         required={required}
       >

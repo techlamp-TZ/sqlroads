@@ -138,6 +138,7 @@ $dc-colors: (
   'grey-400': $dc-grey-400,
 );
 $dc-on-fill: var(--wf-w-on-fill);
+$dc-on-dark: var(--wf-w-on-dark);
 $dc-font-family-sans-serif: "IBM Plex Sans", Arial, sans-serif;
 $dc-font-family-mono: "IBM Plex Mono", monospace;
 $dc-font-size-micro: 0.75rem;
@@ -156,15 +157,15 @@ $dc-line-height-base: 1.5;
 $dc-line-height-heading: 1.2;
 $dc-line-height-large-heading: 1.05;
 $dc-border-radius: 4px;
-$dc-box-shadow-border: 0 0 0 1px rgba(5,25,45,0.1);
-$dc-box-shadow-color: rgba(5,25,45,0.3);
+$dc-box-shadow-border: 0 0 0 1px var(--wf-border);
+$dc-box-shadow-color: var(--wf-shadow-color);
 $dc-box-shadow-lg: 0 3px 5px -1px var(--wf-shadow-color);
 $dc-box-shadow-md: 0 2px 4px -1px var(--wf-shadow-color);
 $dc-box-shadow-sm: 0 1px 4px -1px var(--wf-shadow-color);
 $dc-box-shadow-xl: 0 8px 12px -4px var(--wf-shadow-color);
-$dc-box-shadow-xl-green: 0 4px 8px 0 rgba(54, 213, 125, 0.3);
-$dc-box-shadow-xl-orange: 0 4px 8px 0 rgba(255, 148, 0, 0.3);
-$dc-box-shadow-xl-purple: 0 4px 8px 0 rgba(132, 104, 196, 0.3);
+$dc-box-shadow-xl-green: 0 4px 8px 0 color-mix(in srgb, var(--wf-w-green-dark) 30%, transparent);
+$dc-box-shadow-xl-orange: 0 4px 8px 0 color-mix(in srgb, var(--wf-w-orange) 30%, transparent);
+$dc-box-shadow-xl-purple: 0 4px 8px 0 color-mix(in srgb, var(--wf-w-purple) 30%, transparent);
 $dc-box-shadow-xxl: 0 10px 20px 0 var(--wf-shadow-color);
 $dc-duration: 0.3s;
 $dc-ease: cubic-bezier(0.77, 0, 0.175, 1);

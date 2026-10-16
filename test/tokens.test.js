@@ -48,9 +48,11 @@ test("the generated files are up to date with web/tokens", () => {
 
 test("no hard-coded colour in web/src outside the generated tokens", () => {
   const files = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? (e.name === "tokens" ? [] : files(path.join(d, e.name))) : [path.join(d, e.name)]);
-  const COLOUR = /#[0-9a-fA-F]{3,8}\b|\brgba?\(|\bhsla?\(|\b(white|black)\b(?=\s*[;,)])/;
+  // a literal colour: hex, rgb()/hsl() with a number, or a bare colour keyword used as a value (not part of a name)
+  const COLOUR = /#[0-9a-fA-F]{3,8}\b|\brgba?\(\s*[\d.]|\bhsla?\(\s*[\d.]|(?<![-\w$.'"])(white|black)(?=\s*[;,)])|['"](white|black)['"]/;
   const hits = [];
-  for (const f of files(path.join(WEB, "src")).filter((f) => /\.(js|jsx|ts|tsx|scss|css)$/.test(f))) {
+  // (tests are left out: they feed literal colours to the colour utilities on purpose)
+  for (const f of files(path.join(WEB, "src")).filter((f) => /\.(js|jsx|ts|tsx|scss|css)$/.test(f) && !/[\\/]__tests__[\\/]|\.test\./.test(f))) {
     fs.readFileSync(f, "utf8").split("\n").forEach((line, i) => { if (COLOUR.test(line.replace(/\/\/.*$/, ""))) hits.push(path.relative(ROOT, f) + ":" + (i + 1) + "  " + line.trim()); });
   }
   assert.deepStrictEqual(hits, []);
@@ -60,13 +62,31 @@ test("no brand font, logo or name: copied files, and what the browser loads", ()
   const files = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? files(path.join(d, e.name)) : [path.join(d, e.name)]);
   const copied = files(path.join(WEB, "tokens")).concat(files(path.join(WEB, "src")));
   for (const f of copied) {
-    assert.ok(!/.(woff2?|ttf|otf|eot|svg|png|jpe?g|gif|lottie)$/i.test(f), "asset file copied: " + f);
-    if (path.basename(f) !== "LICENSE") assert.ok(!/Feixen|DataCamp/i.test(fs.readFileSync(f, "utf8")), "brand name in " + f);
+    assert.ok(!/\.(woff2?|ttf|otf|eot|svg|png|jpe?g|gif|lottie)$/i.test(f), "asset file copied: " + f);
+    // LICENSE and WAFFLES-SOURCE.txt are the attribution the MIT licence asks for
+    if (!["LICENSE", "WAFFLES-SOURCE.txt"].includes(path.basename(f))) assert.ok(!/Feixen|DataCamp/i.test(fs.readFileSync(f, "utf8")), "brand name in " + f);
   }
   assert.ok(!fs.existsSync(path.join(WEB, "tokens/waffles/asset")), "the Waffles font token is not copied");
   for (const f of files(path.join(ROOT, "public/app"))) assert.ok(!/Feixen|DataCamp|waffles/i.test(fs.readFileSync(f, "utf8")), "brand name in the built " + path.basename(f));
   assert.ok(fs.existsSync(path.join(ROOT, "LICENSE-waffles.txt")));
   assert.ok(fs.existsSync(path.join(WEB, "tokens/waffles/LICENSE")));
+  // icon SVG sources: the standard (155) and inverted (43) sets only; the 29 brand icons were never copied
+  if (fs.existsSync(path.join(WEB, "icons"))) {
+    const svgs = ["standard", "inverted"].flatMap((d) => fs.readdirSync(path.join(WEB, "icons", d)));
+    assert.strictEqual(svgs.length, 198);
+    assert.ok(!svgs.some((n) => /data-camp|datacamp|facebook|google|linkedin|twitter|youtube|instagram|github|slack|kaggle|apple|paypal|figma|leanpub|python|scala|^r\.svg$/i.test(n)), "brand icon");
+    assert.deepStrictEqual(fs.readdirSync(path.join(WEB, "icons")).sort(), ["LICENSE", "inverted", "standard"]);
+  }
+  // the Waffles parts left out stay out (logos, course-loop graphics, logo spinner, social buttons, font files)
+  for (const p of ["asset-components", "loaders", "heading", "button/src/SocialMediaButtons", "text/src/fontFaces"]) assert.ok(!fs.existsSync(path.join(WEB, "src/waffles/react", p)), p);
+  assert.ok(!fs.existsSync(path.join(WEB, "src/waffles/stylesheets/core/scss/design/vendor/_feixen-font.scss")));
+});
+
+test("Storybook is development only: never in public/, never loaded by the pages", () => {
+  const files = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? files(path.join(d, e.name)) : [path.join(d, e.name)]);
+  for (const f of files(path.join(ROOT, "public"))) assert.ok(!/storybook|iframe\.html|sb-|\.stories\./i.test(path.relative(ROOT, f)), f);
+  for (const page of ["index.html", "admin.html"]) assert.ok(!/storybook/i.test(fs.readFileSync(path.join(ROOT, "public", page), "utf8")), page);
+  assert.ok(fs.readFileSync(path.join(ROOT, ".gitignore"), "utf8").includes("storybook-static/"));
 });
 
 test("contrast audit: every text and UI colour passes, light and dark", async () => {

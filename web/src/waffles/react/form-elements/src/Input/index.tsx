@@ -212,6 +212,7 @@ const InternalInput = ({
       <ClassNames>
         {({ css: getClassName }) =>
           React.cloneElement(icon, {
+            'aria-hidden': true, // SQL Drills: decorative (the label names the field)
             className: getClassName(iconStyle),
             size: iconSize[size],
           })

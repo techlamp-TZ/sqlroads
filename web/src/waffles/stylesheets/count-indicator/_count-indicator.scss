@@ -39,7 +39,7 @@
 
 .dc-count-indicator--red {
   background-color: variables.$dc-red;
-  color: variables.$dc-white;
+  color: variables.$dc-on-fill; // SQL Drills: was white on red (3.2:1)
 }
 
 // ----- Position ----- //

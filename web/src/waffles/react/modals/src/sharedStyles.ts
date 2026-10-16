@@ -1,4 +1,3 @@
-import tokens from '@waffles/tokens/future-tokens';
 import { hexToRgbaColor } from '@waffles/utils';
 import { css } from '@emotion/react';
 
@@ -6,7 +5,8 @@ export const bodyOpenStyle = css({ overflow: 'hidden' });
 
 export const overlayStyle = css({
   alignItems: 'center',
-  backgroundColor: hexToRgbaColor(tokens.color.primary.navy.value.hex, 0.8),
+  // SQL Drills: a fixed dark backdrop (navy turns light in dark mode, which would pale the page instead of dimming it)
+  backgroundColor: hexToRgbaColor('var(--wf-w-backdrop)', 0.8),
   bottom: 0,
   display: 'flex',
   justifyContent: 'center',

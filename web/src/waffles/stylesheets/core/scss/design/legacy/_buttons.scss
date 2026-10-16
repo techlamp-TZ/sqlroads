@@ -257,7 +257,7 @@
 .dc-btn--green {
   @include btn-variant(
     $background: $dc-green,
-    $color: $dc-white,
+    $color: $dc-on-fill,
     $hover: $dc-green-light
   );
 }
@@ -277,7 +277,7 @@
 .dc-btn--red {
   @include btn-variant(
     $background: $dc-red,
-    $color: $dc-white,
+    $color: $dc-on-fill,
     $hover: $dc-red-light
   );
 }
@@ -287,7 +287,7 @@
 .dc-btn--purple {
   @include btn-variant(
     $background: $dc-purple,
-    $color: $dc-white,
+    $color: $dc-on-dark,
     $hover: $dc-purple-light
   );
 }

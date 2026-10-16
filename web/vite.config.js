@@ -44,5 +44,5 @@ export default defineConfig({
       output: { entryFileNames: "assets/[name]-[hash].js", chunkFileNames: "assets/[name]-[hash].js", assetFileNames: "assets/[name]-[hash][extname]" },
     },
   },
-  test: { environment: "jsdom", include: ["src/**/*.test.{js,jsx,ts,tsx}"] },
+  test: { environment: "jsdom", include: ["src/**/*.test.{js,jsx,ts,tsx}"], setupFiles: ["./src/test-setup.js"] },
 });

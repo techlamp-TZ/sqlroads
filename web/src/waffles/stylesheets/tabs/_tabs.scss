@@ -120,3 +120,19 @@
     display: block;
   }
 }
+
+// SQL Drills: the ::after above reserves the bold width of the label text, but not of a tab that also holds a
+// .minimal-tab__label (a count), so that tab still grew when selected. Wrapping the text in .minimal-tab__text
+// (with the same data-text) reserves the width of the text alone; the count after it then stays put.
+.minimal-tab__text {
+  display: inline-flex;
+  flex-direction: column;
+
+  &::after {
+    content: attr(data-text);
+    font-weight: variables.$dc-font-weight-bold;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+}

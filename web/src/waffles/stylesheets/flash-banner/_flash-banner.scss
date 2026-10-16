@@ -101,13 +101,14 @@
 //   Mixin
 // -------------------------------------
 
+// SQL Drills: text on a bright fill uses $dc-on-fill (navy in both themes; navy-text turns light in dark mode)
 @mixin color-flash ($bg, $link-color, $link-hover) {
   background-color: $bg;
-  color: variables.$dc-navy-text;
+  color: variables.$dc-on-fill;
 
   a {
     border-color: $link-color;
-    color: variables.$dc-navy-text;
+    color: variables.$dc-on-fill;
     transition: border-color variables.$dc-transition;
 
     &:hover,
@@ -125,15 +126,15 @@
 
 // Yellow / Notice
 .dc-flash--notice {
-  @include color-flash($bg: variables.$dc-yellow, $link-color: variables.$dc-navy-text, $link-hover: variables.$dc-navy-text);
+  @include color-flash($bg: variables.$dc-yellow, $link-color: variables.$dc-on-fill, $link-hover: variables.$dc-on-fill);
 }
 
 // Green / Success
 .dc-flash--success {
-  @include color-flash($bg: variables.$dc-green, $link-color: variables.$dc-navy-text, $link-hover: variables.$dc-navy-text);
+  @include color-flash($bg: variables.$dc-green, $link-color: variables.$dc-on-fill, $link-hover: variables.$dc-on-fill);
 }
 
 // Red / Error
 .dc-flash--error {
-  @include color-flash($bg: variables.$dc-red, $link-color: variables.$dc-navy-text, $link-hover: variables.$dc-navy-text);
+  @include color-flash($bg: variables.$dc-red, $link-color: variables.$dc-on-fill, $link-hover: variables.$dc-on-fill);
 }

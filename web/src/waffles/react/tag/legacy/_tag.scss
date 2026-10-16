@@ -40,12 +40,12 @@
 // ----- Link ----- //
 
 .dc-tag--link {
-  color: variables.$dc-blue-text;
+  color: variables.$dc-navy-text; // SQL Drills: was blue-text on beige-400 (4.0:1)
   border: none;
   @include afh.afh {
     background-color: variables.$dc-blue;
     border-color: variables.$dc-blue;
-    color: variables.$dc-white;
+    color: variables.$dc-on-fill; // SQL Drills: was white on blue (2.2:1)
     cursor: pointer;
   }
 }

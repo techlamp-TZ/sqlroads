@@ -101,7 +101,15 @@ const wvar = (n) => "var(--wf-w-" + kebab(n) + ")";
 const FONT = { sansSerif: { value: "IBM Plex Sans", attributes: { fallback: "Arial, sans-serif" } }, mono: { value: "IBM Plex Mono", attributes: { fallback: "monospace" } } };
 const strip = (o) => Object.fromEntries(Object.entries(o).filter(([, t]) => !(t && t.attributes && t.attributes.deprecated)).map(([k, t]) => [k, t && typeof t === "object" && !("value" in t) ? strip(t) : t]));
 const colourObj = (group) => Object.fromEntries(live(group).map(([n]) => [n, { value: { hex: wvar(n), hex8: wvar(n), hsl: wvar(n), rgb: wvar(n) } }]));
-const shadowVal = (v) => String(v).replace("{shadow.color.value}", "var(--wf-shadow-color)");
+// shadow colours follow the theme: the navy shadow -> --wf-shadow-color, the 10% border shadow -> --wf-border,
+// the (deprecated) coloured glows -> their palette colour at 30%
+const SHADOW_RGBA = {
+  "5,25,45,0.3": "var(--wf-shadow-color)", "5,25,45,0.1": "var(--wf-border)",
+  "54,213,125,0.3": "color-mix(in srgb, var(--wf-w-green-dark) 30%, transparent)",
+  "255,148,0,0.3": "color-mix(in srgb, var(--wf-w-orange) 30%, transparent)",
+  "132,104,196,0.3": "color-mix(in srgb, var(--wf-w-purple) 30%, transparent)",
+};
+const shadowVal = (v) => String(v).replace("{shadow.color.value}", "var(--wf-shadow-color)").replace(/rgba\(([^)]*)\)/g, (m, a) => SHADOW_RGBA[a.replace(/\s+/g, "")] || m);
 const future = strip({
   ...W,
   asset: { font: FONT },
@@ -140,6 +148,7 @@ line("z-indexes", listOf(W.zIndex).join(" "));
 for (const n of Object.keys(palette)) { line(kebab(n), wvar(n)); line("raw-" + kebab(n), wLight[n]); }
 sv.push("$dc-colors: (\n  'currentColor': currentColor,\n  'transparent': transparent,\n" + Object.keys(palette).map((n) => "  '" + kebab(n) + "': $dc-" + kebab(n) + ",").join("\n") + "\n);");
 line("on-fill", "var(--wf-w-on-fill)");
+line("on-dark", "var(--wf-w-on-dark)");
 for (const [k, t] of Object.entries(FONT)) line("font-family-" + kebab(k), '"' + t.value + '", ' + t.attributes.fallback);
 for (const [, t] of Object.entries(W.size.font)) if (t.attributes && t.attributes.legacyName) line("font-size-" + t.attributes.legacyName, typeof t.value === "string" ? t.value : t.value + "rem");
 for (const [k, t] of Object.entries(W.fontWeight)) line("font-weight-" + kebab(k), ours.fontWeight[k] || t.value);

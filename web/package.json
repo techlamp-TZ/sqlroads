@@ -8,7 +8,11 @@
     "build": "node tools/build-tokens.mjs && vite build && node tools/inject.mjs",
     "dev": "node tools/dev.mjs",
     "test": "vitest run",
-    "audit:contrast": "node tools/contrast-audit.mjs"
+    "audit:contrast": "node tools/contrast-audit.mjs",
+    "icons": "node tools/build-icons.mjs",
+    "check:scss": "node tools/check-scss.mjs",
+    "storybook": "storybook dev -p 6006 --no-open",
+    "build-storybook": "storybook build -o storybook-static --quiet"
   },
   "devDependencies": {
     "@emotion/react": "11.14.0",

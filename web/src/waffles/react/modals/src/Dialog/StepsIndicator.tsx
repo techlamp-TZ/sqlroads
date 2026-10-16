@@ -23,6 +23,7 @@ const StepsIndicator: React.FC<StepsIndicatorProps> = ({
 }) => (
   <div
     aria-label={`Step ${currentStep} of ${totalSteps}`}
+    role="img" // SQL Drills: an aria-label needs a role (axe aria-prohibited-attr)
     css={{ lineHeight: '8px', marginTop: 16, padding: 0 }}
   >
     {[...Array(totalSteps).keys()].map((step) => {

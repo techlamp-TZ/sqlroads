@@ -483,7 +483,7 @@ const tokens = {
   },
   "shadow": {
     "border": {
-      "value": "0 0 0 1px rgba(5,25,45,0.1)"
+      "value": "0 0 0 1px var(--wf-border)"
     },
     "lg": {
       "value": "0 3px 5px -1px var(--wf-shadow-color)"

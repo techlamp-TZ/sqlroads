@@ -45,6 +45,8 @@ const linkStyle = css(baseStyle, {
   fontWeight: tokens.fontWeight.regular.value,
   lineHeight: tokens.size.font.base.value,
   textDecoration: 'none',
+  // SQL Drills: in dark mode the link colour is too close to the text colour to tell apart, so it is underlined
+  'html[data-theme="dark"] &': { textDecoration: 'underline' },
 });
 
 const InternalLink = ({

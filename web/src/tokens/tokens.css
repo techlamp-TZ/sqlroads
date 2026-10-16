@@ -178,6 +178,7 @@
   --wf-w-grey-400: #D9D9E2;
   --wf-w-on-fill: #05192D;
   --wf-w-on-dark: #FFFFFF;
+  --wf-w-backdrop: #000820;
 }
 :root[data-theme="dark"] {
   --wf-bg: #000820;
@@ -251,4 +252,5 @@
   --wf-w-grey-400: #2E4260;
   --wf-w-on-fill: #05192D;
   --wf-w-on-dark: #FFFFFF;
+  --wf-w-backdrop: #000820;
 }

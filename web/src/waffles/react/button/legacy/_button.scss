@@ -24,6 +24,7 @@
 
 .dc-btn {
   align-items: center;
+  color: variables.$dc-navy-text; // SQL Drills: was left to the browser's default (black, unreadable in dark mode)
   border: 2px solid transparent;
   border-radius: variables.$dc-border-radius;
   display: inline-flex;
@@ -204,7 +205,7 @@
 // ----- Primary Light ----- //
 
 .dc-btn--primary-light {
-  @include btn-variant($background: variables.$dc-green, $color: variables.$dc-navy-text, $hover: variables.$dc-green-light);
+  @include btn-variant($background: variables.$dc-green, $color: variables.$dc-on-fill, $hover: variables.$dc-green-light);
 }
 
 // ----- Secondary ----- //
@@ -221,6 +222,7 @@
 
 // TODO: Refactor into own button instead of having a dependence on `dc-btn--tertiary`. DON'T move above `tertiary`.
 .dc-btn--text-light {
+  background-color: transparent; // SQL Drills: a text button for dark backgrounds (was the browser's default grey)
   color: variables.$dc-white;
 
   @include state.state {
@@ -231,7 +233,7 @@
 // ----- Green ----- //
 
 .dc-btn--green {
-  @include btn-variant($background: variables.$dc-green, $color: variables.$dc-navy-text, $hover: variables.$dc-green-light);
+  @include btn-variant($background: variables.$dc-green, $color: variables.$dc-on-fill, $hover: variables.$dc-green-light);
 }
 
 // ----- Grey ----- //
@@ -243,18 +245,18 @@
 // ----- Red ----- //
 
 .dc-btn--red {
-  @include btn-variant($background: variables.$dc-red, $color: variables.$dc-navy-text, $hover: variables.$dc-red-light);
+  @include btn-variant($background: variables.$dc-red, $color: variables.$dc-on-fill, $hover: variables.$dc-red-light);
 }
 
 // ----- Purple ----- //
 
 .dc-btn--purple {
-  @include btn-variant($background: variables.$dc-purple, $color: variables.$dc-navy-text, $hover: variables.$dc-purple-light);
+  @include btn-variant($background: variables.$dc-purple, $color: variables.$dc-on-dark, $hover: variables.$dc-purple-light);
 }
 // ----- Orange ----- //
 
 .dc-btn--orange {
-  @include btn-variant($background: variables.$dc-orange, $color: variables.$dc-navy-text, $hover: variables.$dc-orange-light);
+  @include btn-variant($background: variables.$dc-orange, $color: variables.$dc-on-fill, $hover: variables.$dc-orange-light);
 }
 
 // ----- Social ----- //
@@ -403,6 +405,7 @@
 .dc-multi-btn__item:first-child,
 .dc-multi-btn__item:last-child {
   background: none;
+  color: variables.$dc-navy-text; // SQL Drills: was the browser's default (black)
   border: 1px solid transparent;
   box-shadow: none;
   min-width: 1px;

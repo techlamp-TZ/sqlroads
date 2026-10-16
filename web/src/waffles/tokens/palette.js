@@ -44,7 +44,8 @@ export const palette = {
     "--wf-w-grey-300": "#E8E8EA",
     "--wf-w-grey-400": "#D9D9E2",
     "--wf-w-on-fill": "#05192D",
-    "--wf-w-on-dark": "#FFFFFF"
+    "--wf-w-on-dark": "#FFFFFF",
+    "--wf-w-backdrop": "#000820"
   },
   "dark": {
     "--wf-w-blue": "#06BDFC",
@@ -89,7 +90,8 @@ export const palette = {
     "--wf-w-grey-300": "#213147",
     "--wf-w-grey-400": "#2E4260",
     "--wf-w-on-fill": "#05192D",
-    "--wf-w-on-dark": "#FFFFFF"
+    "--wf-w-on-dark": "#FFFFFF",
+    "--wf-w-backdrop": "#000820"
   }
 };
 export default palette;

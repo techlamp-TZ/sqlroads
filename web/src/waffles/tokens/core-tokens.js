@@ -10,15 +10,15 @@ const tokens = {
     "radius": "4px"
   },
   "boxShadow": {
-    "border": "0 0 0 1px rgba(5,25,45,0.1)",
-    "color": "rgba(5,25,45,0.3)",
+    "border": "0 0 0 1px var(--wf-border)",
+    "color": "var(--wf-shadow-color)",
     "lg": "0 3px 5px -1px var(--wf-shadow-color)",
     "md": "0 2px 4px -1px var(--wf-shadow-color)",
     "sm": "0 1px 4px -1px var(--wf-shadow-color)",
     "xl": "0 8px 12px -4px var(--wf-shadow-color)",
-    "xlGreen": "0 4px 8px 0 rgba(54, 213, 125, 0.3)",
-    "xlOrange": "0 4px 8px 0 rgba(255, 148, 0, 0.3)",
-    "xlPurple": "0 4px 8px 0 rgba(132, 104, 196, 0.3)",
+    "xlGreen": "0 4px 8px 0 color-mix(in srgb, var(--wf-w-green-dark) 30%, transparent)",
+    "xlOrange": "0 4px 8px 0 color-mix(in srgb, var(--wf-w-orange) 30%, transparent)",
+    "xlPurple": "0 4px 8px 0 color-mix(in srgb, var(--wf-w-purple) 30%, transparent)",
     "xxl": "0 10px 20px 0 var(--wf-shadow-color)"
   },
   "breakpoints": {
