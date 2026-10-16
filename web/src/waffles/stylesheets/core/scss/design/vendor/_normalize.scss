@@ -103,7 +103,8 @@ a:hover {
   outline: 0;
 }
 
-:focus {
+// SQL Drills: was `:focus { outline: 0; }`, which hid focus from keyboard users too
+:focus:not(:focus-visible) {
   outline: 0;
 }
 

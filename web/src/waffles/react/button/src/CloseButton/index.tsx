@@ -16,7 +16,8 @@ const CloseButton: React.FC<{
       ':active': { color: tokens.color.primary.green.value.rgb },
       ':disabled': { color: tokens.color.neutral.grey400.value.hex },
       ':disabled:hover, :disabled:focus': { backgroundColor: 'transparent' },
-      ':focus': {
+      // SQL Drills: keyboard focus only
+      ':focus-visible': {
         backgroundColor: tokens.color.neutral.grey200.value.rgb,
       },
       ':hover': { backgroundColor: tokens.color.neutral.grey200.value.rgb },

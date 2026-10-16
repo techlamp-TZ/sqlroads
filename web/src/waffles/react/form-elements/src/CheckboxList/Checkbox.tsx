@@ -85,7 +85,7 @@ const Checkbox = ({
           !disabled && {
             // affects the style of the CheckboxIcon
             ':active + span': focusStyle,
-            ':focus + span': focusStyle,
+            ':focus-visible + span': focusStyle, // SQL Drills: keyboard focus only
           },
         )}
         disabled={elementDisabled}

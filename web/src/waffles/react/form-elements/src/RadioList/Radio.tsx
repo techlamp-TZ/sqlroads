@@ -94,7 +94,7 @@ const Radio = ({
                 !disabled && {
                   // affects the style of the RadioIcon
                   ':active + span': focusStyle,
-                  ':focus + span': focusStyle,
+                  ':focus-visible + span': focusStyle, // SQL Drills: keyboard focus only
                 },
               )}
               disabled={elementDisabled}

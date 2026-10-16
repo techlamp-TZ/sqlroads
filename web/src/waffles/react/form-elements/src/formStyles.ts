@@ -8,11 +8,13 @@ const placeholderColor = hexToRgbaColor(
 );
 
 const baseFormStyle = css({
+  ':focus:not(:focus-visible)': { outline: 'none' },
   ':disabled, :active:disabled, :focus:disabled': {
     cursor: 'not-allowed',
     opacity: 0.3,
   },
-  ':focus': {
+  // SQL Drills: keyboard focus only (text fields still show it on click: browsers treat typing as keyboard use)
+  ':focus-visible': {
     boxShadow: `inset 0 0 0 2px ${tokens.color.primary.blueDark.value.rgb}`,
     outline: 'none',
   },

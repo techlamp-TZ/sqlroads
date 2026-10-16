@@ -1,0 +1,12 @@
+// SQL Drills: one focus ring for everything Waffles renders, shown for keyboard use only.
+// Included under the catalog root and .wf-root (never globally, so the old pages are untouched).
+@mixin keyboard-focus {
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--wf-focus);
+    outline-offset: 2px;
+  }
+}
