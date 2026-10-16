@@ -1,0 +1,35 @@
+@use "../tokens/tokens.scss" as *;
+
+.wf-loader {
+  display: inline-flex;
+  align-items: center;
+  gap: $wf-space-8;
+  color: $wf-text-muted;
+  font-family: $wf-font-sans;
+  font-size: $wf-font-size-200;
+}
+.wf-loader:not(.wf-loader--inline) { display: flex; justify-content: center; padding: $wf-space-16; }
+
+.wf-loader__track { stroke: $wf-border; }
+.wf-loader__arc { stroke: $wf-accent-text; }
+.wf-loader__ring { animation: wf-loader-spin 0.9s linear infinite; flex: none; }
+.wf-loader__label { color: $wf-text-muted; }
+
+@keyframes wf-loader-spin { to { transform: rotate(360deg); } }
+
+// reduced motion: no spinning; the arc stays as a still mark next to the label
+@media (prefers-reduced-motion: reduce) {
+  .wf-loader__ring { animation: none; }
+}
+
+.wf-sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
