@@ -2728,7 +2728,11 @@
     $("#side").classList.remove("open"); $("#scrim").classList.remove("open");
     var V = { drills: viewDrills, drill: function () { viewDrill(r.args[0]); }, levels: viewLevels, level: function () { viewLevel(r.args[0]); }, mcqs: viewMcqs, mcq: function () { viewMcq(r.args[0]); },
       quiz: function () { viewQuiz(r.args[0] || "mixed"); }, recent: viewRecent, interview: viewInterview, bookmarks: viewBookmarks, review: viewReviewMistakes, progress: viewProgress, concept: function () { viewConcept(r.args[0]); }, learn: function () { if (r.args[0]) viewLearnStep(r.args[0]); else viewLearn(); }, docs: viewDocs, help: viewHelp, flashcards: viewFlashcards, notes: viewNotes, licenses: viewLicenses, challenge: viewChallenge, preview: viewPreview, guide: function () { viewGuide(r.args[0], r.args[1]); } };
-    (V[r.name] || viewHome)();
+    // React pages (web/, the Waffles front end) take the routes they own; every other route stays here
+    var R = window.SQLDrillsReact;
+    if (R) R.unmount();
+    if (R && R.has(r.name)) R.mount(r.name, view, { route: r, icon: icon });
+    else (V[r.name] || viewHome)();
     if (!same && !(r.name === "guide" && r.args[1])) view.scrollTop = 0;
   }
 
@@ -2909,6 +2913,9 @@
   });
 
   // ---------- boot ----------
+  // the React bundle loads after this script: if it owns the page already on screen, hand that page over
+  var booted = false;
+  window.addEventListener("sqldrills:react-ready", function () { if (booted && window.SQLDrillsReact.has(route.name)) render(); });
   Promise.all([api("/api/library"), api("/api/mcqs").catch(function () { return []; }), api("/api/progress").catch(function () { return {}; }), api("/api/library/activity").catch(function () { return []; }), api("/api/bookmarks").catch(function () { return []; }), api("/api/library/review").catch(function () { return null; }), api("/api/learn/activity").catch(function () { return []; })])
     .then(function (r) {
       buildModel(r[0], r[1], r[2]);
@@ -2920,6 +2927,7 @@
       recentCount = recentItems(30).length;
       window.addEventListener("hashchange", render);
       if (!location.hash) history.replaceState(null, "", "#/home");
+      booted = true;
       render();
     })
     .catch(function (e) { view.innerHTML = '<div class="page full"><div class="err">Could not load the exercises: ' + esc(e.message) + ". Is sql-drills-server running (npm start)?</div></div>"; });

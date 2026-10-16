@@ -1,0 +1,53 @@
+// Base for everything React renders. Scoped to .wf-root so the old pages are untouched.
+@use "../tokens/tokens.scss" as *;
+
+.wf-root {
+  font-family: $wf-font-sans;
+  font-size: $wf-font-size-300;
+  line-height: $wf-line-height-base;
+  color: $wf-text;
+
+  // focus rings for keyboard use only
+  :focus { outline: none; }
+  :focus-visible { outline: 2px solid $wf-focus; outline-offset: 2px; border-radius: $wf-radius-small; }
+
+  a { color: $wf-accent-text; }
+  h1, h2, h3 { color: $wf-text; line-height: $wf-line-height-heading; font-weight: $wf-font-weight-bold; margin: 0; }
+  h1 { font-size: $wf-font-size-600; letter-spacing: $wf-letter-spacing-medium-heading; }
+  pre, code, kbd { font-family: $wf-font-mono; }
+}
+
+// page frame inside the old shell's #view
+.wf-page {
+  display: flex;
+  flex-direction: column;
+  gap: $wf-space-16;
+  min-width: 0;
+  padding: $wf-space-24 $wf-space-24 $wf-space-48;
+  @include wf-below(md) { padding: $wf-space-16 $wf-space-16 $wf-space-32; }
+}
+
+.wf-crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $wf-space-8;
+  font-size: $wf-font-size-200;
+  color: $wf-text-muted;
+  a { color: $wf-text-muted; text-decoration: none; }
+  a:hover { color: $wf-accent-text; text-decoration: underline; }
+}
+
+.wf-ic { display: inline-flex; width: 14px; height: 14px; svg { width: 100%; height: 100%; } }
+
+// Waffles Card, elevation 1; the border keeps the edge visible in dark mode, where shadows vanish
+.wf-card {
+  background: $wf-surface;
+  border-radius: $wf-radius-small;
+  box-shadow: 0 0 0 1px $wf-border, $wf-shadow-sm;
+  padding: $wf-space-24;
+  min-width: 0;
+  @include wf-below(md) { padding: $wf-space-16; }
+}
+
+.wf-muted { color: $wf-text-muted; }

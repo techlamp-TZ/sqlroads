@@ -1,0 +1,18 @@
+@use "../tokens/tokens.scss" as *;
+
+.wf-licenses {
+  h1 { margin-bottom: $wf-space-8; }
+  p { margin: 0; }
+}
+
+.wf-license-text {
+  margin: $wf-space-12 0 0;
+  padding: $wf-space-16;
+  border-radius: $wf-radius-small;
+  background: $wf-code-bg;
+  color: $wf-text;
+  font-size: $wf-font-size-200;
+  line-height: $wf-line-height-base;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
