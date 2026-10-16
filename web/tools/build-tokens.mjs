@@ -53,7 +53,7 @@ const theme = (name) => {
   const t = {};
   for (const [role, v] of Object.entries(ours.themes[name])) t[role] = colour(v);
   const tv = (ours.textVariants || {})[name] || {};
-  for (const f of FAMILIES) t["color-" + kebab(f) + "-text"] = colour(tv[f] || palette[f + "Text"]);
+  for (const f of FAMILIES) t["color-" + kebab(f) + "-text"] = colour(tv[f] || palette[f + "Text"]); // "_note" keys are ignored
   return t;
 };
 const light = theme("light"), dark = theme("dark");

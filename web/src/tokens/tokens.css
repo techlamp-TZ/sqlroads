@@ -3,11 +3,11 @@
   --wf-color-blue: #06BDFC;
   --wf-color-blue-dark: #009BD8;
   --wf-color-blue-light: #60E7FF;
-  --wf-color-blue-text: #007BB6;
+  --wf-color-blue-text: #0072A9;
   --wf-color-green: #03EF62;
   --wf-color-green-dark: #00C53B;
   --wf-color-green-light: #65FF8F;
-  --wf-color-green-text: #008700;
+  --wf-color-green-text: #007F00;
   --wf-color-navy: #05192D;
   --wf-color-navy-dark: #000820;
   --wf-color-navy-light: #213147;
@@ -15,7 +15,7 @@
   --wf-color-orange: #FF931E;
   --wf-color-orange-dark: #D87300;
   --wf-color-orange-light: #FFBC4B;
-  --wf-color-orange-text: #B75900;
+  --wf-color-orange-text: #AC5400;
   --wf-color-pink: #FF6EA9;
   --wf-color-pink-dark: #DC4D8B;
   --wf-color-pink-light: #FF95CF;
@@ -31,7 +31,7 @@
   --wf-color-yellow: #FCCE0D;
   --wf-color-yellow-dark: #CFA600;
   --wf-color-yellow-light: #FFEC3C;
-  --wf-color-yellow-text: #907000;
+  --wf-color-yellow-text: #876900;
   --wf-color-white: #FFFFFF;
   --wf-color-beige-100: #FFFBF3;
   --wf-color-beige-200: #F7F3EB;
@@ -119,20 +119,20 @@
   --wf-surface: #FFFFFF;
   --wf-surface-raised: #EFEFEF;
   --wf-border: #D9D9E2;
-  --wf-border-strong: #8C94A3;
+  --wf-border-strong: #828A98;
   --wf-text: #05192D;
   --wf-text-muted: #4D5868;
   --wf-accent: #0069A0;
   --wf-on-accent: #FFFFFF;
   --wf-accent-text: #00689E;
-  --wf-focus: #009BD8;
+  --wf-focus: #0072A9;
   --wf-ok: #008700;
   --wf-on-ok: #FFFFFF;
-  --wf-ok-text: #008700;
+  --wf-ok-text: #007F00;
   --wf-bad: #C01100;
   --wf-on-bad: #FFFFFF;
   --wf-bad-text: #C01100;
-  --wf-warn-text: #B75900;
+  --wf-warn-text: #AC5400;
   --wf-shadow-color: rgba(5, 25, 45, 0.3);
   --wf-code-bg: #F7F7FC;
 }
@@ -141,7 +141,7 @@
   --wf-surface: #05192D;
   --wf-surface-raised: #213147;
   --wf-border: #2E4260;
-  --wf-border-strong: #5D7090;
+  --wf-border-strong: #687A98;
   --wf-text: #F2F4F8;
   --wf-text-muted: #B3BDCC;
   --wf-accent: #0069A0;

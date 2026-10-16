@@ -1,33 +1,60 @@
 {
-  "_about": "SQL Drills' layer on top of the Waffles tokens (waffles/). Fonts replace Waffles' font (never copied). themes.light / themes.dark map the roles pages use to colours; a value naming a Waffles colour (\"navy\", \"grey100\", \"blueText\") is taken from waffles/color, a hex value is ours. textVariants.dark gives every colour family a text colour that reads on the dark surfaces (Waffles only defines them for light). tools/contrast-audit.mjs checks every text role against every surface in both themes.",
+  "_about": "SQL Drills' layer on top of the Waffles tokens (waffles/). Fonts replace Waffles' font (never copied). themes.light / themes.dark map the roles pages use to colours; a value naming a Waffles colour (\"navy\", \"grey100\", \"blueText\") is taken from waffles/color, a hex value is ours. textVariants.dark gives every colour family a text colour that reads on the dark surfaces (Waffles only defines them for light, and four of its light ones are darkened slightly to pass on grey). tools/contrast-audit.mjs checks every text role against every surface in both themes.",
   "font": {
     "sans": "\"IBM Plex Sans\", Arial, sans-serif",
     "mono": "\"IBM Plex Mono\", ui-monospace, Menlo, Consolas, monospace"
   },
-  "fontWeight": { "bold": 700, "_note": "Waffles' bold is 800; IBM Plex is loaded up to 700." },
-  "surfaces": ["bg", "surface", "surface-raised"],
-  "textRoles": ["text", "text-muted", "accent-text", "ok-text", "bad-text", "warn-text"],
-  "fills": [["accent", "on-accent"], ["ok", "on-ok"], ["bad", "on-bad"]],
+  "fontWeight": {
+    "bold": 700,
+    "_note": "Waffles' bold is 800; IBM Plex is loaded up to 700."
+  },
+  "surfaces": [
+    "bg",
+    "surface",
+    "surface-raised"
+  ],
+  "textRoles": [
+    "text",
+    "text-muted",
+    "accent-text",
+    "ok-text",
+    "bad-text",
+    "warn-text"
+  ],
+  "fills": [
+    [
+      "accent",
+      "on-accent"
+    ],
+    [
+      "ok",
+      "on-ok"
+    ],
+    [
+      "bad",
+      "on-bad"
+    ]
+  ],
   "themes": {
     "light": {
       "bg": "grey100",
       "surface": "white",
       "surface-raised": "grey200",
       "border": "grey400",
-      "border-strong": "#8C94A3",
+      "border-strong": "#828A98",
       "text": "navy",
       "text-muted": "#4D5868",
       "accent": "#0069A0",
       "on-accent": "white",
       "accent-text": "#00689E",
-      "focus": "blueDark",
+      "focus": "#0072A9",
       "ok": "greenText",
       "on-ok": "white",
-      "ok-text": "greenText",
+      "ok-text": "#007F00",
       "bad": "redText",
       "on-bad": "white",
       "bad-text": "redText",
-      "warn-text": "orangeText",
+      "warn-text": "#AC5400",
       "shadow-color": "rgba(5, 25, 45, 0.3)",
       "code-bg": "grey100"
     },
@@ -36,7 +63,7 @@
       "surface": "navy",
       "surface-raised": "navyLight",
       "border": "#2E4260",
-      "border-strong": "#5D7090",
+      "border-strong": "#687A98",
       "text": "#F2F4F8",
       "text-muted": "#B3BDCC",
       "accent": "#0069A0",
@@ -55,6 +82,13 @@
     }
   },
   "textVariants": {
+    "light": {
+      "_note": "Waffles text colours darkened by the least amount that reaches 4.5:1 on the grey surfaces (Waffles made them for white). Families not listed keep the Waffles value.",
+      "blue": "#0072A9",
+      "green": "#007F00",
+      "orange": "#AC5400",
+      "yellow": "#876900"
+    },
     "dark": {
       "blue": "blueLight",
       "green": "greenLight",
