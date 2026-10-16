@@ -1,0 +1,615 @@
+// *************************************
+//
+//   Buttons
+//
+// -------------------------------------
+//   Template
+// -------------------------------------
+//
+// .dc-btn[...modifiers](dc-is-loading)
+//
+// *************************************
+
+// ----- Variables ----- //
+$_buttons-facebook: #3b5999;
+$_buttons-facebook-hover: #627aad;
+$_buttons-linkedin: #0077b5;
+$_buttons-linkedin-hover: #4792c5;
+$_buttons-google-plus: #dd4b39;
+$_buttons-google-plus-hover: #e57062;
+
+// ----- Base styles ----- //
+
+.dc-btn {
+  align-items: center;
+  border: 2px solid transparent;
+  border-radius: $dc-border-radius;
+  display: inline-flex;
+  font-size: $dc-font-size-base;
+  font-weight: $dc-font-weight-bold;
+  justify-content: center;
+  letter-spacing: inherit;
+  padding: 10px 15px;
+  position: relative;
+  text-align: center;
+  transition: background-color $dc-transition, border-color $dc-transition, color $dc-transition;
+  user-select: none;
+  white-space: nowrap;
+
+  @include state {
+    border-color: transparent;
+  }
+
+  &:disabled,
+  &.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.25;
+    transition: opacity $dc-transition;
+
+    @include state {
+      opacity: 0.25;
+    }
+  }
+
+  &.dc-is-loading {
+    pointer-events: none;
+  }
+}
+
+// -------------------------------------
+// Scaffolding
+// -------------------------------------
+
+// ----- Loading/Spinner ----- //
+
+// Spinner Icon
+.dc-btn__spinner {
+  height: 0;
+  opacity: 0;
+  transition: opacity $dc-transition;
+  visibility: hidden;
+  width: 0;
+
+  .dc-is-loading & {
+    height: 100%;
+    opacity: 1;
+    visibility: visible;
+    width: auto;
+  }
+}
+
+// Spinner/Loading Content
+.dc-btn__content {
+  .dc-is-loading & {
+    height: 0;
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+// -------------------------------------
+// Modifiers
+// -------------------------------------
+
+// ----- Size ----- //
+
+// Small
+.dc-btn--sm {
+  padding: 4px 15px;
+}
+
+// Large
+.dc-btn--lg {
+  font-size: $dc-font-size-h4;
+  line-height: 1.6;
+  padding: 14px 31px;
+}
+
+// ----- Squared ----- //
+
+.dc-btn--squared {
+  height: 48px !important;
+  padding: 0 !important;
+  width: 48px !important;
+
+  // Small
+  &.dc-btn--sm {
+    height: 36px !important;
+    width: 36px !important;
+  }
+
+  // Large
+  &.dc-btn--lg {
+    height: 64px !important;
+    width: 64px !important;
+  }
+}
+
+// ----- Block ----- //
+
+.dc-btn--block {
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.dc-btn--unstyled {
+  @include button-unstyled;
+}
+
+.dc-btn--link {
+  @include button-unstyled;
+  padding: 0;
+}
+
+// -------------------------------------
+// Button variants
+// -------------------------------------
+// Creates button modifiers.
+//
+// $background: background-color value
+// $color: color value
+// $color-hover: color value on hover
+// $hover: background-color and border-color on hover
+// $border-color: border-color value
+// $shadowed: shadowed button (boolean)
+// $scale-type: 'darken' or 'lighten'
+// $scale-percent: 'darken' or 'lighten' percentage
+// -------------------------------------
+
+// ----- Variant Mixin ----- //
+
+@mixin btn-variant($background, $color, $color-hover: $color, $hover: '', $border-color: $background, $border-color-hover: $hover, $shadowed: false, $scale-type: '', $scale-percent: 10%) {
+  background-color: $background;
+  border-color: $border-color;
+  color: $color;
+
+  @include state {
+    @if $hover != '' {
+      background-color: $hover;
+      border-color: $border-color-hover;
+      color: $color-hover;
+    } @else if $scale-type == 'darken' {
+      background-color: darken($color: $background, $amount: $scale-percent);
+      border-color: darken($color: $border-color, $amount: $scale-percent);
+      color: darken($color: $color, $amount: $scale-percent);
+    } @else if $scale-type == 'lighten' {
+      background-color: lighten($background: $background, $amount: $scale-percent);
+      border-color: lighten($color: $border-color, $amount: $scale-percent);
+      color: lighten($color: $color, $amount: $scale-percent);
+    } @else {
+      border-color: $border-color-hover;
+      color: $color-hover;
+    }
+
+    @if $shadowed {
+      background-color: $background;
+      color: $color-hover;
+    }
+  }
+
+  @if $shadowed {
+    box-shadow: $dc-box-shadow-sm;
+  }
+
+  &:disabled,
+  &.is-disabled {
+    background-color: $background;
+    border-color: $border-color;
+    color: $color;
+  }
+}
+
+// ----- Primary Light ----- //
+
+.dc-btn--primary-light {
+  @include btn-variant($background: $dc-green, $color: $dc-navy-text, $hover: $dc-green-light);
+}
+
+// ----- Secondary ----- //
+
+.dc-btn--secondary {
+  @include btn-variant($background: $dc-navy, $color: $dc-white, $hover: $dc-navy-light);
+}
+
+// ----- Tertiary ----- //
+
+.dc-btn--tertiary {
+  @include btn-variant($background: transparent, $border-color: $dc-navy, $hover: rgba($dc-navy, 0.15), $border-color-hover: $dc-navy, $color: $dc-navy-text);
+}
+
+// TODO: Refactor into own button instead of having a dependence on `dc-btn--tertiary`. DON'T move above `tertiary`.
+.dc-btn--text-light {
+  color: $dc-white;
+
+  @include state {
+    color: $dc-white;
+  }
+}
+
+// ----- Green ----- //
+
+.dc-btn--green {
+  @include btn-variant($background: $dc-green, $color: $dc-navy-text, $hover: $dc-green-light);
+}
+
+// ----- Grey ----- //
+
+.dc-btn--grey {
+  @include btn-variant($background: $dc-grey-200, $color: $dc-navy-dark, $hover: $dc-grey-300);
+}
+
+// ----- Red ----- //
+
+.dc-btn--red {
+  @include btn-variant($background: $dc-red, $color: $dc-navy-text, $hover: $dc-red-light);
+}
+
+// ----- Purple ----- //
+
+.dc-btn--purple {
+  @include btn-variant($background: $dc-purple, $color: $dc-navy-text, $hover: $dc-purple-light);
+}
+// ----- Orange ----- //
+
+.dc-btn--orange {
+  @include btn-variant($background: $dc-orange, $color: $dc-navy-text, $hover: $dc-orange-light);
+}
+
+// ----- Social ----- //
+
+// Facebook
+
+.dc-btn--facebook {
+  @include btn-variant($background: $_buttons-facebook, $color: $dc-white, $hover: $_buttons-facebook-hover);
+}
+
+// Linkedin
+
+.dc-btn--linkedin {
+  @include btn-variant($background: $_buttons-linkedin, $color: $dc-white, $hover: $_buttons-linkedin-hover);
+}
+
+// Google Plus
+
+.dc-btn--google-plus {
+  @include btn-variant($background: $_buttons-google-plus, $color: $dc-white, $hover: $_buttons-google-plus-hover);
+}
+
+// ----- Shadowed ----- //
+
+.dc-btn--shadowed {
+  box-shadow: $dc-box-shadow-sm;
+
+  @include afh {
+    box-shadow: $dc-box-shadow-lg;
+    transform: translateY(-1px);
+  }
+
+  &:disabled,
+  &.is-disabled {
+    box-shadow: $dc-box-shadow-sm;
+    transform: none;
+  }
+}
+
+// ----- White ----- //
+
+.dc-btn--white {
+  @include btn-variant($background: $dc-white, $color: $dc-navy-text, $color-hover: $dc-purple-text);
+  transition: all $dc-transition;
+
+  @include afh {
+    border-color: $dc-white;
+
+    .dc-icon {
+      fill: $dc-purple-text;
+    }
+  }
+
+  &:active,
+  &:focus {
+    border: 1px solid $dc-purple-text;
+  }
+
+  .dc-icon {
+    transition: all $dc-transition;
+  }
+}
+
+// ----- White Green ----- //
+
+.dc-btn--white-green {
+  @include afh {
+    color: $dc-green;
+
+    .dc-icon {
+      fill: $dc-green;
+    }
+  }
+
+  &:active,
+  &:focus {
+    border: 1px solid $dc-green;
+  }
+}
+
+// ----- White Red ----- //
+
+.dc-btn--white-red {
+  @include afh {
+    color: $dc-red;
+
+    .dc-icon {
+      fill: $dc-red;
+    }
+  }
+
+  &:active,
+  &:focus {
+    border: 1px solid $dc-red;
+  }
+}
+
+// ----- Bordered Variants ----- //
+
+.dc-btn--bordered {
+  @include btn-variant($background: transparent, $border-color: $dc-navy, $color: $dc-navy-text, $border-color-hover: $dc-navy-light);
+}
+
+// Bordered White
+
+.dc-btn--bordered-white {
+  @include btn-variant($background: transparent, $border-color: $dc-grey-100, $color: $dc-white);
+
+  @include state {
+    background-color: rgba($color: $dc-white, $alpha: 0.2);
+  }
+}
+
+// Bordered Red
+
+.dc-btn--bordered-red {
+  @include btn-variant($background: transparent, $border-color: $dc-red, $color: $dc-navy-text);
+}
+
+// Bordered Green
+
+.dc-btn--bordered-green {
+  @include btn-variant($background: transparent, $border-color: $dc-green, $color: $dc-navy-text);
+}
+
+// Bordered Grey Light
+
+.dc-btn--bordered-grey-light {
+  @include btn-variant($background: transparent, $border-color: $dc-grey-100, $border-color-hover: $dc-green, $color: $dc-navy-text);
+}
+
+// Bordered Facebook
+
+.dc-btn--bordered-facebook {
+  @include btn-variant($background: transparent, $border-color: $dc-grey-100, $border-color-hover: $dc-grey-200, $color: $dc-navy-text, $color-hover: $dc-white, $hover: $_buttons-facebook);
+
+  @include state {
+    .dc-icon--facebook-square {
+      fill: $dc-white !important; /* Overrides icons, which is imported after */
+    }
+  }
+}
+
+.dc-icon--facebook-square {
+  fill: $_buttons-facebook !important; /* Overrides icons, which is imported after */
+}
+
+// Bordered Google Plus
+
+.dc-btn--bordered-google-plus {
+  @include btn-variant($background: transparent, $border-color: $dc-grey-100, $border-color-hover: $dc-grey-200, $color: $dc-navy-text, $color-hover: $dc-white, $hover: $_buttons-google-plus);
+
+  @include state {
+    .dc-icon--google-plus-square {
+      fill: $dc-white !important; /* Overrides icons, which is imported after */
+    }
+  }
+}
+
+.dc-icon--google-plus-square {
+  fill: $_buttons-google-plus !important; /* Overrides icons, which is imported after */
+}
+
+// Bordered Linkedin
+
+.dc-btn--bordered-linkedin {
+  @include btn-variant($background: transparent, $border-color: $dc-grey-200, $border-color-hover: $dc-grey-200, $color: $dc-navy-text, $color-hover: $dc-white, $hover: $_buttons-linkedin);
+
+  @include state {
+    .dc-icon--linkedin-square {
+      fill: $dc-white !important; /* Overrides icons, which is imported after */
+    }
+  }
+}
+
+.dc-icon--linkedin-square {
+  fill: $_buttons-linkedin !important; /* Overrides icons, which is imported after */
+}
+
+// ----- Inline ----- //
+
+.dc-btn--inline {
+  background-color: transparent;
+  border: 0;
+  color: $dc-grey-300;
+  padding: 0;
+
+  @include afh {
+    color: $dc-green;
+  }
+}
+
+// ----- Multi-button ----- //
+
+.dc-multi-btn {
+  display: inline-flex;
+}
+
+.dc-multi-btn__item:first-child,
+.dc-multi-btn__item:last-child {
+  background: none;
+  border: 1px solid transparent;
+  box-shadow: none;
+  min-width: 1px;
+  padding-bottom: 11px;
+  padding-top: 11px;
+  transition: background-color $dc-transition, border-color $dc-transition, color $dc-transition;
+
+  @include state {
+    border-color: transparent;
+  }
+}
+
+.dc-multi-btn__item:first-child {
+  border-radius: $dc-border-radius 0 0 $dc-border-radius;
+  border-right: 0;
+}
+
+.dc-multi-btn__item:last-child {
+  border-radius: 0 $dc-border-radius $dc-border-radius 0;
+}
+
+.dc-multi-btn__text {
+  font-size: 16px;
+  font-weight: $dc-font-weight-bold;
+  letter-spacing: inherit;
+  padding-left: 16px;
+  padding-right: 16px;
+  text-align: center;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.dc-multi-btn__icon {
+  padding-left: 14px; // 48px - 18px icon - 2px border / 2
+  padding-right: 14px; // 48px - 18px icon - 2px border / 2
+}
+
+.dc-multi-btn--secondary {
+  .dc-multi-btn__item:first-child,
+  .dc-multi-btn__item:last-child {
+    background-color: $dc-yellow;
+    border-color: $dc-yellow;
+
+    @include state {
+      background-color: $dc-yellow-light;
+      border-color: $dc-yellow-light;
+    }
+  }
+
+  .dc-multi-btn__text {
+    color: $dc-navy-text;
+  }
+
+  .dc-multi-btn__item:last-child {
+    border-left-color: rgba(#000, 0.2);
+
+    @include state {
+      border-left-color: rgba(#000, 0.2);
+    }
+  }
+}
+
+.dc-multi-btn--sm {
+  .dc-multi-btn__item:first-child,
+  .dc-multi-btn__item:last-child {
+    padding-bottom: 5px;
+    padding-top: 5px;
+  }
+
+  .dc-multi-btn__icon {
+    padding-left: 11px; // 36px - 12px icon - 2px border / 2
+    padding-right: 11px; // 36px - 12px icon - 2px border / 2
+  }
+}
+
+.dc-multi-btn--lg {
+  .dc-multi-btn__item:first-child,
+  .dc-multi-btn__item:last-child {
+    padding-bottom: 16px;
+    padding-top: 16px;
+  }
+
+  .dc-multi-btn__icon {
+    padding-left: 19px; // 64px - 24px icon - 2px border / 2
+    padding-right: 19px; // 64px - 24px icon - 2px border / 2
+  }
+
+  .dc-multi-btn__text {
+    font-size: 20px;
+    padding-left: 32px;
+    padding-right: 32px;
+  }
+}
+
+.dc-multi-btn--timer {
+  .dc-multi-btn__item:first-child {
+    background-color: $dc-white;
+    border-color: $dc-grey-100;
+
+    @include state {
+      background-color: $dc-white;
+    }
+  }
+
+  .dc-multi-btn__item:last-child {
+    background-color: $dc-yellow;
+    border-color: $dc-yellow;
+
+    @include state {
+      background-color: $dc-yellow-light;
+      border-color: $dc-yellow-light;
+    }
+  }
+
+  /**
+  * 1. Hack to override browser default width
+  */
+  .dc-multi-btn__text {
+    color: $dc-grey-300;
+    flex-grow: 1;
+    font-weight: 400;
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 60px; // 1
+  }
+}
+
+.dc-multi-btn--white {
+  .dc-multi-btn__item:first-child,
+  .dc-multi-btn__item:last-child {
+    background-color: $dc-white;
+    border-color: $dc-white;
+
+    @include state {
+      background-color: $dc-white;
+    }
+  }
+
+  .dc-multi-btn__item:last-child {
+    border-left-color: $dc-grey-100;
+
+    @include state {
+      border-left-color: $dc-grey-100;
+    }
+  }
+
+  /**
+  * 1. Hack to override browser default width
+  * 2: TODO: Review for duplication if there's a third, could be __input
+  */
+  .dc-multi-btn__text {
+    color: $dc-grey-300;
+    flex-grow: 1;
+    font-weight: 400;
+    padding-left: 8px;
+    padding-right: 8px;
+    width: 60px; // 1
+  }
+}

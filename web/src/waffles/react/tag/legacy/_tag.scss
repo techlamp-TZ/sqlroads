@@ -1,0 +1,53 @@
+// *************************************
+//
+// Tag
+//
+// -------------------------------------
+// Template
+// -------------------------------------
+//
+// .dc-tag
+//   .dc-tag__close (optional)
+//
+// *************************************
+
+.dc-tag {
+  align-items: center;
+  background-color: $dc-beige-400;
+  border-radius: 4px;
+  color: $dc-navy-text;
+  display: inline-flex;
+  font-size: $dc-font-size-small;
+  font-weight: $dc-font-weight-bold;
+  height: 18px;
+  line-height: 1;
+  padding-left: 4px;
+  padding-right: 4px;
+  position: relative;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+// -------------------------------------
+// Modifiers
+// -------------------------------------
+
+// ----- Link ----- //
+
+.dc-tag--link {
+  color: $dc-blue-text;
+  border: none;
+  @include afh {
+    background-color: $dc-blue;
+    border-color: $dc-blue;
+    color: $dc-white;
+    cursor: pointer;
+  }
+}
+
+.dc-tag--lg {
+  font-size: $dc-font-size-h6;
+  height: 24px;
+  padding-left: 8px;
+  padding-right: 8px;
+}

@@ -1,0 +1,62 @@
+.dc-select-container {
+  position: relative;
+
+  &::after {
+    background-color: $dc-white;
+    border-left: 1px solid $dc-white;
+    border-radius: 0 $dc-border-radius $dc-border-radius 0;
+    content: '';
+    height: 44px; // +2px border-top +2px border-bottom
+    pointer-events: none;
+    position: absolute;
+    right: 2px;
+    top: 2px;
+    width: 46px; // +2px border-left
+  }
+
+  &::before {
+    background: url('https://styleguide-assets.datacamp.com/images/marketing/components/icons/arrow_down-19bbe4876d.svg') no-repeat 50% 50% / 16px 16px;
+    content: '';
+    height: 16px;
+    pointer-events: none;
+    position: absolute;
+    right: 18px; // -2px border on dc-select
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    z-index: 10; // sit above ::after
+  }
+}
+
+.dc-select {
+  appearance: none;
+  background-color: $dc-white;
+  background-image: none;
+  border: 2px solid $dc-beige-400;
+  border-radius: $dc-border-radius;
+  box-shadow: none;
+  box-sizing: border-box;
+  color: $dc-navy-text;
+  cursor: pointer;
+  height: 48px; // firefox, IE11...
+  line-height: $dc-line-height-base;
+  padding: 11px 15px; // +1px border
+  transition: background $dc-transition, border-color $dc-transition, color $dc-transition;
+  width: 100%;
+
+  &:focus,
+  &.focus {
+    border-color: $dc-blue-dark;
+    outline: none;
+  }
+
+  &:disabled,
+  &.dc-is-disabled {
+    cursor: not-allowed;
+    opacity: 0.3;
+  }
+
+  ::-ms-expand {
+    display: none;
+  }
+}

@@ -1,0 +1,33 @@
+// *************************************
+//
+//   Design
+//   -> All of the styles in the design portion of the Design System
+//
+// *************************************
+
+// -------------------------------------
+//   Globals
+// -------------------------------------
+
+@import 'core-ingredients';
+
+//----- Mixins -----//
+@import 'design/mixins/mixins';
+
+//----- Utilities -----//
+@import 'design/utilities/utilities';
+
+//---- Typography -----//
+@import 'design/typography/typography';
+
+//---- Forms -----//
+@import 'design/forms/forms';
+
+//---- Animations -----//
+@import 'design/animations/animations';
+
+//---- Layout -----//
+@import 'design/layout/layout';
+
+//---- Legacy -----//
+@import 'design/legacy/legacy';

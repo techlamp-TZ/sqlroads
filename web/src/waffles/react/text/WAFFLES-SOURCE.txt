@@ -1,0 +1,1 @@
+@datacamp/waffles-text@5.4.0 MIT

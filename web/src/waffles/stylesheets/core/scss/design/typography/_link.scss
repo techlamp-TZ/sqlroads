@@ -1,0 +1,27 @@
+// *************************************
+//
+//   Link
+//   -> Base element and classes for links
+//
+// -------------------------------------
+//   Template
+// -------------------------------------
+//
+// a, .dc-link[]
+//
+// *************************************
+
+a,
+.dc-link {
+  border-bottom: 1px solid transparent;
+  color: $dc-blue-text;
+  font-weight: $dc-font-weight-bold;
+  text-decoration: none;
+  transition: border-color $dc-transition;
+
+  &:hover {
+    border-bottom-color: $dc-blue-text;
+    color: $dc-blue-text;
+    text-decoration: none;
+  }
+}

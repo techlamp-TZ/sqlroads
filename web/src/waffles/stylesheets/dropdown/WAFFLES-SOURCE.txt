@@ -1,0 +1,1 @@
+@datacamp/waffles-dropdown@1.0.1 MIT

@@ -1,0 +1,1 @@
+@datacamp/waffles-count-indicator@0.1.21 MIT

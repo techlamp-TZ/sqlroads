@@ -1,0 +1,1 @@
+@datacamp/waffles-tabs@1.0.1 MIT
