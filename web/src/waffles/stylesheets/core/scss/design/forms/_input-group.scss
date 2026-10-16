@@ -1,6 +1,8 @@
+@use "../../../../../tokens/variables";
+
 // Input group
 .dc-input-group {
-  border-radius: $dc-border-radius;
+  border-radius: variables.$dc-border-radius;
   display: flex;
 }
 
@@ -15,11 +17,11 @@
 }
 
 .dc-input-group__icon {
-  background: $dc-green;
-  border-bottom-left-radius: $dc-border-radius;
-  border-top-left-radius: $dc-border-radius;
+  background: variables.$dc-green;
+  border-bottom-left-radius: variables.$dc-border-radius;
+  border-top-left-radius: variables.$dc-border-radius;
   box-sizing: border-box;
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   display: inline-flex;
   flex-shrink: 0;
   line-height: 1;

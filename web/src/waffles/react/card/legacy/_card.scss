@@ -1,3 +1,8 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../../sqldrills/prelude';
+@use "../../../stylesheets/core/scss/design/mixins/afh";
+@use "../../../tokens/variables";
+
 /** Card */
 
 /** @private variables */
@@ -7,9 +12,9 @@ $_card-padding-content: 24px;
 // TODO: box shadows? blue box shadow?
 
 .dc-card {
-  background-color: $dc-white;
-  border-radius: $dc-border-radius;
-  box-shadow: $dc-box-shadow-md;
+  background-color: variables.$dc-white;
+  border-radius: variables.$dc-border-radius;
+  box-shadow: variables.$dc-box-shadow-md;
   padding: $_card-padding-base;
   position: relative;
 }
@@ -21,7 +26,7 @@ $_card-padding-content: 24px;
 
 // border
 .dc-card--bordered {
-  border: 1px solid $dc-grey-100;
+  border: 1px solid variables.$dc-grey-100;
   box-shadow: none;
   padding: $_card-padding-base - 1; // +1px border
 
@@ -36,15 +41,15 @@ $_card-padding-content: 24px;
 
 // shadow
 .dc-card--shadowed-sm {
-  box-shadow: $dc-box-shadow-sm;
+  box-shadow: variables.$dc-box-shadow-sm;
 }
 
 .dc-card--shadowed-lg {
-  box-shadow: $dc-box-shadow-lg;
+  box-shadow: variables.$dc-box-shadow-lg;
 }
 
 .dc-card--shadowed-xl {
-  box-shadow: $dc-box-shadow-xl;
+  box-shadow: variables.$dc-box-shadow-xl;
 }
 
 // sectioned
@@ -68,12 +73,12 @@ $_card-padding-content: 24px;
   }
 
   .dc-card__header + .dc-card__body {
-    border-top: 1px solid $dc-grey-100;
+    border-top: 1px solid variables.$dc-grey-100;
   }
 
   .dc-card__header + .dc-card__footer,
   .dc-card__body + .dc-card__footer {
-    border-top: 1px solid $dc-grey-100;
+    border-top: 1px solid variables.$dc-grey-100;
   }
 
   &.dc-card--bordered {
@@ -96,23 +101,23 @@ $_card-padding-content: 24px;
 
 // interactive
 .dc-card--interactive {
-  transition: box-shadow $dc-transition, transform $dc-transition;
+  transition: box-shadow variables.$dc-transition, transform variables.$dc-transition;
 
-  @include afh {
-    box-shadow: $dc-box-shadow-xl;
+  @include afh.afh {
+    box-shadow: variables.$dc-box-shadow-xl;
     transform: translate(0, -4px);
   }
 
   &.dc-card--bordered {
-    @include afh {
-      border: 1px solid $dc-grey-100;
+    @include afh.afh {
+      border: 1px solid variables.$dc-grey-100;
       box-shadow: none;
     }
   }
 
   &.dc-card--shadowed-sm {
-    @include afh {
-      box-shadow: $dc-box-shadow-lg;
+    @include afh.afh {
+      box-shadow: variables.$dc-box-shadow-lg;
     }
   }
 }

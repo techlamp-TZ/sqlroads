@@ -1,3 +1,5 @@
+@use "../../../../../tokens/variables";
+
 // *********************************
 //
 // Globals
@@ -8,36 +10,37 @@
 // ----- Colors ----- //
 
 // @sass-export-section="colors"
-$primary-darkest: #002b36; // TODO: $dc-primary-darkest
-$primary-darker: #104a5b; // TODO: $dc-primary-darker
-$primary-dark: #195a72; // TODO: $dc-primary-dark
-$primary: #3ac; // TODO: $dc-primary
-$primary-light: #7ecce2; // TODO: $dc-primary-light
-$primary-lighter: #d5eaef; // TODO: $dc-primary-lighter
-$primary-lightest: #ebf4f7; // TODO: $dc-primary-lightest
-$secondary: #ffc844; // TODO: $dc-secondary
-$secondary-light: #fbe28d; // TODO: $dc-secondary-light
-$green: #36d57d; // TODO: $dc-green
-$green-light: #a5ecc5; // TODO: $dc-green-light
-$red: #fe5c5c; // TODO: $dc-red
-$red-light: #ffb5b5; // TODO: $dc-red-light
-$orange: #ff9400; // TODO: $dc-organge
-$orange-dark: #ad662c; // TODO: $dc-orange-dark
-$purple: #8468c4; // TODO: $dc-purple
-$purple-dark: #5d488c; // TODO: $dc-purple-dark
-$grey-dark: #3d4251; // TODO: $dc-grey-dark
-$grey: #686f75; // TODO: $dc-grey
-$grey-light: #d1d3d8; // TODO: $dc-grey-light
-$grey-lighter: #e6eaeb; // TODO: $dc-grey-lighter
-$geyser: #cfdce1; // TODO: $dc-geyser
-$grey-oslo: #859094; // TODO: $dc-grey-oslo
-$porcelain: #f0f4f5; // TODO: $dc-porcelain
-$white: #fff; // TODO: $dc-white
+// SQL Drills: the pre-rebrand palette now points at the nearest Waffles tokens (so it follows dark mode).
+$primary-darkest: variables.$dc-navy-dark; // TODO: $dc-primary-darkest
+$primary-darker: variables.$dc-navy-light; // TODO: $dc-primary-darker
+$primary-dark: variables.$dc-blue-text; // TODO: $dc-primary-dark
+$primary: variables.$dc-blue-dark; // TODO: $dc-primary
+$primary-light: variables.$dc-blue-light; // TODO: $dc-primary-light
+$primary-lighter: variables.$dc-grey-300; // TODO: $dc-primary-lighter
+$primary-lightest: variables.$dc-grey-100; // TODO: $dc-primary-lightest
+$secondary: variables.$dc-yellow; // TODO: $dc-secondary
+$secondary-light: variables.$dc-yellow-light; // TODO: $dc-secondary-light
+$green: variables.$dc-green-dark; // TODO: $dc-green
+$green-light: variables.$dc-green-light; // TODO: $dc-green-light
+$red: variables.$dc-red-dark; // TODO: $dc-red
+$red-light: variables.$dc-red-light; // TODO: $dc-red-light
+$orange: variables.$dc-orange; // TODO: $dc-organge
+$orange-dark: variables.$dc-orange-text; // TODO: $dc-orange-dark
+$purple: variables.$dc-purple; // TODO: $dc-purple
+$purple-dark: variables.$dc-purple-dark; // TODO: $dc-purple-dark
+$grey-dark: variables.$dc-navy-light; // TODO: $dc-grey-dark
+$grey: var(--wf-text-muted); // TODO: $dc-grey
+$grey-light: variables.$dc-grey-400; // TODO: $dc-grey-light
+$grey-lighter: variables.$dc-grey-200; // TODO: $dc-grey-lighter
+$geyser: variables.$dc-grey-300; // TODO: $dc-geyser
+$grey-oslo: var(--wf-text-muted); // TODO: $dc-grey-oslo
+$porcelain: variables.$dc-grey-100; // TODO: $dc-porcelain
+$white: variables.$dc-white; // TODO: $dc-white
 
 // @end-sass-export-section
 
 // ----- Typography ----- //
-$font-family: 'lato', sans-serif; // TODO: $dc-font-family-sans-serif
+$font-family: variables.$dc-font-family-sans-serif; // TODO: $dc-font-family-sans-serif
 $h1-size: 2.8rem; // 42px // TODO: $dc-font-size-h1
 $h2-size: 2.533rem; // 38px // TODO: $dc-font-size-h2
 $h3-size: 2rem; // 30px // TODO: $dc-font-size-h3
@@ -55,7 +58,7 @@ $code-border-radius: 3px; // TODO: $dc-border-radius-code
 $border-radius: 4px; // TODO: dc-border-radius
 
 // ----- Box Shadow ----- //
-$box-shadow: rgba(0, 0, 0, 0.5); // TODO: dc-box-shadow-color
+$box-shadow: var(--wf-shadow-color); // TODO: dc-box-shadow-color
 
 // ----- Transitions ----- //
 $default-duration: 0.25s; // TODO: $dc-duration or $dc-transition

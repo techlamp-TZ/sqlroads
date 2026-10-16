@@ -157,6 +157,7 @@ bmap("breakpoints", false, false); bmap("breakpoints-hd", true, false);
 sv.push("$dc-breakpoints-all: map.merge($dc-breakpoints, $dc-breakpoints-hd);");
 bmap("breakpoints-below", false, true); bmap("breakpoints-below-hd", true, true);
 sv.push("$dc-breakpoints-below-all: map.merge($dc-breakpoints-below, $dc-breakpoints-below-hd);");
+sv.push("$dc-sides: ('t': top, 'r': right, 'b': bottom, 'l': left);");
 fs.writeFileSync(path.join(WOUT, "_variables.scss"), GEN + '@use "sass:list";\n@use "sass:map";\n' + sv.join("\n") + "\n");
 console.log("waffles tokens: future-tokens.js, core-tokens.js, _variables.scss (" + sv.length + " variables) → " + path.relative(web, WOUT));
 console.log("tokens:", Object.keys(vars).length, "static,", Object.keys(light).length, "per theme,", FAMILIES.length, "colour families →", path.relative(web, OUT));

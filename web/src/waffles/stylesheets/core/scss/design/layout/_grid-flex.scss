@@ -1,3 +1,5 @@
+@use "../../../../../tokens/variables";
+
 /*
  * USE WITH CARE
  *
@@ -19,12 +21,12 @@
 .row--flex {
   display: flex;
 
-  @media (max-width: $dc-bp-sm) {
+  @media (max-width: variables.$dc-bp-sm) {
     flex-wrap: wrap;
   }
 
 
-  @media (min-width: $dc-bp-sm) {
+  @media (min-width: variables.$dc-bp-sm) {
     .col-sm-1,
     .col-sm-2,
     .col-sm-3,
@@ -101,7 +103,7 @@
     }
   }
 
-  @media (min-width: $dc-bp-md) {
+  @media (min-width: variables.$dc-bp-md) {
     .col-md-1,
     .col-md-2,
     .col-md-3,
@@ -178,7 +180,7 @@
     }
   }
 
-  @media (min-width: $dc-bp-lg) {
+  @media (min-width: variables.$dc-bp-lg) {
     .col-lg-1,
     .col-lg-2,
     .col-lg-3,

@@ -1,3 +1,8 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../sqldrills/prelude';
+@use "../../tokens/variables";
+@use "../core/scss/design/mixins/afh";
+
 /** Progress bar */
 
 /** @private variables */
@@ -14,22 +19,22 @@ $_progress-bar-height-small: 8px;
 }
 
 .dc-progress-bar__bar {
-  background: $dc-grey-300;
+  background: variables.$dc-grey-300;
   border: 0;
-  border-radius: $_progress-bar-height / 2;
+  border-radius: $_progress-bar-height * 0.5;
   cursor: default;
   overflow: hidden;
   width: 100%;
 
-  @include afh {
+  @include afh.afh {
     border: 0;
   }
 
   .dc-progress-bar--light & {
-    background: $dc-white;
-    box-shadow: inset 0 0 0 1px $dc-grey-100;
+    background: variables.$dc-white;
+    box-shadow: inset 0 0 0 1px variables.$dc-grey-100;
 
-    @include afh {
+    @include afh.afh {
       border: 0;
     }
   }
@@ -40,33 +45,33 @@ $_progress-bar-height-small: 8px;
 }
 
 .dc-progress-bar__fill {
-  background: $dc-blue;
+  background: variables.$dc-blue;
   border: 0;
-  border-radius: $_progress-bar-height / 2;
-  color: $dc-white;
+  border-radius: $_progress-bar-height * 0.5;
+  color: variables.$dc-white;
   display: block; // So it can be used on an <a> tag
-  font-size: $dc-font-size-micro;
+  font-size: variables.$dc-font-size-micro;
   height: $_progress-bar-height;
   line-height: $_progress-bar-height;
   padding-right: 8px;
   text-align: right;
-  transition: width $dc-transition;
+  transition: width variables.$dc-transition;
   width: 0;
 
   &:active,
   &:focus,
   &:hover {
     border: 0;
-    color: $dc-white;
+    color: variables.$dc-white;
   }
 
   .dc-progress-bar--completed & {
-    background: $dc-green;
+    background: variables.$dc-green;
     text-align: center;
   }
 
   .dc-progress-bar--small & {
-    border-radius: $_progress-bar-height-small / 2;
+    border-radius: $_progress-bar-height-small * 0.5;
     height: $_progress-bar-height-small;
     line-height: $_progress-bar-height-small;
     padding-right: 4px;
@@ -74,10 +79,10 @@ $_progress-bar-height-small: 8px;
 }
 
 .dc-progress-bar__text {
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   opacity: 0.6;
   flex-shrink: 0;
-  font-weight: $dc-font-weight-regular;
+  font-weight: variables.$dc-font-weight-regular;
   padding-right: 8px;
 }
 
@@ -87,18 +92,18 @@ $_progress-bar-height-small: 8px;
 
 .dc-progress-bar--green {
   .dc-progress-bar__fill {
-    background-color: $dc-green;
+    background-color: variables.$dc-green;
   }
 }
 
 .dc-progress-bar--orange {
   .dc-progress-bar__fill {
-    background-color: $dc-orange;
+    background-color: variables.$dc-orange;
   }
 }
 
 .dc-progress-bar--red {
   .dc-progress-bar__fill {
-    background-color: $dc-red;
+    background-color: variables.$dc-red;
   }
 }

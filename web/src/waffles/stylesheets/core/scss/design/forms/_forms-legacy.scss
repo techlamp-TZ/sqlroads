@@ -1,3 +1,6 @@
+@use "../../../../../sqldrills/helpers";
+@use "../../../../../tokens/variables";
+
 // Fieldset
 
 .dc-fieldset {
@@ -17,19 +20,19 @@
 
 .dc-label {
   align-items: center;
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   display: flex;
-  font-size: $dc-font-size-base;
-  font-weight: $dc-font-weight-bold;
-  line-height: $dc-line-height-base;
+  font-size: variables.$dc-font-size-base;
+  font-weight: variables.$dc-font-weight-bold;
+  line-height: variables.$dc-line-height-base;
   margin-bottom: 12px;
 }
 
 .dc-label__number {
-  background-color: $dc-green;
+  background-color: variables.$dc-green;
   border-radius: 50%;
   display: inline-block;
-  font-size: $dc-font-size-small;
+  font-size: variables.$dc-font-size-small;
   line-height: 1;
   margin-right: 8px;
   padding: 5px 0; // 14px lh + 5px v-padding = 24px height
@@ -41,24 +44,24 @@
 
 .dc-input--text,
 .dc-textarea {
-  background-color: $dc-white;
-  border: 2px solid $dc-beige-400;
-  border-radius: $dc-border-radius;
-  color: $dc-navy-text;
-  font-size: $dc-font-size-base;
-  line-height: $dc-line-height-base;
+  background-color: variables.$dc-white;
+  border: 2px solid variables.$dc-beige-400;
+  border-radius: variables.$dc-border-radius;
+  color: variables.$dc-navy-text;
+  font-size: variables.$dc-font-size-base;
+  line-height: variables.$dc-line-height-base;
   padding: 11px 15px; // +1px border
-  transition: border $dc-transition;
+  transition: border variables.$dc-transition;
   width: 100%;
 
   &::placeholder {
-    color: rgba($dc-navy-text, 0.6);
-    transition: color $dc-duration;
+    color: helpers.dc-alpha(variables.$dc-navy-text, 0.6);
+    transition: color variables.$dc-duration;
   }
 
   &:focus,
   &.focus {
-    border-color: $dc-blue-dark;
+    border-color: variables.$dc-blue-dark;
     outline: none;
   }
 
@@ -83,7 +86,7 @@
   }
 
   &::-webkit-calendar-picker-indicator {
-    color: $dc-navy-text;
+    color: variables.$dc-navy-text;
   }
 }
 
@@ -103,7 +106,7 @@
 
 .dc-input-combo--start {
   .dc-input-combo__cap {
-    border-radius: $dc-border-radius 0 0 $dc-border-radius;
+    border-radius: variables.$dc-border-radius 0 0 variables.$dc-border-radius;
     left: 0;
   }
 
@@ -114,7 +117,7 @@
 
 .dc-input-combo--end {
   .dc-input-combo__cap {
-    border-radius: 0 $dc-border-radius $dc-border-radius 0;
+    border-radius: 0 variables.$dc-border-radius variables.$dc-border-radius 0;
     right: 0;
   }
 
@@ -129,21 +132,21 @@
 
 // Tabs
 .tabs {
-  background-color: $dc-navy;
-  border-radius: $dc-border-radius;
+  background-color: variables.$dc-navy;
+  border-radius: variables.$dc-border-radius;
   display: flex;
   overflow: none;
 }
 
 .tabs input[type=radio] + label {
-  border-radius: $dc-border-radius;
-  color: $dc-white;
+  border-radius: variables.$dc-border-radius;
+  color: variables.$dc-white;
   display: inline-block;
-  font-size: $dc-font-size-small;
+  font-size: variables.$dc-font-size-small;
   padding: 12px 0;
   text-align: center;
   text-transform: uppercase;
-  transition: background-color $dc-transition, color $dc-transition;
+  transition: background-color variables.$dc-transition, color variables.$dc-transition;
   vertical-align: top;
   width: 33%;
 }
@@ -170,9 +173,9 @@
 }
 
 .tabs input[type=radio]:checked + label {
-  background-color: $dc-white;
-  color: $dc-navy-text;
-  font-weight: $dc-font-weight-bold;
+  background-color: variables.$dc-white;
+  color: variables.$dc-navy-text;
+  font-weight: variables.$dc-font-weight-bold;
 }
 
 /* stylelint-enable */
@@ -180,9 +183,9 @@
 // TODO: Move to marketing or refactor for all apps
 
 .form-error {
-  color: $dc-red;
+  color: variables.$dc-red;
   display: none;
-  font-size: $dc-font-size-small;
+  font-size: variables.$dc-font-size-small;
 }
 
 .form-error-active {
@@ -190,5 +193,5 @@
 }
 
 .form-required {
-  box-shadow: 0 0 2px 1px $dc-red;
+  box-shadow: 0 0 2px 1px variables.$dc-red;
 }

@@ -1,0 +1,35 @@
+// SQL Drills: helpers for the Waffles SCSS, whose colours are now CSS variables (var(--wf-w-*), light/dark).
+// Sass colour functions need a real colour, so each helper uses color.adjust when it gets one, and
+// color-mix() (computed by the browser, so it follows the theme) when it gets a variable.
+@use "sass:color";
+@use "sass:meta";
+@use "sass:string";
+
+// rgba($color, $alpha) for a token or a colour
+@function dc-alpha($color, $alpha) {
+  @if meta.type-of($color) == color {
+    @return color.adjust($color, $alpha: $alpha - color.channel($color, "alpha", $space: rgb));
+  }
+  @return color-mix(in srgb, #{$color} #{$alpha * 100%}, transparent);
+}
+
+// darken (negative $amount) or lighten (positive $amount) by a percentage
+@function dc-shade($color, $amount) {
+  @if meta.type-of($color) == color {
+    @return color.adjust($color, $lightness: $amount);
+  }
+  @if $amount < 0 {
+    @return color-mix(in srgb, #{$color}, black #{-$amount});
+  }
+  @return color-mix(in srgb, #{$color}, white #{$amount});
+}
+
+// an SVG as a data URI ('#' encoded), for background images drawn in a token colour
+@function dc-svg-uri($svg) {
+  $out: "";
+  @for $i from 1 through string.length($svg) {
+    $ch: string.slice($svg, $i, $i);
+    @if $ch == "#" { $out: $out + "%23"; } @else { $out: $out + $ch; }
+  }
+  @return url("data:image/svg+xml;charset=utf8," + $out);
+}

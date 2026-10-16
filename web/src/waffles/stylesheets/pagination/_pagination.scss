@@ -1,3 +1,10 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../sqldrills/prelude';
+@use "../core/scss/design/legacy/globals";
+@use "../core/scss/design/mixins/buttons";
+@use "../core/scss/design/mixins/lists";
+@use "../core/scss/design/mixins/state";
+
 .dc-pagination {
   text-align: center;
 }
@@ -5,7 +12,7 @@
 // ----- List ----- //
 
 .dc-pagination__list {
-  @include list-unstyled;
+  @include lists.list-unstyled;
 
   align-items: center;
   display: inline-flex;
@@ -17,21 +24,21 @@
 .dc-pagination__page {
   $size: 20px;
 
-  @include button-unstyled;
+  @include buttons.button-unstyled;
 
   align-items: center;
   border-radius: 50%;
-  color: $grey;
+  color: globals.$grey;
   display: flex;
-  font-size: $small-font-size;
+  font-size: globals.$small-font-size;
   height: $size;
   justify-content: center;
   line-height: 1;
-  transition: color $default-duration;
+  transition: color globals.$default-duration;
   width: $size;
 
-  @include state {
-    color: $primary;
+  @include state.state {
+    color: globals.$primary;
   }
 
   &:disabled {
@@ -39,11 +46,11 @@
   }
 
   &.dc-is-active {
-    background-color: $primary;
-    color: $white;
+    background-color: globals.$primary;
+    color: globals.$white;
 
-    @include state {
-      color: $white;
+    @include state.state {
+      color: globals.$white;
     }
   }
 }

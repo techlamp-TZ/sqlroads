@@ -1,3 +1,5 @@
+@use "../../../../../tokens/variables";
+
 /** radio */
 
 .dc-input-radio {
@@ -26,15 +28,15 @@
 
 .dc-input-radio__indicator {
   align-items: center;
-  background-color: $dc-white;
-  border: 2px solid $dc-beige-400;
+  background-color: variables.$dc-white;
+  border: 2px solid variables.$dc-beige-400;
   border-radius: 50%;
   display: flex;
   flex-shrink: 0;
   height: 16px;
   justify-content: center;
   position: relative;
-  transition: border-color $dc-transition, box-shadow $dc-transition;
+  transition: border-color variables.$dc-transition, box-shadow variables.$dc-transition;
   width: 16px;
 
   &::before {
@@ -43,15 +45,15 @@
     display: block;
     height: 8px;
     opacity: 0;
-    transition: opacity $dc-transition;
+    transition: opacity variables.$dc-transition;
     width: 8px;
   }
 
   .dc-has-error & {
-    border-color: $dc-red;
+    border-color: variables.$dc-red;
 
     &::before {
-      background: $dc-red;
+      background: variables.$dc-red;
     }
   }
 
@@ -63,56 +65,56 @@
 
   // checked
   .dc-input-radio__input:checked ~ & {
-    border-color: $dc-blue;
+    border-color: variables.$dc-blue;
 
     &::before {
-      background: $dc-blue;
+      background: variables.$dc-blue;
       opacity: 1;
     }
   }
 
   // focus
   .dc-input-radio__input:focus ~ & {
-    border-color: $dc-blue-dark;
+    border-color: variables.$dc-blue-dark;
   }
 
   // focus and checked
   .dc-input-radio__input:focus:checked ~ & {
-    border-color: $dc-blue-dark;
+    border-color: variables.$dc-blue-dark;
   }
 
   // has error + checked
   .dc-has-error .dc-input-radio__input:checked ~ & {
-    border-color: $dc-red;
+    border-color: variables.$dc-red;
 
     &::before {
-      background: $dc-red;
+      background: variables.$dc-red;
       opacity: 1;
     }
   }
 
   // has error + focus
   .dc-has-error .dc-input-radio__input:focus ~ & {
-    border-color: $dc-red-dark;
+    border-color: variables.$dc-red-dark;
   }
 
   // has error + focus and checked
   .dc-has-error .dc-input-radio__input:focus:checked ~ & {
-    border-color: $dc-red-dark;
+    border-color: variables.$dc-red-dark;
   }
 }
 
 /** text */
 
 .dc-input-radio__text {
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   flex-grow: 1;
-  font-weight: $dc-font-weight-regular;
-  line-height: $dc-line-height-base;
+  font-weight: variables.$dc-font-weight-regular;
+  line-height: variables.$dc-line-height-base;
   margin-left: 8px;
   position: relative;
   top: -4px;
-  transition: color $dc-transition;
+  transition: color variables.$dc-transition;
 
   // disabled
   .dc-input-radio__input:disabled ~ & {

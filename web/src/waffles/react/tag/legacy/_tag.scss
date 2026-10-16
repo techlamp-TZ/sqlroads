@@ -1,3 +1,8 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../../sqldrills/prelude';
+@use "../../../stylesheets/core/scss/design/mixins/afh";
+@use "../../../tokens/variables";
+
 // *************************************
 //
 // Tag
@@ -13,12 +18,12 @@
 
 .dc-tag {
   align-items: center;
-  background-color: $dc-beige-400;
+  background-color: variables.$dc-beige-400;
   border-radius: 4px;
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   display: inline-flex;
-  font-size: $dc-font-size-small;
-  font-weight: $dc-font-weight-bold;
+  font-size: variables.$dc-font-size-small;
+  font-weight: variables.$dc-font-weight-bold;
   height: 18px;
   line-height: 1;
   padding-left: 4px;
@@ -35,18 +40,18 @@
 // ----- Link ----- //
 
 .dc-tag--link {
-  color: $dc-blue-text;
+  color: variables.$dc-blue-text;
   border: none;
-  @include afh {
-    background-color: $dc-blue;
-    border-color: $dc-blue;
-    color: $dc-white;
+  @include afh.afh {
+    background-color: variables.$dc-blue;
+    border-color: variables.$dc-blue;
+    color: variables.$dc-white;
     cursor: pointer;
   }
 }
 
 .dc-tag--lg {
-  font-size: $dc-font-size-h6;
+  font-size: variables.$dc-font-size-h6;
   height: 24px;
   padding-left: 8px;
   padding-right: 8px;

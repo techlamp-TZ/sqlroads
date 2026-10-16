@@ -1,3 +1,7 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../sqldrills/prelude';
+@use "../../tokens/variables";
+
 // *************************************
 //
 //   Flash
@@ -37,12 +41,12 @@
 .dc-flash {
   align-items: center;
   display: flex;
-  font-size: $dc-font-size-h5;
+  font-size: variables.$dc-font-size-h5;
   padding: 16px;
   pointer-events: auto;
 
   @media screen and (min-width: 664px) {
-    border-radius: 0 0 $dc-border-radius $dc-border-radius;
+    border-radius: 0 0 variables.$dc-border-radius variables.$dc-border-radius;
     max-width: 600px;
   }
 }
@@ -57,7 +61,7 @@
   margin-top: 4px;
 
   @media screen and (min-width: 664px) {
-    border-radius: $dc-border-radius;
+    border-radius: variables.$dc-border-radius;
   }
 }
 
@@ -76,7 +80,7 @@
   opacity: 0.65;
   padding-left: 16px;
   right: 16px;
-  transition: opacity $dc-transition;
+  transition: opacity variables.$dc-transition;
 
   &:hover {
     opacity: 1;
@@ -99,12 +103,12 @@
 
 @mixin color-flash ($bg, $link-color, $link-hover) {
   background-color: $bg;
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
 
   a {
     border-color: $link-color;
-    color: $dc-navy-text;
-    transition: border-color $dc-transition;
+    color: variables.$dc-navy-text;
+    transition: border-color variables.$dc-transition;
 
     &:hover,
     &:focus {
@@ -121,15 +125,15 @@
 
 // Yellow / Notice
 .dc-flash--notice {
-  @include color-flash($bg: $dc-yellow, $link-color: $dc-navy-text, $link-hover: $dc-navy-text);
+  @include color-flash($bg: variables.$dc-yellow, $link-color: variables.$dc-navy-text, $link-hover: variables.$dc-navy-text);
 }
 
 // Green / Success
 .dc-flash--success {
-  @include color-flash($bg: $dc-green, $link-color: $dc-navy-text, $link-hover: $dc-navy-text);
+  @include color-flash($bg: variables.$dc-green, $link-color: variables.$dc-navy-text, $link-hover: variables.$dc-navy-text);
 }
 
 // Red / Error
 .dc-flash--error {
-  @include color-flash($bg: $dc-red, $link-color: $dc-navy-text, $link-hover: $dc-navy-text);
+  @include color-flash($bg: variables.$dc-red, $link-color: variables.$dc-navy-text, $link-hover: variables.$dc-navy-text);
 }

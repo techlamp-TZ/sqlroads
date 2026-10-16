@@ -1,3 +1,5 @@
+@use "../../../../tokens/variables";
+
 /**
  * This file is reserved for normalizing html elements
  * in addition to _normalize.scss
@@ -18,7 +20,7 @@ body {
 }
 
 hr {
-  background-color: $dc-grey-100;
+  background-color: variables.$dc-grey-100;
   border: 0;
   height: 1px;
   margin: 32px 0;

@@ -9,25 +9,25 @@
 //   Globals
 // -------------------------------------
 
-@import 'core-ingredients';
+@use 'core-ingredients';
 
 //----- Mixins -----//
-@import 'design/mixins/mixins';
+@use 'design/mixins/mixins';
 
 //----- Utilities -----//
-@import 'design/utilities/utilities';
+@use 'design/utilities/utilities';
 
 //---- Typography -----//
-@import 'design/typography/typography';
+@use 'design/typography/typography';
 
 //---- Forms -----//
-@import 'design/forms/forms';
+@use 'design/forms/forms';
 
 //---- Animations -----//
-@import 'design/animations/animations';
+@use 'design/animations/animations';
 
 //---- Layout -----//
-@import 'design/layout/layout';
+@use 'design/layout/layout';
 
 //---- Legacy -----//
-@import 'design/legacy/legacy';
+@use 'design/legacy/legacy';

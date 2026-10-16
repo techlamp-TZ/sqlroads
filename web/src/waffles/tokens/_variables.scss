@@ -214,3 +214,4 @@ $dc-breakpoints-below-hd: (
   '5k': $dc-bp-below-5k,
 );
 $dc-breakpoints-below-all: map.merge($dc-breakpoints-below, $dc-breakpoints-below-hd);
+$dc-sides: ('t': top, 'r': right, 'b': bottom, 'l': left);

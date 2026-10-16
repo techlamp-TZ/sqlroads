@@ -1,9 +1,11 @@
+@use "../../../../../tokens/variables";
+
 /*
 * 1. Required for the tooltip to go over the next block
 */
 
 @mixin block-hover-effect {
-  transition: transform $dc-transition;
+  transition: transform variables.$dc-transition;
 
   &:hover {
     transform: translate(0, -4px);

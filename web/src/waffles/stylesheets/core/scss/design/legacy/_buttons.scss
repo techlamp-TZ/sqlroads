@@ -11,12 +11,6 @@
 // *************************************
 
 // ----- Variables ----- //
-$_buttons-facebook: #3b5999;
-$_buttons-facebook-hover: #627aad;
-$_buttons-linkedin: #0077b5;
-$_buttons-linkedin-hover: #4792c5;
-$_buttons-google-plus: #dd4b39;
-$_buttons-google-plus-hover: #e57062;
 
 // ----- Base styles ----- //
 
@@ -178,13 +172,13 @@ $_buttons-google-plus-hover: #e57062;
       border-color: $hover;
       color: $color-hover;
     } @else if $scale-type == 'darken' {
-      background-color: darken($color: $background, $amount: $scale-percent);
-      border-color: darken($color: $border-color, $amount: $scale-percent);
-      color: darken($color: $color, $amount: $scale-percent);
+      background-color: dc-shade($background, -$scale-percent);
+      border-color: dc-shade($border-color, -$scale-percent);
+      color: dc-shade($color, -$scale-percent);
     } @else if $scale-type == 'lighten' {
-      background-color: lighten($background: $background, $amount: $scale-percent);
-      border-color: lighten($color: $border-color, $amount: $scale-percent);
-      color: lighten($color: $color, $amount: $scale-percent);
+      background-color: dc-shade($background, $scale-percent);
+      border-color: dc-shade($border-color, $scale-percent);
+      color: dc-shade($color, $scale-percent);
     } @else {
       border-color: $border-color-hover;
       color: $color-hover;
@@ -299,36 +293,13 @@ $_buttons-google-plus-hover: #e57062;
 }
 
 // ----- Social ----- //
+// SQL Drills: the Facebook / LinkedIn / Google+ button variants were left out (brand colours and icons).
 
 // Facebook
 
-.dc-btn--facebook {
-  @include btn-variant(
-    $background: $_buttons-facebook,
-    $color: $dc-white,
-    $hover: $_buttons-facebook-hover
-  );
-}
-
 // Linkedin
 
-.dc-btn--linkedin {
-  @include btn-variant (
-    $background: $_buttons-linkedin,
-    $color: $dc-white,
-    $hover: $_buttons-linkedin-hover
-  );
-}
-
 // Google Plus
-
-.dc-btn--google-plus {
-  @include btn-variant (
-    $background: $_buttons-google-plus,
-    $color: $dc-white,
-    $hover: $_buttons-google-plus-hover
-  );
-}
 
 // ----- Shadowed ----- //
 
@@ -427,7 +398,7 @@ $_buttons-google-plus-hover: #e57062;
   );
 
   @include state {
-    background-color: rgba($color: $dc-white, $alpha: 0.2);
+    background-color: dc-alpha($dc-white, 0.2);
   }
 }
 
@@ -464,72 +435,9 @@ $_buttons-google-plus-hover: #e57062;
 
 // Bordered Facebook
 
-.dc-btn--bordered-facebook {
-  @include btn-variant(
-    $background: transparent,
-    $border-color: $dc-grey-light,
-    $border-color-hover: $dc-grey-light,
-    $color: $dc-grey-dark,
-    $color-hover: $dc-white,
-    $hover: $_buttons-facebook
-  );
-
-  @include state {
-    .dc-icon--facebook-square {
-      fill: $dc-white !important; /* Overrides icons, which is imported after */
-    }
-  }
-}
-
-.dc-icon--facebook-square {
-  fill: $_buttons-facebook !important; /* Overrides icons, which is imported after */
-}
-
 // Bordered Google Plus
 
-.dc-btn--bordered-google-plus {
-  @include btn-variant(
-    $background: transparent,
-    $border-color: $dc-grey-light,
-    $border-color-hover: $dc-grey-light,
-    $color: $dc-grey-dark,
-    $color-hover: $dc-white,
-    $hover: $_buttons-google-plus
-  );
-
-  @include state {
-    .dc-icon--google-plus-square {
-      fill: $dc-white !important; /* Overrides icons, which is imported after */
-    }
-  }
-}
-
-.dc-icon--google-plus-square {
-  fill: $_buttons-google-plus !important; /* Overrides icons, which is imported after */
-}
-
 // Bordered Linkedin
-
-.dc-btn--bordered-linkedin {
-  @include btn-variant(
-    $background: transparent,
-    $border-color: $dc-grey-light,
-    $border-color-hover: $dc-grey-light,
-    $color: $dc-grey-dark,
-    $color-hover: $dc-white,
-    $hover: $_buttons-linkedin
-  );
-
-  @include state {
-    .dc-icon--linkedin-square {
-      fill: $dc-white !important; /* Overrides icons, which is imported after */
-    }
-  }
-}
-
-.dc-icon--linkedin-square {
-  fill: $_buttons-linkedin !important; /* Overrides icons, which is imported after */
-}
 
 // ----- Inline ----- //
 
@@ -607,10 +515,10 @@ $_buttons-google-plus-hover: #e57062;
   }
 
   .dc-multi-btn__item:last-child {
-    border-left-color: rgba(#000, 0.2);
+    border-left-color: var(--wf-shadow-color);
 
     @include state {
-      border-left-color: rgba(#000, 0.2);
+      border-left-color: var(--wf-shadow-color);
     }
   }
 }

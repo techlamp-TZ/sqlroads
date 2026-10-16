@@ -1,3 +1,5 @@
+@use "../../../../../tokens/variables";
+
 /** checkbox */
 
 .dc-input-checkbox {
@@ -22,20 +24,20 @@
 
 .dc-input-checkbox__indicator {
   align-items: center;
-  background-color: $dc-white;
-  border: 2px solid $dc-beige-400;
-  border-radius: $dc-border-radius;
+  background-color: variables.$dc-white;
+  border: 2px solid variables.$dc-beige-400;
+  border-radius: variables.$dc-border-radius;
   display: flex;
   flex-shrink: 0;
   height: 16px;
   justify-content: center;
   position: relative;
-  transition: border-color $dc-transition, box-shadow $dc-transition;
+  transition: border-color variables.$dc-transition, box-shadow variables.$dc-transition;
   width: 16px;
 
   // has error
   .dc-has-error & {
-    border-color: $dc-red;
+    border-color: variables.$dc-red;
   }
 
   // disabled
@@ -46,46 +48,46 @@
 
   // checked
   .dc-input-checkbox__input:checked ~ & {
-    border-color: $dc-blue;
+    border-color: variables.$dc-blue;
   }
 
   // focus
   .dc-input-checkbox__input:focus ~ & {
-    border-color: $dc-blue-dark;
+    border-color: variables.$dc-blue-dark;
   }
 
   // focus and checked
   .dc-input-checkbox__input:focus:checked ~ & {
-    border-color: $dc-blue-dark;
+    border-color: variables.$dc-blue-dark;
   }
 
   // has error + checked
   .dc-has-error .dc-input-checkbox__input:checked ~ & {
-    border-color: $dc-red;
+    border-color: variables.$dc-red;
   }
 
   // has error + focused
   .dc-has-error .dc-input-checkbox__input:focus ~ & {
-    border-color: $dc-red-dark;
+    border-color: variables.$dc-red-dark;
   }
 
   // has error + focus and checked
   .dc-has-error .dc-input-checkbox__input:focus:checked ~ & {
-    border-color: $dc-red;
+    border-color: variables.$dc-red;
   }
 }
 
 /** text */
 
 .dc-input-checkbox__text {
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   flex-grow: 1;
-  font-weight: $dc-font-weight-regular;
-  line-height: $dc-line-height-base;
+  font-weight: variables.$dc-font-weight-regular;
+  line-height: variables.$dc-line-height-base;
   margin-left: 8px;
   position: relative;
   top: -4px;
-  transition: color $dc-transition;
+  transition: color variables.$dc-transition;
 
   // disabled
   .dc-input-checkbox__input:disabled ~ & {
@@ -100,12 +102,12 @@
   height: 8px;
   opacity: 0;
   top: 0 !important;
-  transition: opacity $dc-transition;
+  transition: opacity variables.$dc-transition;
   width: 8px;
 
   // checked
   .dc-input-checkbox__input:checked ~ .dc-input-checkbox__indicator & {
-    fill: $dc-blue;
+    fill: variables.$dc-blue;
     opacity: 1;
   }
 
@@ -116,7 +118,7 @@
 
   // has error + checked
   .dc-has-error .dc-input-checkbox__input:checked ~ .dc-input-checkbox__indicator & {
-    fill: $dc-red;
+    fill: variables.$dc-red;
     opacity: 1;
   }
 }

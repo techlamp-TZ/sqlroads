@@ -1,12 +1,22 @@
+@use "sass:string";
+// SQL Drills: $baseline and spacing() moved to their own module, so stylesheets can use the function without
+// this file's CSS
+@forward "spacing";
+@use "spacing" as *;
+@use "../../../../../tokens/variables";
+@use "../mixins/links";
+@use "../mixins/lists";
+@use "../mixins/stretch";
+@use "../mixins/text";
+
 /* stylelint-disable */
-$baseline: 5px;
 $border-width: 1px; // TODO: replace with 1px
 $button-radius: 4px; // TODO: replace with $dc-border-radius
-$button-font-size: $dc-font-size-base;
+$button-font-size: variables.$dc-font-size-base;
 $button-font-weight: 700; // TODO: replace with $dc-font-weight-bold
-$button-line-height: $dc-line-height-base;
+$button-line-height: variables.$dc-line-height-base;
 $button-small-radius: 3px;
-$button-small-font-size: $dc-font-size-small;
+$button-small-font-size: variables.$dc-font-size-small;
 $button-small-line-height: 1.2;
 $card-outline-width: 2px;
 $dropdown-width: 142px; // TODO: Move to private component var?
@@ -233,9 +243,7 @@ $default-space: 2rem;
  * Example use case: `margin-right: spacing(3, $offset: 1px);` = 14px
  */
 
-@function spacing ($multiplier, $offset: 0) {
-  @return $multiplier * $baseline - $offset;
-}
+// (spacing() moved to _spacing.scss, see there)
 
 
 /**
@@ -264,7 +272,7 @@ $default-space: 2rem;
       $class-slug: spacing-#{$i};
       $margin: margin;
     } @else {
-      $side-abbr: str-slice($side, 1, 1);
+      $side-abbr: string.slice($side, 1, 1);
       $class-slug: spacing-#{$side-abbr}#{$i};
       $margin: margin-#{$side};
     }
@@ -459,7 +467,7 @@ $sides: all, top, right, bottom, left;
 
 // TODO: replace with .dc-u-color-white (DONE: main-app)
 .invert {
-  color: $dc-white;
+  color: variables.$dc-white;
 }
 
 /**
@@ -477,11 +485,11 @@ code.clean {
 
 
 .link-borderless {
-  @include link-borderless();
+  @include links.link-borderless();
 }
 
 .link-unstyled {
-  @include link-unstyled();
+  @include links.link-unstyled();
 }
 
 /**
@@ -491,7 +499,7 @@ code.clean {
 */
 
 .list-unstyled {
-  @include list-unstyled();
+  @include lists.list-unstyled();
 }
 
 
@@ -518,8 +526,8 @@ code.clean {
 */
 #error_explanation {
   h2 {
-    color: $dc-red;
-    font-size: $dc-font-size-base;
+    color: variables.$dc-red;
+    font-size: variables.$dc-font-size-base;
     text-align: left;
   }
 
@@ -589,19 +597,19 @@ code.clean {
 }
 
 .u-text-light { // TODO: replace with .dc-u-color-white
-  color: $dc-white;
+  color: variables.$dc-white;
 }
 
 .u-text-danger { // TODO: replace with .dc-u-color-red
-  color: $dc-red;
+  color: variables.$dc-red;
 }
 
 .u-text-micro { // TODO: replace with .dc-u-fs-micro
-  font-size: $dc-font-size-micro;
+  font-size: variables.$dc-font-size-micro;
 }
 
 .u-text-truncate {
-  @include text-truncate;
+  @include text.text-truncate;
 }
 
 .u-nowrap { // TODO: replace with .dc-u-ws-nowrap
@@ -732,7 +740,7 @@ code.clean {
  */
 
 .u-stretch {
-  @include stretch;
+  @include stretch.stretch;
 }
 
 /* stylelint-enable */
@@ -794,7 +802,7 @@ code.clean {
   align-items: center;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive edge-to-edge classes
   @media screen and (min-width: $bp) {
     .dc-edge-to-edge\@#{$size} {

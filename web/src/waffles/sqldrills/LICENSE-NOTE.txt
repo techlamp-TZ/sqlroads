@@ -1,0 +1,1 @@
+Files in this folder are SQL Drills' own (not copied from Waffles).

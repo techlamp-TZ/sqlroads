@@ -1,3 +1,8 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../sqldrills/prelude';
+@use "../../tokens/variables";
+@use "../core/scss/design/mixins/afh";
+
 // *************************************
 //
 //   Icons
@@ -28,7 +33,7 @@ svg:not(:root) {
   overflow: hidden;
   position: relative;
   top: -0.1em; /* 1 */
-  transition: fill $dc-transition;
+  transition: fill variables.$dc-transition;
   vertical-align: middle;
 
   &::after { /* 2 */
@@ -43,7 +48,7 @@ svg:not(:root) {
 
   .disabled &,
   :disabled & {
-    fill: $dc-white;
+    fill: variables.$dc-white;
   }
 }
 
@@ -82,15 +87,15 @@ svg:not(:root) {
 // ----- White and Shadowed ----- //
 
 .dc-icon--white-shadowed {
-  background: $dc-white;
+  background: variables.$dc-white;
   border-radius: 50%;
-  box-shadow: 0 1px 4px 0 $dc-box-shadow-color;
-  transition: transform $dc-transition, box-shadow $dc-transition;
+  box-shadow: 0 1px 4px 0 variables.$dc-box-shadow-color;
+  transition: transform variables.$dc-transition, box-shadow variables.$dc-transition;
 
-  @include afh {
-    box-shadow: 0 2px 8px 0 $dc-box-shadow-color;
+  @include afh.afh {
+    box-shadow: 0 2px 8px 0 variables.$dc-box-shadow-color;
     transform: translateY(-1px);
-    transition: transform $dc-transition, box-shadow $dc-transition;
+    transition: transform variables.$dc-transition, box-shadow variables.$dc-transition;
   }
 }
 
@@ -104,7 +109,7 @@ svg:not(:root) {
 // Example output: .dc-icon--primary
 // -------------------------------------
 
-@each $color, $value in $dc-colors {
+@each $color, $value in variables.$dc-colors {
   .dc-icon--#{$color},
   .dc-icon--hover-#{$color}:hover,
   .dc-icon--hover-#{$color}:focus {

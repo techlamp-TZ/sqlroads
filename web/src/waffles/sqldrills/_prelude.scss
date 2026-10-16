@@ -1,0 +1,6 @@
+// SQL Drills: what every standalone Waffles stylesheet expected to be loaded before it (the Waffles build
+// concatenated them): the tokens, the colour helpers, the core mixins and the core legacy globals.
+@use '../tokens/variables';
+@use 'helpers';
+@use '../stylesheets/core/scss/design/mixins/mixins';
+@use '../stylesheets/core/scss/design/legacy/globals';

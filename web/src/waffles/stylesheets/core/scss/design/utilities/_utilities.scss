@@ -1,3 +1,5 @@
+@use "../../../../../tokens/variables";
+
 /**
  * Utility classes, all use !important so be careful when chaining utilities
  * which will compete with each other (last in list takes precedence).
@@ -124,7 +126,7 @@
 }
 
 // background-color (.dc-u-bgc)
-@each $color, $hexcode in $dc-colors {
+@each $color, $hexcode in variables.$dc-colors {
   .dc-u-bgc-#{$color} {
     background-color: #{$hexcode} !important;
   }
@@ -144,14 +146,14 @@
  */
 
 .dc-u-b {
-  border: 1px solid $dc-grey-100 !important;
+  border: 1px solid variables.$dc-grey-100 !important;
 }
 
 // Additive: border-bottom/left/right/top (.dc-u-b[b/l/r/t])
 
-@each $side, $value in $dc-sides {
+@each $side, $value in variables.$dc-sides {
   .dc-u-b#{$side} {
-    border-#{$value}: 1px solid $dc-grey-100 !important;
+    border-#{$value}: 1px solid variables.$dc-grey-100 !important;
   }
 }
 
@@ -178,7 +180,7 @@
 }
 
 // border-color (.dc-u-bc)
-@each $color, $hexcode in $dc-colors {
+@each $color, $hexcode in variables.$dc-colors {
   .dc-u-bc-#{$color} {
     border-color: #{$hexcode} !important;
   }
@@ -202,33 +204,33 @@
  */
 
 .dc-u-brad-all {
-  border-radius: $dc-border-radius !important;
+  border-radius: variables.$dc-border-radius !important;
 }
 
 .dc-u-brad-bl {
-  border-bottom-left-radius: $dc-border-radius !important;
+  border-bottom-left-radius: variables.$dc-border-radius !important;
 }
 
 .dc-u-brad-br {
-  border-bottom-right-radius: $dc-border-radius !important;
+  border-bottom-right-radius: variables.$dc-border-radius !important;
 }
 
 .dc-u-brad-tl {
-  border-top-left-radius: $dc-border-radius !important;
+  border-top-left-radius: variables.$dc-border-radius !important;
 }
 
 .dc-u-brad-tr {
-  border-top-right-radius: $dc-border-radius !important;
+  border-top-right-radius: variables.$dc-border-radius !important;
 }
 
 .dc-u-brad-b {
-  border-bottom-left-radius: $dc-border-radius !important;
-  border-bottom-right-radius: $dc-border-radius !important;
+  border-bottom-left-radius: variables.$dc-border-radius !important;
+  border-bottom-right-radius: variables.$dc-border-radius !important;
 }
 
 .dc-u-brad-t {
-  border-top-left-radius: $dc-border-radius !important;
-  border-top-right-radius: $dc-border-radius !important;
+  border-top-left-radius: variables.$dc-border-radius !important;
+  border-top-right-radius: variables.$dc-border-radius !important;
 }
 
 .dc-u-brad-circle {
@@ -267,39 +269,39 @@
 
 /** Box shadow */
 .dc-u-bs-border {
-  box-shadow: $dc-box-shadow-border !important;
+  box-shadow: variables.$dc-box-shadow-border !important;
 }
 
 .dc-u-bs-sm {
-  box-shadow: $dc-box-shadow-sm !important;
+  box-shadow: variables.$dc-box-shadow-sm !important;
 }
 
 .dc-u-bs-md {
-  box-shadow: $dc-box-shadow-md !important;
+  box-shadow: variables.$dc-box-shadow-md !important;
 }
 
 .dc-u-bs-lg {
-  box-shadow: $dc-box-shadow-lg !important;
+  box-shadow: variables.$dc-box-shadow-lg !important;
 }
 
 .dc-u-bs-xl {
-  box-shadow: $dc-box-shadow-xl !important;
+  box-shadow: variables.$dc-box-shadow-xl !important;
 }
 
 .dc-u-bs-xxl {
-  box-shadow: $dc-box-shadow-xxl !important;
+  box-shadow: variables.$dc-box-shadow-xxl !important;
 }
 
 .dc-u-bs-xl-green {
-  box-shadow: $dc-box-shadow-xl-green !important;
+  box-shadow: variables.$dc-box-shadow-xl-green !important;
 }
 
 .dc-u-bs-xl-orange {
-  box-shadow: $dc-box-shadow-xl-orange !important;
+  box-shadow: variables.$dc-box-shadow-xl-orange !important;
 }
 
 .dc-u-bs-xl-purple {
-  box-shadow: $dc-box-shadow-xl-purple !important;
+  box-shadow: variables.$dc-box-shadow-xl-purple !important;
 }
 
 .dc-u-bs-none {
@@ -307,7 +309,7 @@
 }
 
 /** Color */
-@each $color, $hexcode in $dc-colors {
+@each $color, $hexcode in variables.$dc-colors {
   .dc-u-color-#{$color} {
     color: #{$hexcode} !important;
   }
@@ -394,7 +396,7 @@
   display: inline-flex !important;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive display utilities
   @media screen and (min-width: $bp) {
     .dc-u-d-b\@#{$size} {
@@ -424,7 +426,7 @@
 }
 
 /** Fill */
-@each $color, $hexcode in $dc-colors {
+@each $color, $hexcode in variables.$dc-colors {
   .dc-u-fill-#{$color} {
     fill: #{$hexcode} !important;
   }
@@ -454,7 +456,7 @@
  *   o = order (.dc-u-fxi-o)
  */
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive display flex utilities
   @media screen and (min-width: $bp) {
     .dc-u-fx\@#{$size} {
@@ -492,7 +494,7 @@
   flex-direction: row-reverse !important;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive flex direction utilities
   @media screen and (min-width: $bp) {
     .dc-u-fx-fdc\@#{$size} {
@@ -551,7 +553,7 @@
   align-content: stretch !important;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive flex align-content utilities
   @media screen and (min-width: $bp) {
     .dc-u-fx-acc\@#{$size} {
@@ -601,7 +603,7 @@
   align-items: stretch !important;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive flex align-items utilities
   @media screen and (min-width: $bp) {
     .dc-u-fx-aib\@#{$size} {
@@ -648,7 +650,7 @@
   justify-content: space-between !important;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive flex justify-content utilities
   @media screen and (min-width: $bp) {
     .dc-u-fx-jcc\@#{$size} {
@@ -695,15 +697,15 @@
 // flex-basis (.dc-u-fxi-fb)
 // note: 'content' not well supported yet.
 
-@each $size in $dc-spatial-all {
+@each $size in variables.$dc-spatial-all {
   .dc-u-fxi-fb-#{$size} {
     flex-basis: #{$size}px !important;
   }
 }
 
-@each $percentage in $dc-percentages {
+@each $percentage in variables.$dc-percentages {
   .dc-u-fxi-fb-#{$percentage}pc {
-    flex-basis: #{$percentage}% !important;
+    flex-basis: #{$percentage * 1%} !important;
   }
 }
 
@@ -754,7 +756,7 @@
   align-self: stretch !important;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive flex item align-self utilities
   @media screen and (min-width: $bp) {
     .dc-u-fxi-asa\@#{$size} {
@@ -796,87 +798,87 @@
 
 // font-family
 .dc-u-ff-sans-serif {
-  font-family: $dc-font-family-sans-serif !important;
+  font-family: variables.$dc-font-family-sans-serif !important;
 }
 
 .dc-u-ff-mono {
-  font-family: $dc-font-family-mono !important;
+  font-family: variables.$dc-font-family-mono !important;
 }
 
 // font-size
 .dc-u-fs-base {
-  font-size: $dc-font-size-base !important;
+  font-size: variables.$dc-font-size-base !important;
 }
 
 .dc-u-fs-micro {
-  font-size: $dc-font-size-micro !important;
+  font-size: variables.$dc-font-size-micro !important;
 }
 
 .dc-u-fs-small {
-  font-size: $dc-font-size-small !important;
+  font-size: variables.$dc-font-size-small !important;
 }
 
 .dc-u-fs-h1 {
-  font-size: $dc-font-size-h1 !important;
+  font-size: variables.$dc-font-size-h1 !important;
 }
 
 .dc-u-fs-h2 {
-  font-size: $dc-font-size-h2 !important;
+  font-size: variables.$dc-font-size-h2 !important;
 }
 
 .dc-u-fs-h3 {
-  font-size: $dc-font-size-h3 !important;
+  font-size: variables.$dc-font-size-h3 !important;
 }
 
 .dc-u-fs-h4 {
-  font-size: $dc-font-size-h4 !important;
+  font-size: variables.$dc-font-size-h4 !important;
 }
 
 .dc-u-fs-h5 {
-  font-size: $dc-font-size-h5 !important;
+  font-size: variables.$dc-font-size-h5 !important;
 }
 
 .dc-u-fs-h6 {
-  font-size: $dc-font-size-h6 !important;
+  font-size: variables.$dc-font-size-h6 !important;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive font-size utilities
   @media screen and (min-width: $bp) {
     .dc-u-fs-base\@#{$size} {
-      font-size: $dc-font-size-base !important;
+      font-size: variables.$dc-font-size-base !important;
     }
 
     .dc-u-fs-micro\@#{$size} {
-      font-size: $dc-font-size-micro !important;
+      font-size: variables.$dc-font-size-micro !important;
     }
 
     .dc-u-fs-small\@#{$size} {
-      font-size: $dc-font-size-small !important;
+      font-size: variables.$dc-font-size-small !important;
     }
 
     .dc-u-fs-h1\@#{$size} {
-      font-size: $dc-font-size-h1 !important;
+      font-size: variables.$dc-font-size-h1 !important;
     }
 
     .dc-u-fs-h2\@#{$size} {
-      font-size: $dc-font-size-h2 !important;
+      font-size: variables.$dc-font-size-h2 !important;
     }
 
     .dc-u-fs-h3\@#{$size} {
-      font-size: $dc-font-size-h3 !important;
+      font-size: variables.$dc-font-size-h3 !important;
     }
 
     .dc-u-fs-h4\@#{$size} {
-      font-size: $dc-font-size-h4 !important;
+      font-size: variables.$dc-font-size-h4 !important;
     }
 
     .dc-u-fs-h5\@#{$size} {
-      font-size: $dc-font-size-h5 !important;
+      font-size: variables.$dc-font-size-h5 !important;
     }
 
     .dc-u-fs-h6\@#{$size} {
-      font-size: $dc-font-size-h6 !important;
+      font-size: variables.$dc-font-size-h6 !important;
     }
   }
 }
@@ -892,15 +894,15 @@
 
 // font-weight
 .dc-u-fw-light {
-  font-weight: $dc-font-weight-light !important;
+  font-weight: variables.$dc-font-weight-light !important;
 }
 
 .dc-u-fw-regular {
-  font-weight: $dc-font-weight-regular !important;
+  font-weight: variables.$dc-font-weight-regular !important;
 }
 
 .dc-u-fw-bold {
-  font-weight: $dc-font-weight-bold !important;
+  font-weight: variables.$dc-font-weight-bold !important;
 }
 
 /** Height */
@@ -908,7 +910,7 @@
   height: 0 !important;
 }
 
-@each $size in $dc-spatial-all {
+@each $size in variables.$dc-spatial-all {
   .dc-u-h-#{$size} {
     height: #{$size}px !important;
   }
@@ -957,7 +959,7 @@
   max-height: 0 !important;
 }
 
-@each $measure in $dc-measure {
+@each $measure in variables.$dc-measure {
   .dc-u-maxh-#{$measure} {
     max-height: #{$measure}px !important;
   }
@@ -992,7 +994,7 @@
   min-height: 128px !important;
 }
 
-@each $measure in $dc-measure {
+@each $measure in variables.$dc-measure {
   .dc-u-minh-#{$measure} {
     min-height: #{$measure}px !important;
   }
@@ -1032,15 +1034,15 @@
 }
 
 .dc-u-ls-base {
-  letter-spacing: $dc-letter-spacing-base !important;
+  letter-spacing: variables.$dc-letter-spacing-base !important;
 }
 
 .dc-u-ls-medium-heading {
-  letter-spacing: $dc-letter-spacing-medium-heading !important;
+  letter-spacing: variables.$dc-letter-spacing-medium-heading !important;
 }
 
 .dc-u-ls-large-heading {
-  letter-spacing: $dc-letter-spacing-large-heading !important;
+  letter-spacing: variables.$dc-letter-spacing-large-heading !important;
 }
 
 /** Line height */
@@ -1049,15 +1051,15 @@
 }
 
 .dc-u-lh-base {
-  line-height: $dc-line-height-base !important;
+  line-height: variables.$dc-line-height-base !important;
 }
 
 .dc-u-lh-heading {
-  line-height: $dc-line-height-heading !important;
+  line-height: variables.$dc-line-height-heading !important;
 }
 
 .dc-u-lh-large-heading {
-  line-height: $dc-line-height-large-heading !important;
+  line-height: variables.$dc-line-height-large-heading !important;
 }
 
 /** List */
@@ -1136,7 +1138,7 @@
   margin-top: 0 !important;
 }
 
-@each $size in $dc-spatial {
+@each $size in variables.$dc-spatial {
   .dc-u-m-#{$size} {
     margin: #{$size}px !important;
   }
@@ -1180,7 +1182,7 @@
   margin-right: 0 !important;
 }
 
-@each $size in $dc-spatial {
+@each $size in variables.$dc-spatial {
   .dc-u-mh-#{$size} {
     margin-left: #{$size}px !important;
     margin-right: #{$size}px !important;
@@ -1198,7 +1200,7 @@
   margin-top: 0 !important;
 }
 
-@each $size in $dc-spatial {
+@each $size in variables.$dc-spatial {
   .dc-u-mv-#{$size} {
     margin-bottom: #{$size}px !important;
     margin-top: #{$size}px !important;
@@ -1265,7 +1267,7 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
   padding-top: 0 !important;
 }
 
-@each $size in $dc-spatial {
+@each $size in variables.$dc-spatial {
   .dc-u-p-#{$size} {
     padding: #{$size}px !important;
   }
@@ -1291,9 +1293,9 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
  * If we want to output all responsive classes, it's around 32kb/22kb minified
  */
 
-@each $name, $value in $dc-breakpoints {
+@each $name, $value in variables.$dc-breakpoints {
   @media screen and (min-width: $value) {
-    @each $size in $dc-spatial-common {
+    @each $size in variables.$dc-spatial-common {
       .dc-u-p-#{$size}\@#{$name} {
         padding: #{$size}px !important;
       }
@@ -1323,7 +1325,7 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
   padding-right: 0 !important;
 }
 
-@each $size in $dc-spatial {
+@each $size in variables.$dc-spatial {
   .dc-u-ph-#{$size} {
     padding-left: #{$size}px !important;
     padding-right: #{$size}px !important;
@@ -1336,7 +1338,7 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
   padding-top: 0 !important;
 }
 
-@each $size in $dc-spatial {
+@each $size in variables.$dc-spatial {
   .dc-u-pv-#{$size} {
     padding-bottom: #{$size}px !important;
     padding-top: #{$size}px !important;
@@ -1421,7 +1423,7 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
   text-align: right !important;
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   // responsive text-align utilities
   @media screen and (min-width: $bp) {
     .dc-u-ta-center\@#{$size} {
@@ -1499,7 +1501,7 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
   transform: rotate(0deg) !important;
 }
 
-@each $deg in $dc-angles {
+@each $deg in variables.$dc-angles {
   .dc-u-trfm-rot-#{$deg} {
     transform: rotate(#{$deg}deg) !important;
   }
@@ -1588,16 +1590,16 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
   width: 0 !important;
 }
 
-@each $size in $dc-spatial-all {
+@each $size in variables.$dc-spatial-all {
   .dc-u-w-#{$size} {
     width: #{$size}px !important;
   }
 }
 
 // percentages
-@each $percentage in $dc-percentages {
+@each $percentage in variables.$dc-percentages {
   .dc-u-w-#{$percentage}pc {
-    width: #{$percentage}% !important;
+    width: #{$percentage * 1%} !important;
   }
 }
 
@@ -1606,15 +1608,15 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
 }
 
 // max-width
-@each $measure in $dc-measure {
+@each $measure in variables.$dc-measure {
   .dc-u-maxw-#{$measure} {
     max-width: #{$measure}px !important;
   }
 }
 
-@each $percentage in $dc-percentages {
+@each $percentage in variables.$dc-percentages {
   .dc-u-maxw-#{$percentage}pc {
-    max-width: #{$percentage}% !important;
+    max-width: #{$percentage * 1%} !important;
   }
 }
 
@@ -1627,15 +1629,15 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
   min-width: 128px !important;
 }
 
-@each $measure in $dc-measure {
+@each $measure in variables.$dc-measure {
   .dc-u-minw-#{$measure} {
     min-width: #{$measure}px !important;
   }
 }
 
-@each $percentage in $dc-percentages {
+@each $percentage in variables.$dc-percentages {
   .dc-u-minw-#{$percentage}pc {
-    min-width: #{$percentage}% !important;
+    min-width: #{$percentage * 1%} !important;
   }
 }
 
@@ -1653,17 +1655,17 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
 
 /** width x height */
 
-@each $size in $dc-spatial-all {
+@each $size in variables.$dc-spatial-all {
   .dc-u-wh-#{$size} {
     height: #{$size}px !important;
     width: #{$size}px !important;
   }
 }
 
-@each $percentage in $dc-percentages {
+@each $percentage in variables.$dc-percentages {
   .dc-u-wh-#{$percentage}pc {
-    height: #{$percentage}% !important;
-    width: #{$percentage}% !important;
+    height: #{$percentage * 1%} !important;
+    width: #{$percentage * 1%} !important;
   }
 }
 
@@ -1691,7 +1693,7 @@ $dc-overflow-types: 'auto', 'hidden', 'scroll', 'visible';
 }
 
 /** z-index */
-@each $index in $dc-z-indexes {
+@each $index in variables.$dc-z-indexes {
   .dc-u-z-#{$index} {
     z-index: #{$index} !important;
   }

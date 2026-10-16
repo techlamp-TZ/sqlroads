@@ -1,3 +1,9 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../sqldrills/prelude';
+@use "../../tokens/variables";
+@use "../core/scss/design/legacy/globals";
+@use "../core/scss/design/legacy/spacing" as *;
+
 // *********************************
 //
 // Headless Table
@@ -12,15 +18,15 @@
   }
 
   .dc-table__tbody {
-    background-color: $white;
+    background-color: globals.$white;
     border-color: inherit;
     border-radius: 4px;
-    box-shadow: $dc-box-shadow-sm;
+    box-shadow: variables.$dc-box-shadow-sm;
     vertical-align: middle;
   }
 
   .dc-table__th {
-    font-weight: $dc-font-weight-bold;
+    font-weight: variables.$dc-font-weight-bold;
     padding: spacing($multiplier: 5) spacing($multiplier: 3) spacing($multiplier: 2);
   }
 
@@ -30,11 +36,11 @@
 
   // react-table override
   .rt-tr-group:not(:last-child) .dc-table__td {
-    border-bottom: 1px solid #e6eaeb;
+    border-bottom: 1px solid variables.$dc-grey-200;
   }
 
   .dc-table__tr:not(:last-child) .dc-table__td {
-    border-bottom: 1px solid #e6eaeb;
+    border-bottom: 1px solid variables.$dc-grey-200;
   }
 
   .dc-table__tr:first-child .dc-table__td:first-child {

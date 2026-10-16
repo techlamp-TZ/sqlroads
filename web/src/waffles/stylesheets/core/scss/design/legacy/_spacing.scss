@@ -1,0 +1,6 @@
+// SQL Drills: moved unchanged out of _kill.scss (which also outputs CSS), so the table stylesheet can use it.
+$baseline: 5px;
+
+@function spacing ($multiplier, $offset: 0) {
+  @return $multiplier * $baseline - $offset;
+}

@@ -1,3 +1,5 @@
+@use "../../../../../tokens/variables";
+
 /**
  * Outdated styles, needs to be revamped
  * Removed from core
@@ -8,15 +10,15 @@
 .dc-hr-line {
   border: 0;
   border-bottom: 1px solid transparent;
-  border-top: 1px solid $dc-grey-100;
+  border-top: 1px solid variables.$dc-grey-100;
   margin: 16px 0;
   padding: 0;
   text-align: center;
   width: 100%;
 
   legend {
-    color: $dc-navy-text;
-    font-size: $dc-font-size-base;
+    color: variables.$dc-navy-text;
+    font-size: variables.$dc-font-size-base;
     margin: 0 auto;
     padding: 0 16px;
   }

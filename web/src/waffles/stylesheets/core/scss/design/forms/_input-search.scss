@@ -1,14 +1,17 @@
+@use "../../../../../sqldrills/helpers";
+@use "../../../../../tokens/variables";
+
 %dc-input-search {
-  background: $dc-white url('https://styleguide-assets.datacamp.com/images/enterprise/components/search/search-blue-6839bf2eb2.svg') no-repeat 16px center;
+  background: variables.$dc-white helpers.dc-svg-uri('<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"> <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"> <path fill="#{variables.$dc-raw-blue-dark}" d="M13.2607109,12.3028008 L17.6676929,16.2555629 C18.0788293,16.6243243 18.1131811,17.2565564 17.7444198,17.6676929 C17.3756584,18.0788293 16.7434263,18.1131811 16.3322898,17.7444198 L11.7789563,13.6603902 C10.5654151,14.5048904 9.09052626,14.9999971 7.5,15 C3.35786267,14.9999924 0,11.6421297 0,7.5 C0,3.35786267 3.35786267,0 7.5,0 C11.6421297,0 14.9999924,3.35786267 15,7.5 C14.9999966,9.32717769 14.3465978,11.0017471 13.2607109,12.3028008 Z M7.49999898,12.999999 C10.5375608,12.9999934 12.9999934,10.5375608 12.999999,7.49999898 C12.9999934,4.46243161 10.5375608,1.99999898 7.49999898,1.99999898 C4.46243161,1.99999898 1.99999898,4.46243161 1.99999898,7.49999898 C1.99999898,10.5375608 4.46243161,12.9999934 7.49999898,12.999999 Z"/> </g> </svg>') no-repeat 16px center;
   border: 0;
   border-radius: 24px;
-  box-shadow: $dc-box-shadow-sm;
+  box-shadow: variables.$dc-box-shadow-sm;
   box-sizing: border-box !important; // Overwrite Normalize
   height: auto;
   line-height: 1.25;
   margin: 0;
   padding: 8px 16px 8px 42px;
-  transition: box-shadow $dc-transition;
+  transition: box-shadow variables.$dc-transition;
   width: 256px;
 
   &::-ms-clear {
@@ -17,7 +20,7 @@
   }
 
   &::placeholder {
-    color: $dc-navy-text;
+    color: variables.$dc-navy-text;
     opacity: 0.8;
   }
 
@@ -25,7 +28,7 @@
   &:focus,
   &:hover,
   &.dc-is-active {
-    box-shadow: $dc-box-shadow-lg;
+    box-shadow: variables.$dc-box-shadow-lg;
   }
 }
 
@@ -34,8 +37,8 @@
 }
 
 .dc-input-search__filter {
-  background: $dc-white;
-  border-left: 1px solid $dc-grey-200;
+  background: variables.$dc-white;
+  border-left: 1px solid variables.$dc-grey-200;
   border-radius: 0 24px 24px 0;
   display: block;
   padding: 6px 17px 6px 12px;
@@ -44,7 +47,7 @@
   &.dc-is-active {
     // filter active indicator
     &::after {
-      background-color: $dc-red;
+      background-color: variables.$dc-red;
       border-radius: 50%;
       content: '';
       height: 6px;
@@ -57,7 +60,7 @@
 
   .dc-is-open & {
     .dc-icon--filter {
-      color: $dc-green;
+      color: variables.$dc-green;
     }
   }
 }

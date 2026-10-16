@@ -1,3 +1,10 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../sqldrills/prelude';
+@use "../../tokens/variables";
+@use "../core/scss/design/mixins/afh";
+@use "../core/scss/design/mixins/state";
+@use "../core/scss/design/mixins/text";
+
 // *************************************
 //
 //   Dropdown
@@ -72,7 +79,7 @@
   z-index: 20;
 
   .dc-icon {
-    color: $dc-navy;
+    color: variables.$dc-navy;
     opacity: 0.5;
   }
 }
@@ -85,13 +92,13 @@
   @include _dc-dropdown-center;
 
   background-clip: padding-box;
-  background-color: $dc-white;
-  border: solid 1px $dc-grey-100;
-  border-radius: $dc-border-radius;
-  box-shadow: $dc-box-shadow-xl;
-  color: $dc-navy-text;
+  background-color: variables.$dc-white;
+  border: solid 1px variables.$dc-grey-100;
+  border-radius: variables.$dc-border-radius;
+  box-shadow: variables.$dc-box-shadow-xl;
+  color: variables.$dc-navy-text;
   display: none; // none by default, but block on "open" of the menu
-  font-size: $dc-font-size-base; // Redeclare because nesting can cause inheritance issues
+  font-size: variables.$dc-font-size-base; // Redeclare because nesting can cause inheritance issues
   min-width: 192px;
   opacity: 0;
   padding: 12px;
@@ -116,7 +123,7 @@
 
 .dc-dropdown__list--bordered {
   .dc-dropdown__item:not(:first-child) {
-    border-top: 1px solid $dc-grey-100;
+    border-top: 1px solid variables.$dc-grey-100;
   }
 }
 
@@ -127,19 +134,19 @@
 .dc-dropdown__link {
   background-color: transparent;
   border: 0;
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   display: block;
-  font-weight: $dc-font-weight-regular;
+  font-weight: variables.$dc-font-weight-regular;
   line-height: 1;
   padding: 8px 4px;
   text-align: inherit;
-  transition: background-color $dc-transition;
+  transition: background-color variables.$dc-transition;
   white-space: nowrap; // prevent links from randomly breaking onto new lines
   width: 100%;
 
-  @include afh {
-    background-color: $dc-grey-200;
-    color: $dc-navy-text;
+  @include afh.afh {
+    background-color: variables.$dc-grey-200;
+    color: variables.$dc-navy-text;
     cursor: pointer;
   }
 
@@ -155,7 +162,7 @@
 // -------------------------------------
 
 .dc-dropdown__icon {
-  transition: transform $dc-transition;
+  transition: transform variables.$dc-transition;
 
   .dc-is-open & {
     transform: rotate(180deg);
@@ -172,7 +179,7 @@
   .dc-dropdown__toggle::after {
     border: 5px solid transparent;
     border-bottom: 0;
-    border-top: 6px solid $dc-grey-200;
+    border-top: 6px solid variables.$dc-grey-200;
     content: '';
     margin-left: 12px;
   }
@@ -195,13 +202,13 @@
   }
 
   .dc-dropdown__content::after {
-    border-bottom-color: $dc-white;
+    border-bottom-color: variables.$dc-white;
     border-width: 3px;
     margin-left: -3px;
   }
 
   .dc-dropdown__content::before {
-    border-bottom-color: $dc-grey-100;
+    border-bottom-color: variables.$dc-grey-100;
     border-width: 4px;
     margin-left: -4px;
   }
@@ -228,21 +235,21 @@
 }
 
 .dc-dropdown--nav__link {
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   display: block;
-  transition: background-color $dc-transition, color $dc-transition;
+  transition: background-color variables.$dc-transition, color variables.$dc-transition;
 
-  @include state {
-    background-color: $dc-grey-200;
+  @include state.state {
+    background-color: variables.$dc-grey-200;
     border-color: transparent;
-    color: $dc-navy-text;
+    color: variables.$dc-navy-text;
   }
 }
 
 .dc-dropdown--nav__courses {
   width: 34%;
 
-  @media screen and (max-width: $dc-bp-below-lg) {
+  @media screen and (max-width: variables.$dc-bp-below-lg) {
     flex-basis: 320px;
     width: 320px; // of 940px total width
   }
@@ -252,15 +259,15 @@
   min-width: 1px; // Firefox hack, ref: https://stackoverflow.com/questions/27424831/firefox-flexbox-overflow
   width: 38%;
 
-  @media screen and (max-width: $dc-bp-below-lg) {
+  @media screen and (max-width: variables.$dc-bp-below-lg) {
     flex-basis: 340px;
     width: 340px; // of 940px total width
   }
 }
 
 .dc-dropdown--nav__track-name {
-  @media screen and (min-width: $dc-bp-md) {
-    @include text-truncate;
+  @media screen and (min-width: variables.$dc-bp-md) {
+    @include text.text-truncate;
 
     max-width: 310px;
   }
@@ -269,7 +276,7 @@
 .dc-dropdown--nav__instructors {
   width: 28%;
 
-  @media screen and (max-width: $dc-bp-below-lg) {
+  @media screen and (max-width: variables.$dc-bp-below-lg) {
     flex-basis: 280px;
     width: 280px; // of 940px total width
   }
@@ -277,7 +284,7 @@
 
 // ----- Notifications Dropdown ---- //
 
-@media screen and (min-width: $dc-bp-md) {
+@media screen and (min-width: variables.$dc-bp-md) {
   .dc-dropdown--notifications {
     width: 330px;
   }
@@ -287,7 +294,7 @@
 
 // Center (Responsive only as Center is default)
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   .dc-dropdown--center\@#{$size} .dc-dropdown__content {
     @media screen and (min-width: $bp) {
       @include _dc-dropdown-center;
@@ -303,7 +310,7 @@
   }
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   .dc-dropdown--left\@#{$size} .dc-dropdown__content {
     @media screen and (min-width: $bp) {
       @include _dc-dropdown-left;
@@ -319,7 +326,7 @@
   }
 }
 
-@each $size, $bp in $dc-breakpoints {
+@each $size, $bp in variables.$dc-breakpoints {
   .dc-dropdown--right\@#{$size} .dc-dropdown__content {
     @media screen and (min-width: $bp) {
       @include _dc-dropdown-right;
@@ -334,7 +341,7 @@
 .dc-dropdown.dc-is-open,
 .dc-dropdown--hover:hover {
   .dc-dropdown__content {
-    animation: fadeIn $dc-duration forwards;
+    animation: fadeIn variables.$dc-duration forwards;
     display: block;
   }
 

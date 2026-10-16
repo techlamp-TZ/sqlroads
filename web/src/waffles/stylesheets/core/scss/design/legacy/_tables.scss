@@ -1,3 +1,5 @@
+@use "../../../../../tokens/variables";
+
 // **********************************************************************************
 // DEPRECATED, DO NOT USE ANY OF THE TABLE STYLES IN THIS SECTION
 
@@ -9,14 +11,14 @@
 
 table,
 .table {
-  background-color: $dc-white;
+  background-color: variables.$dc-white;
 }
 
 // Baseline styles
 
 .table-wrapper {
-  border: 1px solid $dc-grey-100;
-  border-radius: $dc-border-radius;
+  border: 1px solid variables.$dc-grey-100;
+  border-radius: variables.$dc-border-radius;
   overflow: hidden;
 
   .table {
@@ -36,7 +38,7 @@ table,
     > tr {
       > th,
       > td {
-        border-top: 1px solid $dc-grey-100;
+        border-top: 1px solid variables.$dc-grey-100;
         padding: 10px;
         vertical-align: top;
       }
@@ -83,7 +85,7 @@ table,
 
 caption,
 .dc-table__caption {
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   padding-bottom: 10px;
   padding-top: 10px;
   text-align: left;
@@ -95,7 +97,7 @@ th {
 }
 
 .dc-table__th {
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   cursor: pointer;
   font-size: 11px;
   letter-spacing: 2px;
@@ -105,11 +107,11 @@ th {
   text-transform: uppercase;
 
   &.dc-table__th--sort::after {
-    color: #686f75;
+    color: var(--wf-text-muted);
     content: '▾';
     display: inline-block;
     opacity: 0.5;
-    transition: transform $dc-transition;
+    transition: transform variables.$dc-transition;
   }
 
   &.dc-table__th--sort-asc::after {
@@ -119,7 +121,7 @@ th {
 
 td,
 .dc-table__td {
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   padding: 10px;
   vertical-align: middle;
 }
@@ -144,7 +146,7 @@ td,
 // -------------------------------------
 
 .dc-table--white {
-  background-color: $dc-white;
+  background-color: variables.$dc-white;
 }
 
 // ----- Bordered ----- //
@@ -152,8 +154,8 @@ td,
 // Bordered Table
 
 .dc-table-wrapper--bordered {
-  border: 1px solid $dc-grey-100;
-  border-radius: $dc-border-radius;
+  border: 1px solid variables.$dc-grey-100;
+  border-radius: variables.$dc-border-radius;
   overflow: hidden;
 }
 
@@ -162,7 +164,7 @@ td,
 .dc-table--bordered {
   .dc-table__thead tr,
   .dc-table__tr {
-    border-bottom: 1px solid $dc-grey-100;
+    border-bottom: 1px solid variables.$dc-grey-100;
   }
 
   .dc-table__tr:last-of-type {
@@ -173,15 +175,15 @@ td,
 // Bordered  with Filter
 
 .dc-table-header {
-  background-color: $dc-grey-100;
-  border-radius: $dc-border-radius $dc-border-radius 0 0;
+  background-color: variables.$dc-grey-100;
+  border-radius: variables.$dc-border-radius variables.$dc-border-radius 0 0;
   padding: 16px;
 }
 
 .dc-table--search {
   .dc-table-wrapper {
-    border: 1px solid $dc-grey-100;
-    border-radius: 0 0 $dc-border-radius $dc-border-radius;
+    border: 1px solid variables.$dc-grey-100;
+    border-radius: 0 0 variables.$dc-border-radius variables.$dc-border-radius;
     border-top: 0;
   }
 
@@ -198,7 +200,7 @@ td,
   }
 
   .dc-table__tr:not(:last-child) .dc-table__td {
-    border-bottom: 1px solid #e6eaeb;
+    border-bottom: 1px solid variables.$dc-grey-200;
   }
 
   .dc-table__th:first-child .dc-table__td:first-child {
@@ -236,7 +238,7 @@ td,
 // -------------------------------------
 
 .ReactTable {
-  @media screen and (min-width: $dc-bp-md) {
+  @media screen and (min-width: variables.$dc-bp-md) {
     .rt-tr {
       display: inline-flex;
       flex: 1 0 auto;

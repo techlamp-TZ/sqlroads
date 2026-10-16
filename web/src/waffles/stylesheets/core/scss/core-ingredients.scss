@@ -1,9 +1,11 @@
 //----- Fonts -----//
-@import 'fonts.scss';
+// SQL Drills: Waffles' font files are not used (IBM Plex is loaded by the page).
 
 //----- Normalize -----//
-@import 'normalize.scss';
+@use 'normalize.scss';
 
 //----- Variables -----//
 // this file is copied into built version and this path changed to reflect the copied file
-@import '../../../tokens/variables';
+@use '../../../tokens/variables';
+// SQL Drills: colour helpers for tokens that are CSS variables
+@use '../../../sqldrills/helpers';

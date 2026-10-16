@@ -1,10 +1,13 @@
+@use "../../../../../sqldrills/helpers";
+@use "../../../../../tokens/variables";
+
 .dc-select-container {
   position: relative;
 
   &::after {
-    background-color: $dc-white;
-    border-left: 1px solid $dc-white;
-    border-radius: 0 $dc-border-radius $dc-border-radius 0;
+    background-color: variables.$dc-white;
+    border-left: 1px solid variables.$dc-white;
+    border-radius: 0 variables.$dc-border-radius variables.$dc-border-radius 0;
     content: '';
     height: 44px; // +2px border-top +2px border-bottom
     pointer-events: none;
@@ -15,7 +18,7 @@
   }
 
   &::before {
-    background: url('https://styleguide-assets.datacamp.com/images/marketing/components/icons/arrow_down-19bbe4876d.svg') no-repeat 50% 50% / 16px 16px;
+    background: helpers.dc-svg-uri('<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"> <g fill="none" fill-rule="evenodd" stroke="none" stroke-width="1"> <path fill="#{variables.$dc-raw-white}" d="M12.1545267,9.75620809 L7.20771854,14.706779 C6.8170543,15.0977403 6.18366242,15.0977403 5.79299818,14.706779 C5.40233394,14.3158176 5.40233394,13.6819439 5.79299818,13.2909825 L10.08396,8.99675685 L5.80504596,4.70395096 C5.41526438,4.31290392 5.41669383,3.68031903 5.80823874,3.29103307 C6.19978365,2.90174711 6.83317391,2.90317476 7.2229555,3.2942218 L12.2085964,8.29604904 C12.598378,8.68709608 12.5969485,9.31968097 12.2054036,9.70896693 C12.188864,9.72541114 12.1718928,9.74115816 12.1545267,9.75620809 Z" transform="rotate(90 9 9)"/> </g> </svg>') no-repeat 50% 50% / 16px 16px;
     content: '';
     height: 16px;
     pointer-events: none;
@@ -30,23 +33,23 @@
 
 .dc-select {
   appearance: none;
-  background-color: $dc-white;
+  background-color: variables.$dc-white;
   background-image: none;
-  border: 2px solid $dc-beige-400;
-  border-radius: $dc-border-radius;
+  border: 2px solid variables.$dc-beige-400;
+  border-radius: variables.$dc-border-radius;
   box-shadow: none;
   box-sizing: border-box;
-  color: $dc-navy-text;
+  color: variables.$dc-navy-text;
   cursor: pointer;
   height: 48px; // firefox, IE11...
-  line-height: $dc-line-height-base;
+  line-height: variables.$dc-line-height-base;
   padding: 11px 15px; // +1px border
-  transition: background $dc-transition, border-color $dc-transition, color $dc-transition;
+  transition: background variables.$dc-transition, border-color variables.$dc-transition, color variables.$dc-transition;
   width: 100%;
 
   &:focus,
   &.focus {
-    border-color: $dc-blue-dark;
+    border-color: variables.$dc-blue-dark;
     outline: none;
   }
 

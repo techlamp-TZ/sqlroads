@@ -1,3 +1,5 @@
+@use "../../../../../tokens/variables";
+
 // *************************************
 //
 //   Link
@@ -14,14 +16,14 @@
 a,
 .dc-link {
   border-bottom: 1px solid transparent;
-  color: $dc-blue-text;
-  font-weight: $dc-font-weight-bold;
+  color: variables.$dc-blue-text;
+  font-weight: variables.$dc-font-weight-bold;
   text-decoration: none;
-  transition: border-color $dc-transition;
+  transition: border-color variables.$dc-transition;
 
   &:hover {
-    border-bottom-color: $dc-blue-text;
-    color: $dc-blue-text;
+    border-bottom-color: variables.$dc-blue-text;
+    color: variables.$dc-blue-text;
     text-decoration: none;
   }
 }

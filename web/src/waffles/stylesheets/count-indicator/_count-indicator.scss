@@ -1,3 +1,7 @@
+// SQL Drills: dependencies made explicit (the module system needs them)
+@use '../../sqldrills/prelude';
+@use "../../tokens/variables";
+
 // *************************************
 //
 //   Count Indicator
@@ -13,12 +17,12 @@
 
 .dc-count-indicator {
   align-items: center;
-  border: 1px solid $dc-white;
+  border: 1px solid variables.$dc-white;
   border-radius: 9px;
-  box-shadow: $dc-box-shadow-sm;
+  box-shadow: variables.$dc-box-shadow-sm;
   display: inline-flex;
-  font-size: $dc-font-size-small;
-  font-weight: $dc-font-weight-bold;
+  font-size: variables.$dc-font-size-small;
+  font-weight: variables.$dc-font-weight-bold;
   justify-content: center;
   line-height: 1;
   min-height: 18px;
@@ -34,8 +38,8 @@
 // ----- Color ----- //
 
 .dc-count-indicator--red {
-  background-color: $dc-red;
-  color: $dc-white;
+  background-color: variables.$dc-red;
+  color: variables.$dc-white;
 }
 
 // ----- Position ----- //
