@@ -1,0 +1,38 @@
+# Secrets: never commit (.env.example holds only empty placeholders)
+.env
+.env.*
+!.env.example
+
+# Databases: the app database, test copies, SQLite datasets and their journals
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.db
+*.db-*
+*-journal
+*-wal
+*-shm
+
+# Backups (zips hold the database and uploads)
+backups/
+*.zip
+
+# Uploaded images (Generate → From images)
+uploads/
+
+# SQLPad data (lives outside this folder; ignored here in case it is ever moved in)
+sqlpad-master/
+sqlpad-data/
+**/sqlpad*.sqlite
+
+# Waffles source as downloaded: contains DataCamp's font and logos
+design-system-master/
+
+# Dependencies, build caches, test leftovers
+node_modules/
+.vite/
+coverage/
+storybook-static/
+prof-*/
+*-copy.sqlite
+*.log

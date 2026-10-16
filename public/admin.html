@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SQL Drills Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="app.css">
+<link rel="stylesheet" href="admin.css">
+<script>try { if (localStorage.getItem("sqldrills.theme.v2") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+</head>
+<body class="admin-app">
+<a class="skip" href="#view">Skip to content</a>
+<div class="shell">
+  <aside class="side" id="side" aria-label="Admin navigation">
+    <a class="brand" href="#/overview">
+      <span class="brand-mark" data-icon="db"></span>
+      <span class="brand-txt"><strong>SQL Drills</strong><small>Admin · Content studio</small></span>
+    </a>
+    <nav class="nav admin-nav" id="nav"></nav>
+    <div class="side-foot">
+      <div class="local"><span class="dot" aria-hidden="true"></span><span><strong>Local only</strong> · <span class="mono">127.0.0.1</span></span></div>
+      <a class="side-link" href="/#/home"><span data-icon="external"></span>Open the learner app</a>
+    </div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+  <div class="main">
+    <header class="top admin-top">
+      <button class="top-menu" id="menuBtn" aria-label="Open navigation"><span data-icon="menu"></span></button>
+      <h1 class="admin-title" id="pageTitle">Overview</h1>
+      <div class="search admin-search" id="searchWrap" role="search">
+        <span data-icon="search"></span>
+        <input id="searchInput" type="search" placeholder="Search exercises, MCQs, levels…" autocomplete="off" aria-label="Search exercises, MCQs and levels" aria-controls="searchResults" aria-expanded="false" aria-autocomplete="list">
+        <kbd>Ctrl K</kbd>
+        <div class="search-results" id="searchResults" role="listbox" aria-label="Search results" hidden></div>
+      </div>
+      <a class="icon-btn help-btn" id="helpBtn" href="#/help" aria-label="How to use this page" title="How to use this page"><span data-icon="help"></span></a>
+      <a class="btn primary gen-btn" href="#/generate"><span data-icon="spark"></span><span>Generate content</span></a>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode"></button>
+    </header>
+    <main class="body" id="view" tabindex="-1"><div class="loading">Loading…</div></main>
+  </div>
+</div>
+<dialog class="modal" id="modal"><div id="modalBody"></div></dialog>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+<script src="help.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

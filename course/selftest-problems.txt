@@ -1,0 +1,4 @@
+mysql D15-P020 [diff] unavailable: The course solution can't run on your database right now (Table 'sqldrills_test_practice.gift_cards' doesn't exist). If you changed data in an earlier exercise, use "Undo exercise changes" there, or R
+mysql D16-P064 [diff] unavailable: The course solution can't run on your database right now (Duplicate entry '13' for key 'categories.PRIMARY'). Your database probably already contains changes from this exercise: click "Undo exercise c
+postgres D15-P020 [diff] unavailable: The course solution can't run on your database right now (relation "practice.gift_cards" does not exist). If you changed data in an earlier exercise, use "Undo exercise changes" there, or Reset databa
+postgres D16-P064 [diff] unavailable: The course solution can't run on your database right now (duplicate key value violates unique constraint "categories_pkey"). Your database probably already contains changes from this exercise: click "

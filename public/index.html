@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>SQL Drills</title>
+<meta name="description" content="Practice SQL level by level, from SELECT basics to capstone projects.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="app.css">
+<script>
+  // theme before first paint (light by default)
+  try { if (localStorage.getItem("sqldrills.theme.v2") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}
+</script>
+</head>
+<body>
+<div class="shell" id="shell">
+  <aside class="side" id="side" aria-label="Main navigation">
+    <a class="brand" href="#/home">
+      <span class="brand-mark" data-icon="db"></span>
+      <span class="brand-txt"><strong>SQL Drills</strong><small>Practice · Build Skills · Grow</small></span>
+    </a>
+    <nav class="nav" id="nav"></nav>
+    <div class="side-streak" id="sideStreak"></div>
+  </aside>
+  <div class="scrim" id="scrim"></div>
+
+  <div class="main">
+    <header class="top">
+      <button class="top-menu" id="menuBtn" aria-label="Open navigation"><span data-icon="menu"></span></button>
+      <div class="search" id="searchWrap">
+        <span data-icon="search"></span>
+        <input id="searchInput" type="text" placeholder="Search drills, topics, or keywords…" autocomplete="off" aria-label="Search drills">
+        <kbd>Ctrl + K</kbd>
+        <div class="search-results" id="searchResults" hidden></div>
+      </div>
+      <div class="top-stats" id="topStats"></div>
+      <a class="icon-btn help-btn" id="helpBtn" href="#/help" aria-label="How to use this page" title="How to use this page"><span data-icon="help"></span></a>
+      <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode"></button>
+      <div class="settings-wrap">
+        <button class="icon-btn" id="settingsBtn" aria-label="Settings" aria-haspopup="true" aria-expanded="false" title="Settings"></button>
+        <div class="settings-menu card" id="settingsMenu" role="dialog" aria-label="Settings" hidden></div>
+      </div>
+      <a class="top-user" href="#/progress" title="Your progress">
+        <span class="avatar" id="avatar">S</span>
+      </a>
+    </header>
+    <div class="body" id="view" tabindex="-1"><div class="loading">Loading drills…</div></div>
+    <footer class="app-foot"><a href="#/licenses">Licenses</a></footer>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.12.0/sql-asm.min.js"></script>
+<script src="compare.js"></script>
+<script src="cards.js"></script>
+<script src="help.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
