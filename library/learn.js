@@ -64,7 +64,10 @@ function contentMap() {
   for (const r of db.prepare("SELECT id, kind, concept, data FROM stage_items WHERE status = 'published' ORDER BY created_at").all()) {
     const p = per.get(r.concept);
     // "card" items (extra interaction types) are optional practice: listed apart, never counted for a stage or mastery
-    if (p) p[r.kind === "flashcard" ? "flashcards" : r.kind === "lesson" ? "lessons" : r.kind === "card" ? "cards" : "predicts"].push({ id: r.id, ...JSON.parse(r.data) });
+    if (p) {
+      const data = JSON.parse(r.data);
+      p[r.kind === "flashcard" ? "flashcards" : r.kind === "lesson" ? "lessons" : r.kind === "card" ? "cards" : "predicts"].push({ id: r.id, ...data, concept: r.concept });
+    }
   }
   return { concepts, per, visible };
 }
@@ -277,6 +280,33 @@ router.get("/concept/:slug", wrap((req) => {
     reflections: db.prepare("SELECT * FROM reflections ORDER BY at DESC").all().filter((r) => JSON.parse(r.concepts).includes(p.slug)),
   };
 }));
+// A paginated learner-facing catalogue. The study session remains concept-based, but the catalogue lets learners
+// browse the whole approved flashcard bank without sending tens of thousands of cards to the browser at once.
+router.get("/flashcards", wrap((req) => {
+  const q = String(req.query.q || "").trim().toLowerCase().slice(0, 120);
+  const type = ["keyword", "blank", "order", "error"].includes(String(req.query.type || "")) ? String(req.query.type) : "all";
+  const level = /^\d+$/.test(String(req.query.level || "")) ? Number(req.query.level) : 0;
+  const concept = String(req.query.concept || "").trim().slice(0, 120);
+  const sort = req.query.sort === "new" ? "new" : "path";
+  const size = Math.min(100, Math.max(10, Number(req.query.size) || 25));
+  const page = Math.max(0, Number(req.query.page) || 0);
+  const where = ["s.kind = 'flashcard'", "s.status = 'published'"], params = [];
+  if (level >= 1 && level <= 14) { where.push("s.level = ?"); params.push(level); }
+  if (type !== "all") { where.push("json_extract(s.data, '$.type') = ?"); params.push(type); }
+  if (concept) { where.push("s.concept = ?"); params.push(concept); }
+  if (q) { const like = `%${q}%`; where.push("(lower(s.data) LIKE ? OR lower(s.concept) LIKE ? OR lower(COALESCE(c.name, '')) LIKE ?)"); params.push(like, like, like); }
+  const from = "FROM stage_items s LEFT JOIN concepts c ON c.slug = s.concept WHERE " + where.join(" AND ");
+  const total = db.prepare("SELECT COUNT(*) n " + from).get(...params).n;
+  const pages = Math.max(1, Math.ceil(total / size));
+  const safePage = Math.min(page, pages - 1), offset = safePage * size;
+  const order = sort === "new" ? "s.created_at DESC, s.id DESC" : "s.level, s.concept, s.created_at, s.id";
+  const rows = db.prepare("SELECT s.id, s.concept, s.level, s.data, s.created_at, COALESCE(c.name, s.concept) conceptName " + from + " ORDER BY " + order + " LIMIT ? OFFSET ?").all(...params, size, offset);
+  const items = rows.map((r) => ({ id: r.id, concept: r.concept, conceptName: r.conceptName, level: r.level, created_at: r.created_at, ...JSON.parse(r.data) }));
+  const concepts = db.prepare("SELECT c.slug, c.name, c.level, COUNT(s.id) count FROM concepts c JOIN stage_items s ON s.concept = c.slug AND s.kind = 'flashcard' AND s.status = 'published' GROUP BY c.slug, c.name, c.level ORDER BY c.level, c.ord").all();
+  return { items, total, page: safePage, pages, size, sort, type, level: level || "all", concept: concept || "all", q, concepts,
+    types: db.prepare("SELECT json_extract(data, '$.type') type, COUNT(*) count FROM stage_items WHERE kind = 'flashcard' AND status = 'published' GROUP BY type ORDER BY type").all(),
+    levels: db.prepare("SELECT level, COUNT(*) count FROM stage_items WHERE kind = 'flashcard' AND status = 'published' GROUP BY level ORDER BY level").all() };
+}));
 router.post("/concept/:slug/seen", wrap((req) => {
   if (!db.prepare("SELECT 1 FROM concepts WHERE slug = ?").get(req.params.slug)) throw bad("No such concept");
   const first = db.prepare("INSERT INTO concept_seen (concept, at) VALUES (?, ?) ON CONFLICT(concept) DO NOTHING").run(req.params.slug, nowIso()).changes;
@@ -290,8 +320,10 @@ router.get("/flash/session", wrap((req) => {
   const due = pool.filter((f) => st.flash.has(f.id) && R.isDue(st.flash.get(f.id)));
   const fresh = slug ? pool.filter((f) => !st.flash.has(f.id)) : [];
   const later = slug ? pool.filter((f) => st.flash.has(f.id) && !R.isDue(st.flash.get(f.id))) : [];
+  const selected = req.query.card ? pool.find((f) => f.id === String(req.query.card)) : null;
+  const ordered = selected ? [selected].concat(due.concat(fresh).filter((f) => f.id !== selected.id)) : due.concat(fresh);
   const name = (f) => (map.per.get(f.concept) || {}).name, ctx = flashCtx(map);
-  return { concept: slug || null, cards: due.concat(fresh).slice(0, 30).map((f) => ({ ...flashOut(f, ctx), conceptName: name(f), state: st.flash.get(f.id) || null })), later: later.length, intervals: R.INTERVALS };
+  return { concept: slug || null, cards: ordered.slice(0, 30).map((f) => ({ ...flashOut(f, ctx), conceptName: name(f), state: st.flash.get(f.id) || null })), later: later.length, intervals: R.INTERVALS };
 }));
 router.post("/flash/:id", wrap((req) => {
   const card = db.prepare("SELECT id, concept FROM stage_items WHERE id = ? AND kind = 'flashcard' AND status = 'published'").get(req.params.id);
