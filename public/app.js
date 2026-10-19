@@ -1923,11 +1923,53 @@
     }).catch(function (e) { var box = $("#notesList"); if (box) box.innerHTML = '<div class="err">' + esc(e.message) + "</div>"; });
   }
 
-  // ---------- flashcard session ----------
+  // ---------- flashcard catalogue and session ----------
+  function flashTypeLabel(t) { return { keyword: "Keyword", blank: "Fill in the blank", order: "Clause order", error: "Spot the error" }[t] || t || "Flashcard"; }
+  function flashLibraryCard(c) {
+    var front = c.type === "keyword" ? c.front : c.prompt || flashTypeLabel(c.type), detail = c.type === "keyword" ? c.back : c.type === "blank" ? c.sql : c.type === "order" ? (c.parts || []).join("  →  ") : c.wrong_sql;
+    var answer = c.type === "blank" ? "Answer: " + (c.answer || "") : c.type === "error" ? "Fixed: " + (c.fixed_sql || "") : c.type === "keyword" ? c.back : c.type === "order" ? "Correct order: " + (c.parts || []).join("  →  ") : "";
+    var go = '#/flashcards?concept=' + encodeURIComponent(c.concept) + '&card=' + encodeURIComponent(c.id);
+    return '<article class="card fc-lib-card" data-go="' + esc(go) + '" tabindex="0" role="link" aria-label="Open flashcard: ' + esc(front) + '"><div class="fc-lib-head"><span class="tag">' + esc(flashTypeLabel(c.type)) + '</span><span class="tag plain">Level ' + c.level + '</span><span class="tag plain">' + esc(c.conceptName) + '</span><span class="grow"></span><a class="btn sm" href="' + go + '">' + icon("play") + 'Study this card</a></div><h3>' + esc(front) + '</h3>' + (detail ? '<pre class="fc-lib-code">' + esc(detail) + '</pre>' : '') + (answer && c.type !== "keyword" ? '<details><summary class="small">Show answer</summary><p class="small">' + esc(answer) + '</p></details>' : '') + '</article>';
+  }
+  function flashLibraryPager(page, pages, total, size) {
+    var out = '<div class="pager"><button data-fc-page="' + (page - 1) + '"' + (page <= 0 ? " disabled" : "") + ' aria-label="Previous page">' + icon("chevLeft") + '</button>';
+    var nums = [];
+    for (var i = 0; i < pages; i++) if (i < 1 || i >= pages - 1 || Math.abs(i - page) <= 2) nums.push(i); else if (nums[nums.length - 1] !== -1) nums.push(-1);
+    nums.forEach(function (i) { out += i < 0 ? "<button disabled>…</button>" : '<button data-fc-page="' + i + '" class="' + (i === page ? "on" : "") + '">' + (i + 1) + '</button>'; });
+    out += '<button data-fc-page="' + (page + 1) + '"' + (page >= pages - 1 ? " disabled" : "") + ' aria-label="Next page">' + icon("chevRight") + '</button><span class="info">Showing ' + (total ? page * size + 1 : 0) + "–" + Math.min(total, (page + 1) * size) + " of " + total.toLocaleString() + ' flashcards</span><select data-fc-size aria-label="Per page">' + [10, 25, 50, 100].map(function (n) { return '<option value="' + n + '"' + (n === size ? " selected" : "") + '>' + n + ' / page</option>'; }).join("") + '</select></div>';
+    return out;
+  }
+  function viewFlashcardLibrary() {
+    var q = route.q, params = new URLSearchParams();
+    ["q", "type", "level", "concept", "sort", "page", "size"].forEach(function (k) { if (q.get(k)) params.set(k, q.get(k)); });
+    learnApi("/flashcards" + (params.toString() ? "?" + params : "")).then(function (r) {
+      if (route.name !== "flashcards" || route.q.get("study") === "1" || route.q.get("concept")) return;
+      var type = q.get("type") || "all", level = q.get("level") || "all", concept = q.get("concept") || "all", sort = q.get("sort") || "path", size = Number(q.get("size")) || 25;
+      var types = [["all", "All types"], ["keyword", "Keyword"], ["blank", "Fill in the blank"], ["order", "Clause order"], ["error", "Spot the error"]];
+      var levels = r.levels || [], concepts = r.concepts || [];
+      var chip2 = function (key, value, label, current) { var n = new URLSearchParams(q); if (value === "all") n.delete(key); else n.set(key, value); n.delete("page"); n.delete("study"); return '<a class="chip' + (String(current) === value ? " on" : "") + '" href="#/flashcards' + (n.toString() ? "?" + n : "") + '">' + esc(label) + '</a>'; };
+      var html = '<div class="page"><div class="col"><div class="hero"><div><div class="eyebrow">Flashcards</div><h1>SQL Flashcard Library</h1><p>' + r.total.toLocaleString() + ' published flashcards. Browse the full bank, filter by level or card type, then study a concept.</p></div><div class="acts"><a class="btn primary" href="#/flashcards?study=1">' + icon("play") + 'Start today\'s review</a></div></div>';
+      html += '<section class="card filters fc-filters"><div class="f-group"><div class="f-label">' + icon("cards") + 'Card type</div><div class="f-chips">' + types.map(function (x) { return chip2("type", x[0], x[1], type); }).join("") + '</div></div><div class="f-group"><div class="f-label">' + icon("levels") + 'Level</div><div class="f-chips">' + chip2("level", "all", "All levels", level) + levels.map(function (x) { return chip2("level", String(x.level), "Level " + x.level, level); }).join("") + '</div></div><div class="f-group f-wide"><div class="f-label">' + icon("search") + 'Concept</div><select class="inp fc-concept-select" data-fc-concept><option value="all">All concepts</option>' + concepts.map(function (x) { return '<option value="' + esc(x.slug) + '"' + (concept === x.slug ? ' selected' : '') + '>Level ' + x.level + ' · ' + esc(x.name) + ' (' + x.count.toLocaleString() + ')</option>'; }).join("") + '</select></div></section>';
+      html += '<div class="listbar"><label class="search-inline">' + icon("search") + '<input data-fc-search value="' + esc(q.get("q") || "") + '" placeholder="Search flashcards…" aria-label="Search flashcards"></label><label class="sortsel">Sort by <select data-fc-sort><option value="path"' + (sort === "path" ? " selected" : "") + '>Level order</option><option value="new"' + (sort === "new" ? " selected" : "") + '>Newest first</option></select></label></div>';
+      html += r.items.length ? '<div class="dlist fc-lib-list">' + r.items.map(flashLibraryCard).join("") + '</div>' : '<div class="card empty">' + icon("search") + '<div>Nothing matches these filters.</div><p><a class="btn" href="#/flashcards">Clear filters</a></p></div>';
+      html += flashLibraryPager(r.page, r.pages, r.total, r.size) + '</div>' + rail() + '</div>';
+      view.innerHTML = html;
+      // the search re-renders the page: keep the learner typing (what they typed, including keys pressed while the
+      // results loaded, and where the cursor was)
+      var typing = viewFlashcardLibrary._typing;
+      if (typing && Date.now() - typing.at < 3000) {
+        var box = view.querySelector("[data-fc-search]");
+        if (box) { box.value = typing.value; box.focus(); box.selectionStart = box.selectionEnd = Math.min(typing.pos, typing.value.length); }
+      }
+    }).catch(function (e) { view.innerHTML = '<div class="page full"><div class="card empty"><div class="bad-txt">' + esc(e.message) + '</div></div></div>'; });
+  }
   function viewFlashcards() {
     var slug = route.q && route.q.get("concept");
+    var selectedCard = route.q && route.q.get("card");
+    if (!slug && route.q.get("study") !== "1") { viewFlashcardLibrary(); return; }
     view.innerHTML = '<div class="page full"><div class="col fc-page"><div class="card card-pad" aria-busy="true"><p class="muted">Loading cards…</p></div></div></div>';
-    learnApi("/flash/session" + (slug ? "?concept=" + encodeURIComponent(slug) : "")).then(function (s) {
+    var sessionQ = []; if (slug) sessionQ.push("concept=" + encodeURIComponent(slug)); if (selectedCard) sessionQ.push("card=" + encodeURIComponent(selectedCard));
+    learnApi("/flash/session" + (sessionQ.length ? "?" + sessionQ.join("&") : "")).then(function (s) {
       if (route.name !== "flashcards") return;
       S.fc = { slug: slug, cards: s.cards, i: 0, right: 0, wrong: 0, later: s.later, results: [] };
       if (!s.cards.length && slug) {
@@ -1939,7 +1981,7 @@
   }
   function flashShell(inner) {
     var F = S.fc, c = F.cards[F.i];
-    var back = F.slug ? '<a href="#/concept/' + esc(F.slug) + '?tab=memorize">' + esc((c && c.conceptName) || "Concept") + "</a>" : '<a href="#/home">Home</a>';
+    var back = F.slug ? '<a href="#/concept/' + esc(F.slug) + '?tab=memorize">' + esc((c && c.conceptName) || "Concept") + "</a>" : '<a href="#/flashcards">Flashcard library</a>';
     return '<div class="page full"><div class="col fc-page"><div class="crumbs">' + back + icon("chevRight") + "<span>Flashcards</span></div>" +
       '<div class="fc-top"><span class="mono">' + (F.i < F.cards.length ? "Card " + (F.i + 1) + " of " + F.cards.length : "Done") + '</span><span class="bar" role="progressbar" aria-label="Session progress" aria-valuemin="0" aria-valuemax="' + F.cards.length + '" aria-valuenow="' + F.i + '"><span style="width:' + pct(F.i, F.cards.length) + '%"></span></span><span class="small"><b class="ok-txt">' + F.right + '</b> right · <b class="bad-txt">' + F.wrong + "</b> to review</span></div>" + inner + "</div></div>";
   }
@@ -2688,7 +2730,7 @@
       return '<section class="card card-pad today" id="todayPlan" aria-busy="true"><div class="card-h"><h2 class="h3">' + icon("target") + 'Today</h2></div><p class="muted small">Loading your plan…</p></section>';
     }
     var st = streak(), goal = dailyGoal(), steps = [];
-    var fcRow = T.flashcards.due ? ["cards", "Memorize", plural(T.flashcards.due, "flashcard") + " due", "#/flashcards", "Review"]
+    var fcRow = T.flashcards.due ? ["cards", "Memorize", plural(T.flashcards.due, "flashcard") + " due", "#/flashcards?study=1", "Review"]
       : T.flashcards.newConcept ? ["cards", "Memorize", "New cards: " + T.flashcards.newConcept.name, "#/flashcards?concept=" + T.flashcards.newConcept.slug, "Start"]
       : ["cards", "Memorize", "No flashcards due" + (T.flashcards.newConcept === null ? " (cards appear once approved)" : ""), null, null];
     steps.push(fcRow);
@@ -2745,6 +2787,8 @@
     if (bmBtn) { var on2 = toggleBookmark(bmBtn.getAttribute("data-bm-btn")); bmBtn.innerHTML = icon("bookmark") + (on2 ? "Bookmarked" : "Bookmark"); bmBtn.classList.toggle("ghost-accent", on2); return; }
     var go = t.closest("[data-go]");
     if (go && !t.closest("a,button")) { location.hash = go.getAttribute("data-go"); return; }
+    var fcp = t.closest("[data-fc-page]");
+    if (fcp && !fcp.disabled) { var fp = new URLSearchParams(route.q); fp.set("page", fcp.getAttribute("data-fc-page")); location.hash = "#/flashcards?" + fp; return; }
     var fl = t.closest("[data-filter]");
     if (fl) { S.filters[fl.getAttribute("data-filter")] = fl.getAttribute("data-value"); S.filters.page = 0; saveFilters(); render(); return; }
     var pg = t.closest("[data-page]");
@@ -2835,10 +2879,12 @@
       clearTimeout(viewList._t);
       viewList._t = setTimeout(function () { var pos = e.target.selectionStart; render(); var inp = view.querySelector('[data-act="filter-q"]'); if (inp) { inp.focus(); inp.selectionStart = inp.selectionEnd = pos; } }, 250);
     }
+    if (e.target.matches('[data-fc-search]')) { var fq = new URLSearchParams(route.q); if (e.target.value) fq.set("q", e.target.value); else fq.delete("q"); fq.delete("page"); viewFlashcardLibrary._typing = { value: e.target.value, pos: e.target.selectionStart, at: Date.now() }; clearTimeout(viewFlashcardLibrary._t); viewFlashcardLibrary._t = setTimeout(function () { location.hash = "#/flashcards?" + fq; }, 250); }
   });
   view.addEventListener("change", function (e) {
     if (e.target.matches('[data-act="sort"]')) { S.filters.sort = e.target.value; S.filters.page = 0; saveFilters(); render(); }
     if (e.target.matches('[data-act="size"]')) { S.filters.size = Number(e.target.value); S.filters.page = 0; saveFilters(); render(); }
+    if (e.target.matches('[data-fc-concept], [data-fc-sort], [data-fc-size]')) { var fq = new URLSearchParams(route.q), key = e.target.matches('[data-fc-concept]') ? "concept" : e.target.matches('[data-fc-sort]') ? "sort" : "size", value = e.target.value; if (!value || value === "all" || (key === "sort" && value === "path") || (key === "size" && value === "25")) fq.delete(key); else fq.set(key, value); fq.delete("page"); location.hash = "#/flashcards" + (fq.toString() ? "?" + fq : ""); }
   });
 
   // settings menu (header gear)

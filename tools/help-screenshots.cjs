@@ -37,6 +37,7 @@ if (/:4000\b/.test(BASE)) { console.error("Run this against a server on a copy o
     await shot("learn.jpg", "/#/learn/" + concept + "?s=2", { wait: ".ln-try", before: async () => { await p.click("[data-ex-run]"); await sleep(800); } });
     await shot("home.jpg", "/#/home", { wait: ".page" });
     await shot("flashcards.jpg", "/#/flashcards?concept=" + concept, { wait: ".fc-page" });
+    await shot("flashcard-library.jpg", "/#/flashcards", { wait: ".fc-lib-list" });
     await shot("levels.jpg", "/#/levels", { wait: ".page" });
     await shot("cards.jpg", "/#/concept/" + concept + "?tab=understand", { wait: ".xcard", element: ".xcard" });
     await shot("challenge.jpg", "/#/challenge?level=1", { wait: ".challenge-page" });

@@ -235,6 +235,20 @@ a.stat:hover { border-color: var(--accent); }
 .bm.on { color: var(--warn); }
 .bm.on svg { fill: currentColor; }
 .dgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 12px; }
+.fc-lib-list { gap: 12px; }
+.fc-lib-card { padding: 16px 18px; }
+.fc-lib-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.fc-lib-card h3 { margin: 0; font-size: 16px; line-height: 1.4; }
+.fc-lib-code { margin: 12px 0 0; padding: 12px; border-radius: 8px; background: var(--code-bg); color: var(--fg-2); white-space: pre-wrap; overflow-wrap: anywhere; font-size: 12.5px; }
+.fc-lib-card details { margin-top: 12px; }
+.fc-lib-card details summary { cursor: pointer; color: var(--accent); }
+.fc-lib-card[data-go] { cursor: pointer; }
+.fc-lib-card[data-go]:hover { border-color: #b7cbff; }
+.fc-concept-select { width: 100%; max-width: 720px; }
+/* the library has three filter groups and fifteen level chips: one full-width row each (two columns squeezed the levels) */
+.filters.fc-filters { grid-template-columns: minmax(0, 1fr); }
+.filters.fc-filters .f-group + .f-group { border-left: 0; border-top: 1px solid var(--line); }
+.filters.fc-filters .f-wide { border-top: 1px solid var(--line); }
 .dcard { padding: 16px; display: flex; flex-direction: column; gap: 10px; cursor: pointer; min-width: 0; }
 .dcard:hover { border-color: #b7cbff; }
 .dcard .dtitle { white-space: normal; }
