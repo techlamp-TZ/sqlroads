@@ -20,7 +20,7 @@ const prof = path.join(web, ".check-profile-" + Date.now());
 const browser = await puppeteer.launch({ executablePath: process.env.CHROME || "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: "new", userDataDir: prof });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 const out = {}; let ok = true;
-const open = async (id, theme = "light", width = 1366) => { const p = await browser.newPage(); await p.setViewport({ width, height: 900 }); await p.goto(`${BASE}/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`, { waitUntil: "networkidle0" }); await p.evaluate(() => document.fonts.ready); await sleep(500); return p; };
+const open = async (id, theme = "light", width = 1366) => { const p = await browser.newPage(); await p.setViewport({ width, height: 900 }); await p.goto(`${BASE}/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`, { waitUntil: "networkidle0", timeout: 120000 }); await p.evaluate(() => document.fonts.ready); await sleep(500); return p; };
 try {
   // tabs
   out.tabs = [];

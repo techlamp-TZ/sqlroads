@@ -29,7 +29,7 @@ async function open(story, theme = "light") {
   p.on("pageerror", (e) => errors.push(e.message));
   await p.evaluateOnNewDocument(SEEDED);
   await p.setViewport({ width: 1366, height: 900 });
-  await p.goto(`${served.base}/iframe.html?id=shared-pieces--${story}&viewMode=story&globals=theme:${theme}`, { waitUntil: "networkidle0" });
+  await p.goto(`${served.base}/iframe.html?id=shared-pieces--${story}&viewMode=story&globals=theme:${theme}`, { waitUntil: "networkidle0", timeout: 120000 });
   await p.waitForSelector(".wf-pair [data-side=new] .wf-legacy > *, .wf-pair [data-side=new] button", { timeout: 60000 });
   await sleep(800);
   return { p, calls, errors };

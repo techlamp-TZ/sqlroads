@@ -35,7 +35,9 @@ try {
     page.on("console", (m) => { if (m.type() === "error" && !/Failed to load resource|Download the React DevTools/.test(m.text())) errors.push("console: " + m.text().slice(0, 200)); });
     page.on("response", (r) => { if (r.status() >= 400 && !r.url().endsWith("/favicon.ico")) errors.push(r.status() + " " + r.url()); });
     await page.setViewport({ width, height: width === 390 ? 844 : 900, deviceScaleFactor: 1 });
-    await page.goto(`${BASE}/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`, { waitUntil: "networkidle0" });
+    // the shared-piece stories download the old app, its SQL engine (1.2 MB from the CDN) and the library: allow time, retry once
+    const url = `${BASE}/iframe.html?id=${id}&viewMode=story&globals=theme:${theme}`;
+    await page.goto(url, { waitUntil: "networkidle0", timeout: 120000 }).catch(() => page.goto(url, { waitUntil: "networkidle0", timeout: 120000 }));
     await page.waitForSelector("#storybook-root > *, dialog[open]", { timeout: 15000 }).catch(() => errors.push("story did not render"));
     await page.evaluate(() => document.fonts.ready);
     await new Promise((r) => setTimeout(r, 900)); // dialog / toast / tooltip transitions
