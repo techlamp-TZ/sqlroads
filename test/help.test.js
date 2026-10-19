@@ -31,7 +31,8 @@ test("every number in both guides comes from the API: no token without a value, 
   }
   const html = Help.textHtml("A **b** `c`\n- one\n- two\nEnd {{concepts}}", nums);
   assert.match(html, /<b>b<\/b> <code>c<\/code>/);
-  assert.match(html, /<ul><li>one<\/li><li>two<\/li><\/ul><p>End \d+<\/p>/);
+  // the number may carry thousands separators ("15,173", "15 173"); it is still one whole number from the API
+  assert.match(html, /<ul><li>one<\/li><li>two<\/li><\/ul><p>End \d{1,3}(?:[,.   ]\d{3})*<\/p>/);
 });
 
 test("each page's '?' opens a section that exists; section ids are unique; every section has a title and text", () => {
