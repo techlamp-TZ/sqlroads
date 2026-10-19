@@ -1,6 +1,6 @@
 // Creating items by hand (admin "Create"): every type the app has, through the same checks generated items get, saved
 // as "Mine" (source 'mine'), published or kept as a draft, logged in History with Undo, editable later. Also: building a
-// dataset from pasted rows, CSV or a CREATE + INSERT script, and CSV / JSON bulk import of exercises and MCQs.
+// dataset from pasted rows, CSV or a CREATE + INSERT script, and CSV / JSON bulk import of exercises, MCQs and flashcards.
 const crypto = require("crypto");
 const { DatabaseSync } = require("node:sqlite");
 const db = require("../db.js");
@@ -336,18 +336,28 @@ async function datasetCreate(body) {
   return { ok: true, ...ds, ...p };
 }
 
-// ---------- bulk import: exercises and MCQs, through the same checks ----------
+// ---------- bulk import: exercises, MCQs and flashcards, through the same checks ----------
 function importRow(kind, raw, defaults) {
-  const get = (...names) => { for (const n of names) for (const k of Object.keys(raw)) if (k.trim().toLowerCase() === n) return str(raw[k]); return ""; };
+  const value = (...names) => { for (const n of names) for (const k of Object.keys(raw)) if (k.trim().toLowerCase() === n) return raw[k]; return ""; };
+  const get = (...names) => str(value(...names));
+  const getList = (...names) => { const v = value(...names); return Array.isArray(v) ? v.map(str).filter(Boolean) : list(v); };
   const base = { level: Number(get("level")) || Number(defaults.level) || 0, concept: get("concept") || defaults.concept || "", stage: get("stage").toLowerCase() || defaults.stage || "", diff: (get("difficulty", "diff") || defaults.diff || "").toLowerCase(), dataset: get("dataset") || defaults.dataset || "" };
-  if (kind === "exercise") return { ...base, type: "exercise", fields: { title: get("title"), task: get("task", "prompt", "question"), solution_sql: get("solution", "solution_sql"), accepted: get("accepted"), hints: get("hints"), ordered: /^(1|yes|true|y)$/i.test(get("ordered", "order matters")) } };
+  if (kind === "exercise") return { ...base, type: "exercise", fields: { title: get("title"), task: get("task", "prompt", "question"), solution_sql: get("solution", "solution_sql"), accepted: getList("accepted"), hints: getList("hints"), ordered: /^(1|yes|true|y)$/i.test(get("ordered", "order matters")) } };
+  if (FLASH[kind]) {
+    const type = FLASH[kind];
+    const fields = type === "keyword" ? { front: get("front", "question", "keyword"), back: get("back", "answer", "explanation") }
+      : type === "blank" ? { prompt: get("prompt", "question"), sql: get("sql", "solution"), answer: get("answer") }
+      : type === "order" ? { prompt: get("prompt", "question"), parts: getList("parts", "clauses") }
+      : { prompt: get("prompt", "question"), wrong_sql: get("wrong_sql", "wrong"), fixed_sql: get("fixed_sql", "fixed", "solution"), explanation: get("explanation", "why") };
+    return { ...base, type: kind, fields };
+  }
   const letters = ["a", "b", "c", "d", "e"];
   const options = get("options") ? list(get("options")) : letters.map((l) => get("option_" + l, "option " + l, l)).filter(Boolean);
   const ans = get("answer"), answer = /^[a-e]$/i.test(ans) ? letters.indexOf(ans.toLowerCase()) : Number(ans) - 1;
   return { ...base, type: "mcq", fields: { q: get("question", "q"), code: get("code"), options, answer, why: get("why", "explanation"), why_wrong: letters.map((l) => get("why_wrong_" + l, "why not " + l)) } };
 }
 async function importPreview(body) {
-  const b = body || {}, kind = b.kind === "mcq" ? "mcq" : "exercise";
+  const b = body || {}, allowed = ["exercise", "mcq", ...Object.keys(FLASH)], kind = allowed.includes(b.kind) ? b.kind : "exercise";
   if (!Array.isArray(b.rows) || !b.rows.length) throw bad("No rows to import");
   if (b.rows.length > 200) throw bad("Import at most 200 rows at a time");
   const out = [];
@@ -355,7 +365,7 @@ async function importPreview(body) {
     const body1 = importRow(kind, raw, b.defaults || {});
     let r;
     try { r = await check(body1); } catch (e) { r = { status: "fail", checks: [{ ok: false, label: "Row", detail: e.message }] }; }
-    out.push({ row: k + 1, body: body1, status: r.status, title: r.data ? titleOf(r) : body1.fields.title || body1.fields.q || "", failed: r.checks.filter((c) => !c.ok).map((c) => (c.warn ? "warning: " : "") + c.label + (c.detail ? ": " + c.detail : "")) });
+    out.push({ row: k + 1, body: body1, status: r.status, title: r.data ? titleOf(r) : body1.fields.title || body1.fields.q || body1.fields.front || body1.fields.prompt || kind, failed: r.checks.filter((c) => !c.ok).map((c) => (c.warn ? "warning: " : "") + c.label + (c.detail ? ": " + c.detail : "")) });
   }
   return { kind, rows: out, pass: out.filter((x) => x.status === "pass").length, warn: out.filter((x) => x.status === "warn").length, fail: out.filter((x) => x.status === "fail").length };
 }

@@ -722,8 +722,26 @@
       stageList = stageList.filter(function (x) { return keep(catOf(x), x.level, x.kind); });
       items = items.filter(function (i) { return keep(catOf(i), itemLevel(i.data), i.kind === "mcq" ? "mcq" : "draft"); });
       refsList = refsList.filter(function (x) { return keep(x.category || "disagree", x.level, "drill"); });
-      var passing = items.filter(function (i) { return i.verify && i.verify.status === "pass"; });
+      // Large imports can put tens of thousands of drafts in the queue. Keep all
+      // filtered data for counts and actions, but only put one page into the DOM.
+      var draftPageSize = 100;
+      var draftPage = Math.max(0, Number(route.q.get("page")) || 0);
+      var draftPages = Math.max(1, Math.ceil(items.length / draftPageSize));
+      draftPage = Math.min(draftPages - 1, draftPage);
+      var pageItems = items.slice(draftPage * draftPageSize, (draftPage + 1) * draftPageSize);
+      var passing = pageItems.filter(function (i) { return i.verify && i.verify.status === "pass"; });
       var total = allItems.length + allRefs.length + allTags.length + allStage.length, shown = items.length + refsList.length + tagList.length + stageList.length;
+      var draftPager = "";
+      if (draftPages > 1) {
+        var pageLink = function (n, label, aria) {
+          var q = new URLSearchParams(route.q);
+          if (n) q.set("page", String(n)); else q.delete("page");
+          return '<a class="btn sm" href="#/review' + (q.toString() ? "?" + q : "") + '" aria-label="' + aria + '">' + label + "</a>";
+        };
+        draftPager = '<div class="pager-row"><span class="mono">' + (draftPage * draftPageSize + 1) + "–" + Math.min(items.length, (draftPage + 1) * draftPageSize) + ' of ' + items.length.toLocaleString() + ' drafts</span><span class="grow"></span>' +
+          (draftPage ? pageLink(draftPage - 1, icon("chevLeft"), "Previous draft page") : "") +
+          (draftPage < draftPages - 1 ? pageLink(draftPage + 1, icon("chevRight"), "Next draft page") : "") + "</div>";
+      }
       var html = '<div class="page admin"><div class="col"><div class="hero"><div><div class="eyebrow">Review queue</div><h2 class="h1">' + plural(total, "item") + " to review</h2><p>" + (job ? 'From one generation run. <a href="#/review">Show everything</a>' : plural(allItems.length, "generated draft") + " · " + plural(allRefs.length, "reference answer") + " where the providers disagree · " + plural(allTags.length, "uncertain tag") + " · " + plural(allStage.length, "new flashcard or predict item", "new flashcard or predict items") + ".") + "</p></div></div>";
       if (lastBulk) html += bulkResultHtml(lastBulk);
       var opt = function (v, label, cur) { return '<option value="' + v + '"' + (cur === v ? " selected" : "") + ">" + label + "</option>"; };
@@ -744,8 +762,8 @@
           BULK_ACTIONS.map(function (a) { return '<button type="button" class="btn sm' + (a[0] === "reject" ? " danger" : "") + '" data-bulkact="' + a[0] + '" disabled>' + a[1] + "</button>"; }).join("") + "</span></div>";
       }
       html += '<h3 class="q-sec">Generated drafts <span class="mono muted">' + items.length + "</span></h3>";
-      if (items.length) html += '<div class="actions"><button class="btn ok" data-act="approve-pass"' + (passing.length ? "" : " disabled") + ">" + icon("check") + "Approve all " + passing.length + " verified</button><span class=\"muted small\">Drafts with warnings or failed checks need a look first.</span></div>";
-      html += items.length ? items.map(itemCard).join("") : '<div class="card empty">' + icon("inbox") + "<div>" + (allItems.length ? "No drafts match these filters." : 'No drafts waiting. <a href="#/generate">Generate some content</a>.') + "</div></div>";
+      if (items.length) html += '<div class="actions"><button class="btn ok" data-act="approve-pass"' + (passing.length ? "" : " disabled") + ">" + icon("check") + "Approve all " + passing.length + " verified on this page</button><span class=\"muted small\">Drafts with warnings or failed checks need a look first.</span></div>";
+      html += items.length ? pageItems.map(itemCard).join("") + draftPager : '<div class="card empty">' + icon("inbox") + "<div>" + (allItems.length ? "No drafts match these filters." : 'No drafts waiting. <a href="#/generate">Generate some content</a>.') + "</div></div>";
       if (!job) {
         html += '<h3 class="q-sec">Reference answers to check <span class="mono muted">' + refsList.length + '</span></h3><p class="muted small" style="margin:-6px 0 4px">Built-in drills where the pipeline couldn\'t settle on one answer. Tick every solution that is right (a learner is correct when they match any of them) and save, write your own, or leave the drill unchecked (it becomes a self-check). <a href="#/review?view=history">History</a></p>';
         html += bulkBar(fx);
@@ -778,7 +796,7 @@
       };
       view.onchange = function (e) {
         var qf = e.target.closest("[data-qf]");
-        if (qf) { var q = new URLSearchParams(route.q); q.set(qf.getAttribute("data-qf"), qf.value); if (qf.value === "all") q.delete(qf.getAttribute("data-qf")); location.hash = "#/review" + (q.toString() ? "?" + q : ""); return; }
+        if (qf) { var q = new URLSearchParams(route.q); q.set(qf.getAttribute("data-qf"), qf.value); q.delete("page"); if (qf.value === "all") q.delete(qf.getAttribute("data-qf")); location.hash = "#/review" + (q.toString() ? "?" + q : ""); return; }
         if (e.target.id === "selAll") { $$("[data-sel]").forEach(function (b) { b.checked = e.target.checked; }); selSync(); return; }
         if (e.target.matches("[data-sel]") || e.target.id === "selHidden") { selSync(); return; }
         if (e.target.matches("[data-tagstage]")) { setTagStage(e.target); return; }
@@ -2126,11 +2144,11 @@
       }
     }).catch(function (e) { out.innerHTML = '<p class="bad-txt" role="alert">' + esc(e.message) + "</p>"; });
   }
-  // ---------- bulk import: exercises or MCQs from CSV / JSON, a pass / fail summary first ----------
+  // ---------- bulk import: exercises, MCQs or flashcards from CSV / JSON, a pass / fail summary first ----------
   function importHtml() {
-    return '<section class="card card-pad c-imp" aria-labelledby="imp-h"><div class="card-h"><h3 id="imp-h">' + icon("download") + 'Import exercises or MCQs</h3></div>' +
-      '<p class="muted small">Columns for exercises: title, task, solution, level, difficulty, dataset, concept, stage, accepted, hints (several separated by ||), ordered. For MCQs: question, option_a … option_e, answer (A-E), why, why_wrong_a … why_wrong_e, level, difficulty, concept, stage. Every row runs the same checks as one item; nothing is saved until you choose.</p>' +
-      '<div class="c-grid"><div class="c-f"><label for="imp-kind">Rows are</label><select class="inp" id="imp-kind"><option value="exercise">Exercises</option><option value="mcq">MCQs</option></select></div>' +
+    return '<section class="card card-pad c-imp" aria-labelledby="imp-h"><div class="card-h"><h3 id="imp-h">' + icon("download") + 'Import exercises, MCQs or flashcards</h3></div>' +
+      '<p class="muted small">Choose the row type, then provide flat CSV / JSON fields. Flashcards use: keyword = front, back; blank = prompt, sql, answer; order = prompt, parts (one clause per line or ||); error = prompt, wrong_sql, fixed_sql, explanation. Shared fields are level and concept; SQL-based cards also need dataset. Every row runs the same checks as one item; nothing is saved until you choose.</p>' +
+      '<div class="c-grid"><div class="c-f"><label for="imp-kind">Rows are</label><select class="inp" id="imp-kind"><option value="exercise">Exercises</option><option value="mcq">MCQs</option><option value="flashcard_keyword">Flashcards: keyword</option><option value="flashcard_blank">Flashcards: fill in the blank</option><option value="flashcard_order">Flashcards: clause order</option><option value="flashcard_error">Flashcards: spot the error</option></select></div>' +
       '<div class="c-f"><label for="imp-file">CSV or JSON file</label><input type="file" class="inp" id="imp-file" accept=".csv,.json,.txt,text/csv,application/json"></div></div>' +
       '<label for="imp-text">…or paste CSV / JSON</label><textarea class="inp mono" rows="8" id="imp-text" spellcheck="false"></textarea>' +
       '<fieldset class="c-save"><legend>Rows that pass</legend><label class="c-check"><input type="radio" name="imp-pub" value="1" checked><span>Publish</span></label><label class="c-check"><input type="radio" name="imp-pub" value="0"><span>Save as drafts</span></label></fieldset>' +

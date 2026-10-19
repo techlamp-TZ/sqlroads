@@ -13,7 +13,9 @@ function liveMcqs() { return content.allMcqs().filter((m) => m.status === "publi
 /** Everything waiting in the review queue, counted once: MCQ / drill drafts, reference answers to check, learning-model
  *  drafts (flashcards, predict items, lessons) and concept tags. The sidebar and the Overview both use this. */
 function queueCounts() {
-  const drafts = content.allItems("mcq").concat(content.allItems("drill")).filter((i) => i.status === "draft").length;
+  // Keep the sidebar fast even when the review queue contains a large import.
+  // The review page loads the item details separately; the badge only needs a count.
+  const drafts = db.prepare("SELECT COUNT(*) AS n FROM content_items WHERE status = 'draft'").get().n;
   const refReview = require("../library/refs.js").reviewList().length;
   const stage = db.prepare("SELECT COUNT(*) n FROM stage_items WHERE status = 'draft'").get().n;
   const tags = db.prepare("SELECT COUNT(*) n FROM item_tags WHERE status = 'review'").get().n;
