@@ -1,0 +1,11 @@
+// Catalog and test page only: the old piece and the wrapper side by side (stacked on narrow screens).
+@use "../../tokens/tokens.scss" as *;
+
+.wf-pair { margin: 0 0 $wf-space-32; min-width: 0; }
+.wf-pair-h { font: $wf-font-weight-bold #{$wf-font-size-500}/1.2 $wf-font-sans; color: $wf-text; margin: 0 0 $wf-space-12; }
+.wf-pair-cols { display: grid; grid-template-columns: minmax(0, 1fr); gap: $wf-space-16; align-items: start; }
+@include wf-up(md) { .wf-pair-cols { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.wf-pair-col { min-width: 0; }
+.wf-pair-tag { font: $wf-font-weight-bold #{$wf-font-size-100}/1.4 $wf-font-mono; color: $wf-text-muted; text-transform: uppercase; letter-spacing: 0.04em; margin: 0 0 $wf-space-8; }
+.wf-pair-said { font: #{$wf-font-size-200}/1.4 $wf-font-mono; color: $wf-text-muted; margin: $wf-space-8 0 0; min-height: 1.4em; }
+.wf-pair-row { display: flex; flex-wrap: wrap; align-items: center; gap: $wf-space-24; margin-bottom: $wf-space-16; }

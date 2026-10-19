@@ -16,7 +16,7 @@ function fakeShared(over = {}) {
     tablesPanel: vi.fn((ds, sql) => (/CREATE TABLE/i.test(sql) ? "" : `<section class="card schema-panel" data-sp="sp2">${ds}</section>`)),
     sqlWorkspace: vi.fn((l, slug) => `<section class="card ws-card" data-ex="${slug}"><textarea class="ln-sql" aria-label="Query">${l.example.sql}</textarea><button type="button" data-ex-run>Run</button></section>`),
     wsMount: vi.fn(),
-    lessonExample: vi.fn((ex) => `<pre class="mcq-code">${ex.sql}</pre>`),
+    exampleBox: vi.fn((l) => `<pre class="mcq-code">${l.example.sql}</pre>`),
     resultTable: vi.fn((r) => `<div class="grid-wrap"><table class="grid"><thead><tr><th>${r.columns[0]}</th></tr></thead></table></div>`),
     diffTables: vi.fn(() => '<div class="diff-legend small"></div><div class="compare"><table class="grid rdiff" aria-label="Expected result"><thead><tr><th scope="col">a</th></tr></thead><tbody></tbody></table></div>'),
     miniTable: vi.fn(() => '<div class="tbl-wrap po-tbl"><table class="grid"><thead><tr><th>x</th></tr></thead></table></div>'),
@@ -65,8 +65,8 @@ describe("wrappers render through the one copy in app.js", () => {
 
   test("new props rebuild the markup", () => {
     const s = fakeShared();
-    const { container, rerender } = withShared(s, <ExampleBox example={{ sql: "SELECT 1" }} />);
-    rerender(<SharedProvider value={s}><ExampleBox example={{ sql: "SELECT 2" }} /></SharedProvider>);
+    const { container, rerender } = withShared(s, <ExampleBox lesson={{ example: { sql: "SELECT 1" } }} />);
+    rerender(<SharedProvider value={s}><ExampleBox lesson={{ example: { sql: "SELECT 2" } }} /></SharedProvider>);
     expect(container.querySelector("pre").textContent).toBe("SELECT 2");
   });
 

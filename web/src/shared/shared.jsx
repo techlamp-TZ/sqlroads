@@ -76,10 +76,11 @@ export function SqlWorkspace({ lesson, slug, opts }) {
   return <LegacyHtml html={html} mount={s.wsMount} label="sqlWorkspace" />;
 }
 
-/** lessonExample(example): a lesson's example (query and its real result, before/after, not-run, error) */
-export function ExampleBox({ example }) {
+/** exampleBox(lesson): a lesson's example, as on the lesson card (the query, its real result and the explanation;
+ * the special formats before/after, not-run, error and twice through lessonExample) */
+export function ExampleBox({ lesson }) {
   const s = useShared();
-  const html = useMemoByKey(key(example), () => (example ? s.lessonExample(example) : ""));
+  const html = useMemoByKey(key(lesson), () => (lesson ? s.exampleBox(lesson) : ""));
   if (!html) return null;
   return <LegacyHtml html={html} label="exampleBox" />;
 }

@@ -7,6 +7,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer-core";
+import { serveCatalog } from "./serve-catalog.mjs";
 
 const web = fileURLToPath(new URL("../", import.meta.url));
 const ROOT = path.join(web, "storybook-static");
@@ -18,13 +19,9 @@ const SHOTS = arg("--shots", "");
 const AXE = fs.readFileSync(path.join(web, "node_modules/axe-core/axe.min.js"), "utf8");
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".mjs": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".woff2": "font/woff2", ".png": "image/png" };
 
-const server = http.createServer((q, r) => {
-  const p = path.join(ROOT, decodeURIComponent(q.url.split("?")[0]).replace(/^\/+/, "") || "index.html");
-  if (!p.startsWith(ROOT)) { r.writeHead(403); return r.end(); }
-  fs.readFile(p, (e, d) => { if (e) { r.writeHead(404); return r.end(); } r.writeHead(200, { "content-type": TYPES[path.extname(p)] || "application/octet-stream" }); r.end(d); });
-});
-await new Promise((ok) => server.listen(0, "127.0.0.1", ok));
-const BASE = "http://127.0.0.1:" + server.address().port;
+const served = await serveCatalog();
+const server = { close: served.close };
+const BASE = served.base;
 const ids = Object.values(JSON.parse(fs.readFileSync(path.join(ROOT, "index.json"), "utf8")).entries).filter((e) => e.type === "story" && e.id.includes(ONLY)).map((e) => e.id);
 
 const prof = path.join(web, ".axe-profile-" + Date.now());

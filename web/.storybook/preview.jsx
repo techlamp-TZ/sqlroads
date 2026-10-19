@@ -14,11 +14,12 @@ const withTheme = (Story, ctx) => {
   const theme = ctx.globals.theme === "dark" ? "dark" : "light";
   if (theme === "dark") document.documentElement.setAttribute("data-theme", "dark");
   else document.documentElement.removeAttribute("data-theme");
+  const Frame = ctx.parameters.legacyApp ? "header" : "main";
   return (
-    <main className="wf-root wf-catalog" lang="en">
+    <Frame className="wf-root wf-catalog" lang="en">
       <h1 className="cat-h">{ctx.title.split("/").pop() + ": " + ctx.name}</h1>
       <Story />
-    </main>
+    </Frame>
   );
 };
 

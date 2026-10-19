@@ -8,13 +8,14 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import puppeteer from "puppeteer-core";
+import { serveCatalog } from "./serve-catalog.mjs";
 
 const web = fileURLToPath(new URL("../", import.meta.url));
 const ROOT = path.join(web, "storybook-static");
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".json": "application/json", ".svg": "image/svg+xml", ".woff2": "font/woff2" };
-const server = http.createServer((q, r) => { const p = path.join(ROOT, decodeURIComponent(q.url.split("?")[0]).replace(/^\/+/, "") || "index.html"); fs.readFile(p, (e, d) => { if (e) { r.writeHead(404); return r.end(); } r.writeHead(200, { "content-type": TYPES[path.extname(p)] || "application/octet-stream" }); r.end(d); }); });
-await new Promise((ok) => server.listen(0, "127.0.0.1", ok));
-const BASE = "http://127.0.0.1:" + server.address().port;
+const served = await serveCatalog();
+const server = { close: served.close };
+const BASE = served.base;
 const prof = path.join(web, ".check-profile-" + Date.now());
 const browser = await puppeteer.launch({ executablePath: process.env.CHROME || "C:/Program Files/Google/Chrome/Application/chrome.exe", headless: "new", userDataDir: prof });
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
