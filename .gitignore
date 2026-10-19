@@ -36,3 +36,9 @@ storybook-static/
 prof-*/
 *-copy.sqlite
 *.log
+
+# reports DeepSeek generated while checking (API dumps and page snapshots, up to 104 MB)
+flashcards-check.json
+flashcards-final.json
+home-final.json
+library-check.json
