@@ -1648,13 +1648,18 @@
     if (!dataset || /\bCREATE\s+(TEMP(ORARY)?\s+)?TABLE\b/i.test(String(sql || ""))) return "";
     return schemaPanel({ kind: "sqlite", key: dataset }, { open: !!open, hint: "its tables first", sql: String(sql || "") });
   }
+  // a lesson's example: the query, its real result and the explanation (or the special formats, via lessonExample)
+  function exampleBox(l) {
+    var ex = l.example || {};
+    return (ex.format ? '<h3 class="ls-sub">Example</h3>' + lessonExample(ex) + (l.explain ? '<p class="ls-explain">' + lessonText(l.explain) + "</p>" : "") : "") +
+      (ex.sql && !ex.format ? '<h3 class="ls-sub">Example</h3><pre class="mcq-code">' + highlight(ex.sql) + '</pre><div class="muted small">The real result' + (ex.engine ? " (" + esc(ex.engine) + ")" : "") + "</div>" + miniTable({ columns: ex.columns, rows: ex.rows }) + (ex.total > (ex.rows || []).length ? '<div class="muted small">… and ' + (ex.total - ex.rows.length) + " more rows</div>" : "") + (l.explain ? '<p class="ls-explain">' + lessonText(l.explain) + "</p>" : "") : "");
+  }
   function lessonCard(l, opts) {
     var ex = l.example || {}, withTables = !(opts && typeof opts === "object" && opts.noTables);
     return '<article class="card card-pad lesson" aria-labelledby="ls-' + esc(l.id) + '"><h2 class="ls-h" id="ls-' + esc(l.id) + '">' + icon("file") + esc(l.title) + "</h2>" +
       '<h3 class="ls-sub">What it is</h3><p>' + lessonText(l.what) + "</p>" +
       ((l.when || []).length ? '<h3 class="ls-sub">When to use it</h3><ul class="ls-when">' + l.when.map(function (w) { return "<li>" + lessonText(w) + "</li>"; }).join("") + "</ul>" : "") +
-      (ex.format ? '<h3 class="ls-sub">Example</h3>' + lessonExample(ex) + (l.explain ? '<p class="ls-explain">' + lessonText(l.explain) + "</p>" : "") : "") +
-      (ex.sql && !ex.format ? '<h3 class="ls-sub">Example</h3><pre class="mcq-code">' + highlight(ex.sql) + '</pre><div class="muted small">The real result' + (ex.engine ? " (" + esc(ex.engine) + ")" : "") + "</div>" + miniTable({ columns: ex.columns, rows: ex.rows }) + (ex.total > (ex.rows || []).length ? '<div class="muted small">… and ' + (ex.total - ex.rows.length) + " more rows</div>" : "") + (l.explain ? '<p class="ls-explain">' + lessonText(l.explain) + "</p>" : "") : "") +
+      exampleBox(l) +
       (l.tip ? '<div class="self-note ls-tip">' + icon("bulb") + "<div><strong>Watch out.</strong> " + lessonText(l.tip) + "</div></div>" : "") +
       (withTables ? tablesPanel(l.dataset, ex.sql || (ex.before && ex.before.sql), true) : "") + "</article>";
   }
@@ -2964,7 +2969,7 @@
   window.SQLDrillsShared = {
     askConfirm: askConfirm, confirmClick: confirmClick,
     schemaPanel: schemaPanel, schemaMount: schemaMount, tablesPanel: tablesPanel,
-    sqlWorkspace: sqlWorkspace, wsMount: wsMount, lessonExample: lessonExample,
+    sqlWorkspace: sqlWorkspace, wsMount: wsMount, exampleBox: exampleBox, lessonExample: lessonExample, lessonCard: lessonCard,
     resultTable: resultTable, diffTables: diffTables, miniTable: miniTable,
     xcardHtml: xcardHtml, cardsInProgress: cardsInProgress,
     highlight: highlight, icon: icon, esc: esc,
