@@ -599,7 +599,7 @@
     html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("target") + 'Daily Goal</h3><button class="more link" data-act="set-goal" title="Change the daily goal">' + icon("chevRight") + "</button></div>" +
       '<div class="goal">' + ring(st.today / goal, 104, 10, Math.min(st.today, 99) + "/" + goal, "done") + "<div><p>" +
       (st.today >= goal ? "Goal reached today. Great work!" : "Do " + plural(goal, "activity").replace("activitys", "activities") + " today (exercises, flashcards, predictions, reflections) to keep your streak alive!") + '</p><a class="btn primary" href="#/progress">View Progress</a></div></div></section>';
-    html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("bulb") + 'SQL Concept of the Day</h3><a class="more" href="#/guide/commands/' + concept.id + '">' + icon("chevRight") + "</a></div>" +
+    html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("bulb") + 'SQL Concept of the Day</h3><a class="more" href="#/guide/commands/' + concept.id + '" aria-label="Open the SQL Concept of the Day">' + icon("chevRight") + "</a></div>" +
       '<div class="concept"><h4>' + esc(concept.name) + "</h4><p>" + esc(concept.text) + '</p><a class="btn sm ghost-accent" href="#/guide/commands/' + concept.id + '">Read More ' + icon("chevRight") + "</a></div></section>";
     var cheat = CHEATS[lvNow] || [];
     if (cheat.length) html += '<section class="card card-pad cheat" aria-labelledby="cheat-h"><div class="card-h"><h3 id="cheat-h">' + icon("file") + "Level " + lvNow + ' cheat sheet</h3></div><dl class="cheat-list">' +
