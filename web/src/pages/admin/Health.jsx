@@ -30,7 +30,7 @@ export function Outcome({ label, parts, total }) {
   );
 }
 
-function HealthList({ h, onRun, running }) {
+export function HealthList({ h, onRun, running }) {
   const A = useAdmin();
   const o = h.outcome, dr = h.drills;
   return (
