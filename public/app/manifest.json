@@ -1,11 +1,49 @@
 {
+  "_bridge-DJmNTMWb.js": {
+    "file": "assets/bridge-DJmNTMWb.js",
+    "name": "bridge",
+    "css": [
+      "assets/bridge-QgOmLnHE.css"
+    ]
+  },
+  "_bridge-QgOmLnHE.css": {
+    "file": "assets/bridge-QgOmLnHE.css",
+    "src": "_bridge-QgOmLnHE.css"
+  },
+  "src/admin-main.jsx": {
+    "file": "assets/admin-DHWNsWBH.js",
+    "name": "admin",
+    "src": "src/admin-main.jsx",
+    "isEntry": true,
+    "imports": [
+      "_bridge-DJmNTMWb.js"
+    ]
+  },
+  "src/legacy/admin.css": {
+    "file": "assets/admin-styles-Cuan_hk5.css",
+    "name": "admin-styles",
+    "names": [
+      "admin-styles.css"
+    ],
+    "src": "src/legacy/admin.css",
+    "isEntry": true
+  },
+  "src/legacy/app.css": {
+    "file": "assets/app-styles-B2q8GBUu.css",
+    "name": "app-styles",
+    "names": [
+      "app-styles.css"
+    ],
+    "src": "src/legacy/app.css",
+    "isEntry": true
+  },
   "src/main.jsx": {
-    "file": "assets/main-BdDX6woa.js",
+    "file": "assets/main-CdMjN6kC.js",
     "name": "main",
     "src": "src/main.jsx",
     "isEntry": true,
-    "css": [
-      "assets/main-QgOmLnHE.css"
+    "imports": [
+      "_bridge-DJmNTMWb.js"
     ]
   }
 }
