@@ -1,0 +1,24 @@
+// My notes: note cards, tags, the search box (shares Docs' search look), pills (on the tokens)
+@use "../tokens/tokens.scss" as *;
+
+.wf-notes-list { display: flex; flex-direction: column; gap: $wf-space-12; }
+.wf-note { display: flex; flex-direction: column; gap: $wf-space-8; }
+.wf-note-h { display: flex; align-items: center; gap: $wf-space-8; flex-wrap: wrap; }
+.wf-note-conf { margin-left: auto; }
+.wf-note-item { font-weight: $wf-font-weight-bold; color: $wf-accent-text; }
+.wf-note-tags { display: flex; flex-wrap: wrap; gap: $wf-space-4; }
+.wf-note-text { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+.wf-tag { display: inline-block; padding: 0 $wf-space-8; border-radius: $wf-radius-small; box-shadow: inset 0 0 0 1px $wf-border-strong; font-size: $wf-font-size-200; font-weight: $wf-font-weight-bold; line-height: 22px; }
+.wf-tag-link { display: inline-block; padding: 0 $wf-space-8; border-radius: $wf-radius-small; background: $wf-surface-raised; color: $wf-accent-text; font-size: $wf-font-size-200; line-height: 24px; text-decoration: none; &:hover { text-decoration: underline; } }
+.wf-pill { display: inline-block; padding: 0 $wf-space-8; border-radius: 99px; font-size: $wf-font-size-100; font-weight: $wf-font-weight-bold; line-height: 22px;
+  &.done { color: $wf-ok-text; box-shadow: inset 0 0 0 1px $wf-ok-text; }
+  &.fail { color: $wf-bad-text; box-shadow: inset 0 0 0 1px $wf-bad-text; }
+}
+.wf-icon-btn { display: inline-grid; place-items: center; width: 32px; height: 32px; margin-left: auto; border: 0; border-radius: $wf-radius-small; background: transparent; color: $wf-text-muted; cursor: pointer;
+  svg { width: 16px; height: 16px; }
+  &:hover { background: $wf-surface-raised; color: $wf-text; }
+  &:focus { outline: none; } &:focus-visible { box-shadow: inset 0 0 0 2px $wf-focus; }
+}
+.wf-note-conf + .wf-icon-btn { margin-left: 0; }
+.wf-rf-feedback { background: $wf-surface-raised; border-radius: $wf-radius-small; padding: $wf-space-8 $wf-space-12; p { margin: $wf-space-4 0 0; } }
+.wf-empty-card { display: flex; gap: $wf-space-12; align-items: flex-start; > svg { width: 22px; height: 22px; color: $wf-text-muted; flex: none; } p { margin: 0 0 $wf-space-8; } }
