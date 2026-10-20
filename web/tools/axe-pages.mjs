@@ -8,26 +8,14 @@ import os from "node:os";
 import path from "node:path";
 import { createRequire } from "node:module";
 import puppeteer from "puppeteer-core";
+import { mainPages } from "./pages.mjs";
 
 const BASE = process.argv[2] || "http://localhost:4100";
 if (/:4000\b/.test(BASE)) { console.error("Run this against a server on a copy of the database (e.g. :4100), not the live app."); process.exit(2); }
 const CHROME = process.env.CHROME || "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const AXE = fs.readFileSync(createRequire(import.meta.url).resolve("axe-core/axe.min.js"), "utf8");
 
-const get = async (u) => (await fetch(BASE + u)).json();
-const lib = await get("/api/library"), items = lib.items || lib, mcqs = await get("/api/mcqs");
-const pick = (f) => (items.find(f) || {}).id;
-const mcq = mcqs.find((m) => m.status !== "hidden") || mcqs[0];
-const PAGES = [
-  "/#/home", "/#/levels", "/#/level/1", "/#/level/14?section=capstone", "/#/drills", "/#/drill/" + pick((d) => d.engine !== "server" && d.check === "solution"),
-  "/#/drill/" + pick((d) => d.check === "self"), "/#/drill/" + pick((d) => d.engine === "server"), "/#/mcqs", "/#/mcq/" + (mcq.id || mcq.key), "/#/quiz/mixed", "/#/recent",
-  "/#/interview", "/#/bookmarks", "/#/review", "/#/progress", "/#/concept/choosing-columns", "/#/concept/choosing-columns?tab=understand", "/#/learn",
-  "/#/learn/choosing-columns?s=2", "/#/learn/choosing-columns?s=3", "/#/docs", "/#/docs?t=sheets&l=2", "/#/help", "/#/flashcards", "/#/flashcards?concept=choosing-columns",
-  "/#/notes", "/#/licenses", "/#/challenge?level=1", "/#/guide", "/#/guide/commands",
-  "/admin#/overview", "/admin#/generate", "/admin#/generate?kind=stage&level=1", "/admin#/generate?kind=images", "/admin#/create", "/admin#/create?tab=import", "/admin#/review",
-  "/admin#/review?view=history", "/admin#/library", "/admin#/item/" + pick((d) => d.check === "solution"), "/admin#/concepts", "/admin#/mcqs", "/admin#/drills", "/admin#/recent",
-  "/admin#/health", "/admin#/health?check=near_dups", "/admin#/learners", "/admin#/backups", "/admin#/settings", "/admin#/help",
-];
+const PAGES = await mainPages(BASE); // tools/pages.mjs: the same list as check-pages.mjs
 
 const prof = fs.mkdtempSync(path.join(os.tmpdir(), "sqldrills-axe-"));
 const browser = await puppeteer.launch({ executablePath: CHROME, headless: "new", userDataDir: prof });

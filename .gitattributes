@@ -1,0 +1,14 @@
+# Line endings: text files follow core.autocrlf (Git for Windows defaults to true, so a fresh Windows checkout has
+# CRLF; this repository's own clone uses false). The code and tests accept both. Binary files are never converted.
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.webp   binary
+*.pdf    binary
+*.woff   binary
+*.woff2  binary
+*.zip    binary
+*.sqlite binary
+*.db     binary

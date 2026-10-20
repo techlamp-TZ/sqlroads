@@ -2274,7 +2274,8 @@
     if (!viewPreview.noFocus) { viewPreview.noFocus = true; HTMLElement.prototype.focus = function () {}; }
     document.body.classList.add("preview-mode");
     var it = S.previewItem;
-    if (!it) { view.innerHTML = '<div class="page full"><div class="card empty">' + icon("eye") + "<div><p>The item appears here once it passes its checks.</p></div></div></div>"; return; }
+    // nothing to preview yet: still the page's h1 (axe page-has-heading-one), sized inline (the old CSS stays as it is)
+    if (!it) { view.innerHTML = '<div class="page full"><div class="card empty">' + icon("eye") + '<div><h1 style="font-size: 18px; margin: 0 0 6px;">Nothing to preview yet</h1><p>The item appears here once it passes its checks.</p></div></div></div>'; return; }
     var wrap = function (inner) { return '<div class="page full"><div class="col preview-col">' + inner + "</div></div>"; };
     if (it.kind === "drill") {
       view.innerHTML = wrap('<section class="card card-pad"><div class="dmeta">' + diffBadge(it.diff || "medium") + '<span class="tag">' + esc(levelName(it.level || 1)) + "</span></div><h1>" + esc(it.title) + '</h1><div class="dq">' + exerciseText(it.body || "") + "</div>" +
