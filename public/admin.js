@@ -2212,6 +2212,11 @@
       var h = sec && $("#hh-" + sec); if (h) { h.scrollIntoView(); h.focus(); }
     }).catch(fail);
   }
+  // the old view for a route (used by the router, and by a React page that hosts an old view)
+  function viewFor(name) {
+    return ({ overview: viewOverview, generate: viewGenerate, review: viewReview, mcqs: viewMcqs, drills: viewDrills, recent: viewRecent, learners: viewLearners, settings: viewSettings,
+      library: viewLibrary, item: viewItem, health: viewHealth, backups: viewBackups, concepts: viewConcepts, create: viewCreate, help: viewHelp }[name] || null);
+  }
   function render() {
     view = viewRoot;
     var h = (location.hash || "#/overview").replace(/^#\/?/, "");
@@ -2222,13 +2227,13 @@
     view.onclick = null; view.onchange = null; view.onsubmit = null;
     renderNav();
     $("#side").classList.remove("open"); $("#scrim").classList.remove("open");
-    view.scrollTop = 0;
+    viewRoot.scrollTop = 0;
     // React pages (web/, the Waffles front end) take the admin routes they own; every other route stays here
     var R = window.SQLDrillsReact;
     if (R) R.unmount();
-    if (R && R.has(route.name, "admin")) { R.mount(route.name, view, { app: "admin", route: route, icon: icon }); return; }
-    ({ overview: viewOverview, generate: viewGenerate, review: viewReview, mcqs: viewMcqs, drills: viewDrills, recent: viewRecent, learners: viewLearners, settings: viewSettings,
-      library: viewLibrary, item: viewItem, health: viewHealth, backups: viewBackups, concepts: viewConcepts, create: viewCreate, help: viewHelp }[route.name] || viewOverview)();
+    var name = viewFor(route.name) ? route.name : "overview"; // an unknown address shows the Overview
+    if (R && R.has(name, "admin")) { R.mount(name, view, { app: "admin", route: route, icon: icon }); return; }
+    viewFor(name)();
   }
   // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
   function scrollersFocusable() {
@@ -2259,7 +2264,7 @@
     openEditor: openEditor, openImport: openImport, barChart: barChart, spendHtml: spendHtml, stateDot: stateDot, DIFF_COLORS: DIFF_COLORS,
     LSTAGES: LSTAGES, LSTAGE_LABEL: LSTAGE_LABEL, stageCellParts: function (c, st) { var t = document.createElement("tr"); t.innerHTML = stageCell(c, st); var td = t.firstChild; return { cls: td.className, html: td.innerHTML }; },
     kwList: kwList, setTagStage: setTagStage, stagePicker: stagePicker,
-    hostView: function (name, el) { view = el; ({ review: viewReview, generate: viewGenerate }[name])(); },
+    hostView: function (name, el) { view = el; (viewFor(name) || viewOverview)(); },
     meta: function () { return META; }, route: function () { return route; },
   };
   // the React bundle (a module script, so it runs after this one) owns some routes: the first render waits for it,

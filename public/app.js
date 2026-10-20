@@ -613,7 +613,7 @@
   }
 
   // ---------- views ----------
-  var view = $("#view");
+  var view = $("#view"), viewRoot = view; // view: where the current page draws (a React host box, or #view)
 
   function viewHome() {
     var done = doneCount(), total = S.items.length, st = streak(), started = S.items.filter(isStarted).length, lv = currentLevel();
@@ -2780,6 +2780,12 @@
     if (/^[a-z0-9]+\.\d+/.test(name)) { location.replace("#/levels"); return null; }
     return { name: name, args: parts.slice(1), q: new URLSearchParams((location.hash.split("?")[1]) || "") };
   }
+  // the old view for a route (used by the router, and by a React page that hosts an old view)
+  function viewFor(r) {
+    var V = { drills: viewDrills, drill: function () { viewDrill(r.args[0]); }, levels: viewLevels, level: function () { viewLevel(r.args[0]); }, mcqs: viewMcqs, mcq: function () { viewMcq(r.args[0]); },
+      quiz: function () { viewQuiz(r.args[0] || "mixed"); }, recent: viewRecent, interview: viewInterview, bookmarks: viewBookmarks, review: viewReviewMistakes, progress: viewProgress, concept: function () { viewConcept(r.args[0]); }, learn: function () { if (r.args[0]) viewLearnStep(r.args[0]); else viewLearn(); }, docs: viewDocs, help: viewHelp, flashcards: viewFlashcards, notes: viewNotes, licenses: viewLicenses, challenge: viewChallenge, preview: viewPreview, guide: function () { viewGuide(r.args[0], r.args[1]); } };
+    return V[r.name] || null;
+  }
   function render() {
     var r = parseRoute();
     if (!r) return;
@@ -2789,14 +2795,15 @@
     S.filters = r.name === "mcqs" ? S.mf : S.df;
     renderChrome();
     $("#side").classList.remove("open"); $("#scrim").classList.remove("open");
-    var V = { drills: viewDrills, drill: function () { viewDrill(r.args[0]); }, levels: viewLevels, level: function () { viewLevel(r.args[0]); }, mcqs: viewMcqs, mcq: function () { viewMcq(r.args[0]); },
-      quiz: function () { viewQuiz(r.args[0] || "mixed"); }, recent: viewRecent, interview: viewInterview, bookmarks: viewBookmarks, review: viewReviewMistakes, progress: viewProgress, concept: function () { viewConcept(r.args[0]); }, learn: function () { if (r.args[0]) viewLearnStep(r.args[0]); else viewLearn(); }, docs: viewDocs, help: viewHelp, flashcards: viewFlashcards, notes: viewNotes, licenses: viewLicenses, challenge: viewChallenge, preview: viewPreview, guide: function () { viewGuide(r.args[0], r.args[1]); } };
+    view = viewRoot;
+    var draw = viewFor(r), name = r.name;
+    if (!draw) { draw = viewHome; name = "home"; } // an unknown address shows Home
     // React pages (web/, the Waffles front end) take the routes they own; every other route stays here
     var R = window.SQLDrillsReact;
     if (R) R.unmount();
-    if (R && R.has(r.name, "learner")) R.mount(r.name, view, { app: "learner", route: r, icon: icon });
-    else (V[r.name] || viewHome)();
-    if (!same && !(r.name === "guide" && r.args[1])) view.scrollTop = 0;
+    if (R && R.has(name, "learner")) R.mount(name, view, { app: "learner", route: r, icon: icon });
+    else draw();
+    if (!same && !(r.name === "guide" && r.args[1])) viewRoot.scrollTop = 0;
   }
 
   // ---------- events ----------
@@ -2813,7 +2820,7 @@
     var fl = t.closest("[data-filter]");
     if (fl) { S.filters[fl.getAttribute("data-filter")] = fl.getAttribute("data-value"); S.filters.page = 0; saveFilters(); render(); return; }
     var pg = t.closest("[data-page]");
-    if (pg && !pg.disabled) { S.filters.page = Number(pg.getAttribute("data-page")); saveFilters(); render(); view.scrollTop = 0; return; }
+    if (pg && !pg.disabled) { S.filters.page = Number(pg.getAttribute("data-page")); saveFilters(); render(); viewRoot.scrollTop = 0; return; }
     var lt = t.closest("[data-ltab]");
     if (lt) { route.tab = lt.getAttribute("data-ltab"); viewLevel(route.args[0]); return; }
     var ls = t.closest("[data-lsection]");
@@ -2824,7 +2831,7 @@
     var ld = t.closest("[data-ldiff]");
     if (ld) { S.levelFilter.diff = ld.getAttribute("data-ldiff"); S.levelFilter.page = 0; viewLevel(route.args[0]); return; }
     var lp = t.closest("[data-lpage]");
-    if (lp && !lp.disabled) { S.levelFilter.page = Number(lp.getAttribute("data-lpage")); viewLevel(route.args[0]); view.scrollTop = 0; return; }
+    if (lp && !lp.disabled) { S.levelFilter.page = Number(lp.getAttribute("data-lpage")); viewLevel(route.args[0]); viewRoot.scrollTop = 0; return; }
     var act = t.closest("[data-act]"), a = act && act.getAttribute("data-act");
     var d = route.name === "drill" ? S.byId[route.args[0]] : null;
     if (a === "view") { S.filters.view = act.getAttribute("data-v"); saveFilters(); render(); }
@@ -3010,7 +3017,9 @@
     stageMark: stageMark, stagePanel: stagePanel, STAGES: STAGES, STAGE_LABEL: STAGE_LABEL, STAGE_STATUS: STAGE_STATUS, CTABS: CTABS,
     levelName: levelName, diffBadge: diffBadge, statusHtml: statusHtml, CHECK_LABEL: CHECK_LABEL, toggleBookmark: toggleBookmark,
     spIsPhone: spIsPhone, dialect: dialect, quickCheck: quickCheck, itemsIn: itemsIn, drillEditorHtml: drillEditorHtml, drillWire: drillWire,
-    refreshConcept: refreshConcept, takeConceptStale: function () { var v = !!viewConcept.stale; viewConcept.stale = false; return v; },
+    refreshConcept: refreshConcept,
+    // Phase 6: a React page that hosts an old view (render() takes #view back on every route change)
+    hostView: function (name, el) { view = el; (viewFor(route) || viewHome)(); }, takeConceptStale: function () { var v = !!viewConcept.stale; viewConcept.stale = false; return v; },
   };
 
   // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
