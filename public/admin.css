@@ -534,3 +534,6 @@ label.c-check input { width: 18px; height: 18px; margin: 0; flex: none; }
 .help-page .help-sec p, .help-page .help-sec li { max-width: 72ch; }
 .help-shot { margin: 12px 0 0; }
 .help-shot img { width: 100%; height: auto; border: 1px solid var(--line); border-radius: 10px; display: block; }
+
+/* links inside a line of text are underlined (WCAG 1.4.1: not told apart by colour alone) */
+.admin-app #view .page.admin p a, .admin-app #view .page.admin .small a, .admin-app #view .page.admin li a:not(.btn) { text-decoration: underline; }

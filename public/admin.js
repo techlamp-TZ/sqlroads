@@ -86,7 +86,7 @@
   }
 
   var META = null; // topics, difficulties, tracks
-  var view = $("#view");
+  var view = $("#view"), viewRoot = view; // view: where the current page draws (a React host box, or #view)
   var route = { name: "overview", args: [], q: new URLSearchParams() };
   // [route, label, icon, badge key] - a string entry starts a group
   var NAV = [["overview", "Overview", "home"],
@@ -343,7 +343,7 @@
       var radio = function (name, value, label, checked, extra) { return '<label class="opt-chip' + (extra ? " " + extra : "") + '"><input type="radio" name="' + name + '" value="' + esc(value) + '"' + (checked ? " checked" : "") + "><span>" + label + "</span></label>"; };
       var html = '<div class="page admin gen"><div class="col"><div class="hero"><div><div class="eyebrow">Content generation machine</div><h2 class="h1">Generate practice content</h2><p>The AI drafts it, every draft is checked automatically, and nothing goes live until you approve it in the review queue. Approved items go straight into the chosen level.</p></div></div>';
       html += genTabs(st.kind);
-      html += '<div class="gen-grid"><form class="gen-form" id="genForm" role="tabpanel" aria-labelledby="tab-' + st.kind + '">';
+      html += '<div class="gen-grid" role="tabpanel" aria-labelledby="tab-' + st.kind + '"><form class="gen-form" id="genForm">';
       if (checkable && st.kind === "drill") html += '<div class="note-box">' + icon("check") + "<div>Generated drills are always auto-checkable: each one has a solution that is run on its dataset (a single SELECT in SQLite, or for Levels 10–13 statements run on a scratch MySQL copy and compared by end state), so learners get Correct / Not yet feedback. None of them are self-check.</div></div>";
       html += step(1, "Level", '<div class="lvl-cards">' + lib.levels.map(function (L) {
         return '<label class="lvl-card"><input type="radio" name="level" value="' + L.n + '"' + (L.n === st.level ? " checked" : "") + '><span class="lc-n mono">' + L.n + '</span><span class="lc-t">' + esc(L.title) + '</span><span class="lc-c mono">' + L.total + " · " + L.easy + "/" + L.medium + "/" + L.hard + (mcqBy[L.n] ? " · " + mcqBy[L.n] + " MCQ" : "") + "</span></label>";
@@ -1694,7 +1694,7 @@
       var lib = r[0], cov = r[1], job = r[2];
       var html = '<div class="page admin gen"><div class="col"><div class="hero"><div><div class="eyebrow">Content generation machine</div><h2 class="h1">Generate practice content</h2><p>Learning-model stages: the AI fills what a level\'s concepts are missing. Every SQL is run, a second provider reviews, items with warnings get one repair round, and everything waits in the review queue.</p><p class="hint-txt" id="stageRoles"></p></div></div>';
       html += genTabs("stage");
-      html += '<div class="gen-grid"><form class="gen-form" id="stageForm" role="tabpanel" aria-labelledby="tab-stage">';
+      html += '<div class="gen-grid" role="tabpanel" aria-labelledby="tab-stage"><form class="gen-form" id="stageForm">';
       html += '<fieldset class="gstep"><legend><span class="gnum" aria-hidden="true">1</span>Level</legend><div class="lvl-cards">' + lib.levels.map(function (L) {
         var C = cov.levels.filter(function (x) { return x.level === L.n; })[0] || { covered: 0, total: 0 };
         return '<label class="lvl-card"><input type="radio" name="level" value="' + L.n + '"' + (L.n === st.level ? " checked" : "") + '><span class="lc-n mono">' + L.n + '</span><span class="lc-t">' + esc(L.title) + '</span><span class="lc-c mono">' + C.covered + "/" + C.total + " covered</span></label>";
@@ -1753,7 +1753,7 @@
     api("/images/meta").then(function (meta) {
       var html = '<div class="page admin gen"><div class="col"><div class="hero"><div><div class="eyebrow">Content generation machine</div><h2 class="h1">Generate practice content</h2><p>From screenshots: the images are read by a vision model, you correct what it read, and each item then goes through the same checks as every generated item. Everything lands as a draft in the review queue.</p></div></div>';
       html += genTabs("images");
-      html += '<div class="gen-grid"><form class="gen-form" id="imgForm" role="tabpanel" aria-labelledby="tab-images" onsubmit="return false">';
+      html += '<div class="gen-grid" role="tabpanel" aria-labelledby="tab-images"><form class="gen-form" id="imgForm" onsubmit="return false">';
       html += '<fieldset class="gstep"><legend><span class="gnum" aria-hidden="true">1</span>Screenshots</legend>' +
         '<div class="img-drop" id="imgDrop" tabindex="0" role="button" aria-describedby="imgDropHelp"><b>Paste (Ctrl+V), drop, or choose images</b><span id="imgDropHelp" class="muted small">PNG or JPG, up to 10 at once, 8 MB each</span><input type="file" id="imgPick" accept="image/png,image/jpeg" multiple hidden></div>' +
         '<ul class="img-thumbs" id="imgThumbs" aria-label="Chosen images"></ul><p class="muted small" id="imgReadEst" aria-live="polite"></p></fieldset>';
@@ -2213,6 +2213,7 @@
     }).catch(fail);
   }
   function render() {
+    view = viewRoot;
     var h = (location.hash || "#/overview").replace(/^#\/?/, "");
     var parts = h.split("?");
     route = { name: parts[0].split("/")[0] || "overview", args: parts[0].split("/").slice(1), q: new URLSearchParams(parts[1] || "") };
@@ -2243,6 +2244,12 @@
     api: api, toast: toast, askConfirm: askConfirm, confirmClick: confirmClick, esc: esc, icon: icon, fmtDate: fmtDate, plural: plural,
     refreshCounts: refreshCounts, setCount: function (k, v) { counts[k] = v; renderNav(); },
     loadRefs: loadRefs, previewItem: previewItem, importRows: importRows,
+    // Phase 4 group 5: Overview and Concepts on React; Review and Generate hosted (the old view draws into a box
+    // React gives it; render() takes #view back on every route change)
+    openEditor: openEditor, openImport: openImport, barChart: barChart, spendHtml: spendHtml, stateDot: stateDot, DIFF_COLORS: DIFF_COLORS,
+    LSTAGES: LSTAGES, LSTAGE_LABEL: LSTAGE_LABEL, stageCellParts: function (c, st) { var t = document.createElement("tr"); t.innerHTML = stageCell(c, st); var td = t.firstChild; return { cls: td.className, html: td.innerHTML }; },
+    kwList: kwList, setTagStage: setTagStage, stagePicker: stagePicker,
+    hostView: function (name, el) { view = el; ({ review: viewReview, generate: viewGenerate }[name])(); },
     meta: function () { return META; }, route: function () { return route; },
   };
   // the React bundle (a module script, so it runs after this one) owns some routes: the first render waits for it,
