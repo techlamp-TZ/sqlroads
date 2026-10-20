@@ -1,0 +1,34 @@
+// Home: the Today plan and the review-due banner (on the tokens); shared learner bits (headings, "more" links)
+@use "../tokens/tokens.scss" as *;
+
+.wf-h3 { display: flex; align-items: center; gap: $wf-space-8; margin: 0; font-size: $wf-font-size-500; line-height: $wf-line-height-heading;
+  .wf-ic, svg { width: 22px; height: 22px; color: $wf-accent-text; flex: none; }
+}
+.wf-more { display: inline-flex; align-items: center; gap: $wf-space-4; color: $wf-accent-text; font-weight: $wf-font-weight-bold; font-size: $wf-font-size-200; text-decoration: none;
+  &:hover { text-decoration: underline; }
+  svg { width: 16px; height: 16px; }
+}
+.wf-panel-h { display: flex; align-items: center; gap: $wf-space-12; flex-wrap: wrap; margin-bottom: $wf-space-12;
+  > .wf-muted { margin-left: auto; }
+}
+.wf-today-list { list-style: none; margin: 0 0 $wf-space-8; padding: 0;
+  li { display: flex; align-items: center; gap: $wf-space-12; padding: $wf-space-8 0; border-top: 1px solid $wf-border; }
+  li:first-child { border-top: 0; }
+  @include wf-below(sm) { li { flex-wrap: wrap; } li > a { margin-left: 46px; } }
+}
+.wf-today-ic { width: 34px; height: 34px; border-radius: $wf-radius-small; display: grid; place-items: center; background: $wf-surface-raised; color: $wf-accent-text; flex: none;
+  svg { width: 18px; height: 18px; }
+}
+.wf-tl-main { display: flex; flex-direction: column; gap: 2px; flex: 1; min-width: 0; .wf-eyebrow { font-size: $wf-font-size-100; } }
+.wf-today-sub { display: flex; align-items: center; gap: $wf-space-8; margin: $wf-space-12 0 $wf-space-4; font-size: $wf-font-size-300;
+  svg { width: 16px; height: 16px; color: $wf-accent-text; }
+}
+.wf-root .wf-review-due, .wf-review-due { display: flex; align-items: center; gap: $wf-space-12; padding: $wf-space-12 $wf-space-16; color: $wf-text; text-decoration: none;
+  background: $wf-surface; border-radius: $wf-radius-small; box-shadow: inset 4px 0 0 $wf-warn-text, 0 0 0 1px $wf-border, $wf-shadow-sm;
+  > svg { width: 20px; height: 20px; color: $wf-warn-text; flex: none; }
+  &:hover { box-shadow: inset 4px 0 0 $wf-warn-text, 0 0 0 1px $wf-accent-text, $wf-shadow-sm; }
+}
+.wf-go { margin-left: auto; display: inline-flex; svg { width: 18px; height: 18px; } }
+.wf-err { color: $wf-bad-text; font-weight: $wf-font-weight-bold; }
+.wf-muted { color: $wf-text-muted; }
+.mono { font-family: $wf-font-mono; }
