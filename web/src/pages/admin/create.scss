@@ -1,0 +1,31 @@
+// Create: the form beside the learner preview, field grid, dataset form, checks, import (on the tokens)
+@use "../../tokens/tokens.scss" as *;
+
+.wf-card-box { background: $wf-surface; border-radius: $wf-radius-small; box-shadow: 0 0 0 1px $wf-border, $wf-shadow-sm; padding: $wf-space-24; min-width: 0;
+  @include wf-below(md) { padding: $wf-space-16; }
+}
+.wf-sub-card { border: 1px solid $wf-border; border-radius: $wf-radius-small; padding: $wf-space-16; }
+.c-page { max-width: 1400px; }
+.c-cols { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: $wf-space-16; align-items: start;
+  @media (max-width: 1000px) { grid-template-columns: minmax(0, 1fr); }
+}
+.c-form, .c-ds, .c-imp { display: flex; flex-direction: column; gap: $wf-space-12; }
+.c-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: $wf-space-12; }
+.c-grid .c-wide { grid-column: 1 / -1; }
+#cCommon, #cFields { display: flex; flex-direction: column; gap: $wf-space-12; }
+.c-form .wf-fieldset, .c-ds .wf-fieldset, .c-imp .wf-fieldset { border: 1px solid $wf-border; border-radius: $wf-radius-small; padding: $wf-space-8 $wf-space-12 $wf-space-12;
+  > legend { padding: 0 $wf-space-4; }
+}
+.c-in { display: flex; gap: $wf-space-8; label { display: block; } }
+.c-num .wf-control { max-width: 120px; }
+.c-ds h4 { margin: 0; font-size: $wf-font-size-300; }
+.c-res { margin-top: $wf-space-12; border-radius: $wf-radius-small; padding: $wf-space-8 $wf-space-12; border: 1px solid $wf-border; &.fail { border-color: $wf-bad; } }
+.c-sum { margin: 0 0 $wf-space-8; }
+.c-checks { list-style: none; margin: 0; padding: 0; font-size: $wf-font-size-200;
+  li { display: flex; gap: $wf-space-8; padding: $wf-space-4 0; border-top: 1px solid $wf-border; overflow-wrap: anywhere; }
+  li:first-child { border-top: 0; }
+  svg { width: 16px; height: 16px; flex: none; margin-top: 2px; }
+}
+.c-saved { margin-top: $wf-space-12; display: block; svg { width: 16px; height: 16px; vertical-align: -3px; margin-right: $wf-space-4; } a { color: $wf-accent-text; } }
+.c-prev iframe { width: 100%; height: 640px; border: 1px solid $wf-border; border-radius: $wf-radius-small; background: $wf-surface; }
+@media (min-width: 1001px) { .c-prev { position: sticky; top: 76px; } .c-prev iframe { height: calc(100vh - 190px); min-height: 420px; } }
