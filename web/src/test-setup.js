@@ -11,3 +11,6 @@ if (typeof HTMLDialogElement !== "undefined" && !HTMLDialogElement.prototype.sho
 import { afterEach } from "vitest";
 import { cleanup } from "@testing-library/react";
 afterEach(cleanup);
+
+// Test-only: jsdom does not lay out, so it has no scrollIntoView; the pages call it before focusing a heading.
+if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) Element.prototype.scrollIntoView = function () {};

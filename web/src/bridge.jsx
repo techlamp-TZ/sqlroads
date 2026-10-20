@@ -6,9 +6,10 @@ import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import Licenses from "./pages/Licenses.jsx";
+import Help from "./pages/Help.jsx";
 
 // the routes React owns in each app (learner: index.html, admin: admin.html)
-export const PAGES = { learner: { licenses: Licenses }, admin: {} };
+export const PAGES = { learner: { licenses: Licenses, help: Help }, admin: { help: Help } };
 
 export function createBridge(pages = PAGES) {
   const byApp = pages.learner || pages.admin ? pages : { learner: pages }; // a flat map means the learner app

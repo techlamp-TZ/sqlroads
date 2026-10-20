@@ -1,0 +1,41 @@
+// Waffles minimal tabs (stylesheets/tabs), for link tabs, on the theme tokens
+@use "../tokens/tokens.scss" as *;
+
+.wf-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 $wf-space-24;
+  border-bottom: 1px solid $wf-border;
+}
+
+.wf-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: $wf-space-8;
+  margin-bottom: -1px;
+  padding: $wf-space-8 0 $wf-space-8;
+  border-bottom: 3px solid transparent;
+  color: $wf-text-muted;
+  font-size: $wf-font-size-200;
+  font-weight: 400;
+  text-decoration: none;
+
+  &:hover { color: $wf-text; }
+  &.is-on { color: $wf-text; font-weight: $wf-font-weight-bold; border-bottom-color: $wf-text; }
+
+  .wf-ic { width: 16px; height: 16px; }
+}
+
+// the label's bold width, reserved (Waffles' ::after with attr(data-text)), so selecting a tab moves nothing
+.wf-tab-text {
+  display: inline-flex;
+  flex-direction: column;
+
+  &::after {
+    content: attr(data-text);
+    font-weight: $wf-font-weight-bold;
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+  }
+}

@@ -17,7 +17,9 @@ describe("bridge", () => {
     expect(b.has("toString")).toBe(false);
     expect(createBridge().has("licenses")).toBe(true);
     expect(createBridge().has("licenses", "admin")).toBe(false);
-    expect(Object.keys(PAGES.learner)).toEqual(["licenses"]);
+    expect(Object.keys(PAGES.learner)).toEqual(["licenses", "help"]);
+    expect(Object.keys(PAGES.admin)).toEqual(["help"]);
+    expect(createBridge().has("help", "admin")).toBe(true);
   });
 
   test("mount renders synchronously into #view, replacing the old page", () => {

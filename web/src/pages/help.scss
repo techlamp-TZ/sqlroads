@@ -1,0 +1,21 @@
+@use "../tokens/tokens.scss" as *;
+
+.wf-help-toc {
+  ol { margin: 0; padding-left: $wf-space-24; columns: 2 220px; column-gap: $wf-space-32; }
+  li { margin: 0 0 $wf-space-4; break-inside: avoid; }
+  a { color: $wf-accent-text; }
+  p { margin: $wf-space-12 0 0; }
+}
+
+.wf-help-sec {
+  h2, h3 { font-size: $wf-font-size-500; line-height: $wf-line-height-heading; margin: 0 0 $wf-space-12; scroll-margin-top: $wf-space-16; }
+}
+
+.wf-help-shot {
+  margin: $wf-space-16 0 0;
+  img { display: block; width: 100%; height: auto; border-radius: $wf-radius-small; box-shadow: 0 0 0 1px $wf-border; }
+  figcaption { color: $wf-text-muted; font-size: $wf-font-size-200; margin-top: $wf-space-8; }
+}
+
+// the admin app's page frame: no rail
+.wf-admin { grid-template-columns: minmax(0, 1fr) !important; max-width: 1100px; }

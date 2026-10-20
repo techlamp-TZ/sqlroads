@@ -1,0 +1,56 @@
+// Shared page frame for migrated pages: the main column, and on learner pages the old right-hand rail
+@use "../tokens/tokens.scss" as *;
+
+.wf-with-rail {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: $wf-space-24;
+  align-items: start;
+  padding: $wf-space-24 $wf-space-24 $wf-space-48;
+  @include wf-up(lg) { grid-template-columns: minmax(0, 1fr) 330px; }
+  @include wf-below(md) { padding: $wf-space-16 $wf-space-16 $wf-space-32; }
+}
+.wf-main { display: flex; flex-direction: column; gap: $wf-space-16; min-width: 0; }
+
+.wf-eyebrow { font-size: $wf-font-size-100; font-weight: $wf-font-weight-bold; letter-spacing: 0.08em; text-transform: uppercase; color: $wf-accent-text; }
+.wf-hero h1, .wf-hero h2 { font-size: $wf-font-size-700; line-height: $wf-line-height-heading; letter-spacing: $wf-letter-spacing-medium-heading; margin: $wf-space-4 0 $wf-space-8; }
+.wf-hero p { color: $wf-text-muted; margin: 0; max-width: 70ch; }
+@include wf-below(md) { .wf-hero h1, .wf-hero h2 { font-size: $wf-font-size-600; } }
+
+.wf-card-pad { padding: $wf-space-24; @include wf-below(md) { padding: $wf-space-16; } }
+.wf-small { font-size: $wf-font-size-200; }
+.wf-sr-only { border: 0; clip: rect(0 0 0 0); height: 1px; margin: -1px; overflow: hidden; padding: 0; position: absolute; white-space: nowrap; width: 1px; }
+
+// text from the guides (Help.textHtml) and other trusted markup
+.wf-prose {
+  color: $wf-text;
+  line-height: $wf-line-height-base;
+  p { margin: 0 0 $wf-space-12; }
+  ul, ol { margin: 0 0 $wf-space-12; padding-left: $wf-space-24; }
+  li { margin: 0 0 $wf-space-4; }
+  code { font-family: $wf-font-mono; font-size: 0.92em; background: $wf-code-bg; padding: 1px $wf-space-4; border-radius: $wf-radius-small; }
+  :last-child { margin-bottom: 0; }
+}
+
+// a table on the tokens (Waffles table stylesheet, bordered)
+.wf-table-wrap { overflow-x: auto; }
+.wf-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: $wf-font-size-200;
+  caption { text-align: left; }
+  th, td { text-align: left; vertical-align: top; padding: $wf-space-8 $wf-space-12; border-bottom: 1px solid $wf-border; }
+  thead th { color: $wf-text-muted; font-weight: $wf-font-weight-bold; white-space: nowrap; }
+  tbody th { font-weight: $wf-font-weight-bold; }
+  .mono, pre, code { font-family: $wf-font-mono; }
+  pre { margin: 0; white-space: pre-wrap; overflow-wrap: anywhere; }
+}
+
+// chips (Waffles tag look) used as links
+.wf-chips { display: flex; flex-wrap: wrap; gap: $wf-space-8; }
+.wf-chip {
+  display: inline-flex; align-items: center; min-height: 32px; padding: 0 $wf-space-12; border-radius: 16px;
+  border: 1px solid $wf-border-strong; color: $wf-text; text-decoration: none; font-size: $wf-font-size-200;
+  &:hover { border-color: $wf-accent-text; }
+  &.is-on { background: $wf-accent; border-color: $wf-accent; color: $wf-on-accent; font-weight: $wf-font-weight-bold; }
+}
