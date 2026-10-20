@@ -97,6 +97,12 @@ keyboard-only focus, `#confirmDlg`), `node tools/check-shared.mjs` (old vs new s
 - `npm run audit:contrast`: every token text / background pair, both themes.
 - `npm run audit:pages` (`web/tools/axe-pages.mjs`): axe in real Chrome on every page of both apps, light and dark,
   1366 and 390 px, against a server on a database copy (never :4000). Expected result: no violations.
+- Chrome checks in `web/tools/` (each refuses :4000; run against a copy on :4100; exit code 1 on a failure):
+  `npm run check:pages` (every main page, light/dark, 1366/390: axe, page and console errors, failed requests,
+  sideways scroll, drawn by React, not stuck loading), `npm run check:keyboard` (skip link, Tab ring, search, menus,
+  dialogs), `npm run check:behaviour` ("New version" banner and the 409 guard, the in-page confirm, no native
+  confirm), `npm run check:boot` (the boot fallback: bundle blocked, error at start, slow bundle). The page list is
+  `web/tools/pages.mjs`, shared with `audit:pages`.
 - Browser tests write learner rows (progress, attempts, notes, flashcard grades): run them on a copy only and leave
   nothing behind.
 

@@ -13,7 +13,11 @@
     "check:scss": "node tools/check-scss.mjs",
     "storybook": "storybook dev -p 6006 --no-open",
     "build-storybook": "storybook build -o storybook-static --quiet",
-    "audit:pages": "node tools/axe-pages.mjs"
+    "audit:pages": "node tools/axe-pages.mjs",
+    "check:pages": "node tools/check-pages.mjs",
+    "check:keyboard": "node tools/check-keyboard.mjs",
+    "check:behaviour": "node tools/check-behaviour.mjs",
+    "check:boot": "node tools/check-boot-fallback.mjs"
   },
   "devDependencies": {
     "@emotion/react": "11.14.0",
