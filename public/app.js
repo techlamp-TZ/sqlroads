@@ -2978,6 +2978,16 @@
   };
 
   // ---------- boot ----------
+  // the React bundle (a module script, so it runs after this one) owns some routes: the first render waits for it,
+  // so an owned page is not drawn (and fetched) twice; a bundle that fails to load, or takes over 4 s, leaves the old page
+  function whenReact(cb) {
+    var s = document.querySelector('script[type="module"][src*="/app/assets/"]'), done = false;
+    var go = function () { if (!done) { done = true; cb(); } };
+    if (window.SQLDrillsReact || window.SQLDrillsReactFailed || !s) return go();
+    window.addEventListener("sqldrills:react-ready", go);
+    window.addEventListener("sqldrills:react-failed", go);
+    setTimeout(go, 4000);
+  }
   // the React bundle loads after this script: if it owns the page already on screen, hand that page over
   var booted = false;
   window.addEventListener("sqldrills:react-ready", function () { if (booted && window.SQLDrillsReact.has(route.name)) render(); });
@@ -2992,9 +3002,11 @@
       recentCount = recentItems(30).length;
       window.addEventListener("hashchange", render);
       if (!location.hash) history.replaceState(null, "", "#/home");
-      booted = true;
-      window.dispatchEvent(new Event("sqldrills:booted"));
-      render();
+      whenReact(function () {
+        booted = true;
+        window.dispatchEvent(new Event("sqldrills:booted"));
+        render();
+      });
     })
     .catch(function (e) { view.innerHTML = '<div class="page full"><div class="err">Could not load the exercises: ' + esc(e.message) + ". Is sql-drills-server running (npm start)?</div></div>"; });
 })();

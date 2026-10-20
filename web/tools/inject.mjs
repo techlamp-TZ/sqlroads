@@ -10,7 +10,8 @@ const entry = manifest["src/main.jsx"];
 if (!entry) throw new Error("manifest has no src/main.jsx entry");
 const tags = [
   ...(entry.css || []).map((f) => `<link rel="stylesheet" href="/app/${f}">`),
-  `<script type="module" src="/app/${entry.file}"></script>`,
+  // onerror: a bundle that cannot load tells the old app at once, so its first render does not wait for it
+  `<script type="module" src="/app/${entry.file}" onerror="window.SQLDrillsReactFailed=true;dispatchEvent(new Event('sqldrills:react-failed'))"></script>`,
 ].join("\n");
 const START = "<!-- waffles:start -->", END = "<!-- waffles:end -->";
 for (const page of ["index.html", "admin.html"]) {

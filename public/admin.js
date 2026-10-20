@@ -955,9 +955,9 @@
       var usage = Object.keys(last.usage).map(function (m) { var u = last.usage[m]; return esc(provName(u.provider)) + ' <span class="muted">' + esc(m) + '</span> <span class="mono">' + u.calls + " calls · " + u.input.toLocaleString() + " in / " + u.output.toLocaleString() + " out tokens</span>"; }).join("<br>");
       html += '<dl class="kv3 ref-last"><div><dt>Processed</dt><dd class="mono">' + last.processed + " / " + last.total + '</dd></div><div><dt>Time</dt><dd class="mono">' + Math.floor(last.seconds / 60) + "m " + (last.seconds % 60) + 's</dd></div><div><dt>Estimated cost</dt><dd class="mono">$' + last.cost.toFixed(4) + '</dd></div></dl><p class="small muted" style="margin:8px 0 0">This run: <span class="mono">' + last.matched + "</span> matched · <span class=\"mono\">" + last.review + "</span> to review · <span class=\"mono\">" + last.not_query + "</span> not a query · <span class=\"mono\">" + last.errors + "</span> errors · levels " + last.levels.join(", ") + "<br>" + usage + "<br>Cost uses list prices per million input / output tokens: Claude Haiku 4.5 $1 / $5, gpt-5-nano $0.05 / $0.40, Claude Sonnet 5.5 (tie-breaker) $2 / $10.</p>";
     }
-    if (s.jobs && s.jobs.length) html += '<div class="table-wrap" style="margin-top:12px"><table class="admin-t"><caption class="sr-only">Recent runs</caption><thead><tr><th scope="col">Run</th><th scope="col">Levels</th><th scope="col" class="n">Drills</th><th scope="col" class="n">Matched</th><th scope="col" class="n">Review</th><th scope="col" class="n">Not a query</th><th scope="col">Resolved by</th><th scope="col" class="n">Time</th><th scope="col" class="n">Cost</th></tr></thead><tbody>' +
+    if (s.jobs && s.jobs.length) html += '<div class="table-wrap" style="margin-top:12px" tabindex="0" role="group" aria-label="Recent runs"><table class="admin-t"><caption class="sr-only">Recent runs</caption><thead><tr><th scope="col">Run</th><th scope="col">Levels</th><th scope="col" class="n">Drills</th><th scope="col" class="n">Matched</th><th scope="col" class="n">Review</th><th scope="col" class="n">Not a query</th><th scope="col">Resolved by</th><th scope="col" class="n">Time</th><th scope="col" class="n">Cost</th></tr></thead><tbody>' +
       s.jobs.map(function (j) { return '<tr><td class="mono small nowrap">' + fmtDate(j.started_at, true) + "<br>" + (j.mode === "review" ? "re-run of review" : j.mode === "write" ? "write drills (MySQL)" : j.mode === "write-review" ? "re-run of write reviews" : j.mode === "fix-text" ? "bulk text fixes" : j.mode === "fix-setup" ? "bulk setup fixes" : "new drills") + " · " + esc(j.status) + "</td><td>" + j.levels.join(", ") + '</td><td class="n">' + j.processed + " / " + j.total + '</td><td class="n">' + j.matched + '</td><td class="n">' + j.review + '</td><td class="n">' + j.not_query + '</td><td class="small">' + Object.keys(j.resolutions).map(function (k) { return '<span class="mono">' + j.resolutions[k] + "</span> " + esc(k); }).join("<br>") + '</td><td class="n">' + Math.floor(j.seconds / 60) + "m " + (j.seconds % 60) + 's</td><td class="n">$' + j.cost.toFixed(4) + "</td></tr>"; }).join("") + "</tbody></table></div>";
-    html += '<div class="table-wrap" style="margin-top:12px"><table class="admin-t"><thead><tr><th scope="col">Level</th><th scope="col" class="n">Drills</th><th scope="col" class="n">Matched</th><th scope="col" class="n">Need review</th><th scope="col" class="n">Not a query</th><th scope="col" class="n">Not started</th><th scope="col" class="n">Write: matched</th><th scope="col" class="n">Write: review</th><th scope="col" class="n">Write: not tried</th></tr></thead><tbody>' +
+    html += '<div class="table-wrap" style="margin-top:12px" tabindex="0" role="group" aria-label="Reference answers per level"><table class="admin-t"><thead><tr><th scope="col">Level</th><th scope="col" class="n">Drills</th><th scope="col" class="n">Matched</th><th scope="col" class="n">Need review</th><th scope="col" class="n">Not a query</th><th scope="col" class="n">Not started</th><th scope="col" class="n">Write: matched</th><th scope="col" class="n">Write: review</th><th scope="col" class="n">Write: not tried</th></tr></thead><tbody>' +
       s.levels.map(function (L) { return "<tr><td>" + L.level + " · " + esc((META.levels[L.level - 1] || {}).title || "") + '</td><td class="n">' + L.drills + '</td><td class="n">' + L.matched + '</td><td class="n">' + L.review + '</td><td class="n">' + L.not_query + '</td><td class="n">' + L.todo + '</td><td class="n">' + L.write_matched + '</td><td class="n">' + L.write_review + '</td><td class="n">' + L.write_todo + "</td></tr>"; }).join("") + "</tbody></table></div>";
     return html;
   }
@@ -2229,14 +2229,33 @@
     ({ overview: viewOverview, generate: viewGenerate, review: viewReview, mcqs: viewMcqs, drills: viewDrills, recent: viewRecent, learners: viewLearners, settings: viewSettings,
       library: viewLibrary, item: viewItem, health: viewHealth, backups: viewBackups, concepts: viewConcepts, create: viewCreate, help: viewHelp }[route.name] || viewOverview)();
   }
+  // ---------- shared with the React pages (web/src/admin): the one copy of each piece stays here ----------
+  window.SQLDrillsAdmin = {
+    api: api, toast: toast, askConfirm: askConfirm, confirmClick: confirmClick, esc: esc, icon: icon, fmtDate: fmtDate, plural: plural,
+    refreshCounts: refreshCounts, setCount: function (k, v) { counts[k] = v; renderNav(); },
+    loadRefs: loadRefs, previewItem: previewItem, importRows: importRows,
+    meta: function () { return META; }, route: function () { return route; },
+  };
+  // the React bundle (a module script, so it runs after this one) owns some routes: the first render waits for it,
+  // so an owned page is not drawn (and fetched) twice; a bundle that fails to load, or takes over 4 s, leaves the old page
+  function whenReact(cb) {
+    var s = document.querySelector('script[type="module"][src*="/app/assets/"]'), done = false;
+    var go = function () { if (!done) { done = true; cb(); } };
+    if (window.SQLDrillsReact || window.SQLDrillsReactFailed || !s) return go();
+    window.addEventListener("sqldrills:react-ready", go);
+    window.addEventListener("sqldrills:react-failed", go);
+    setTimeout(go, 4000);
+  }
   // the React bundle loads after this script: if it owns the page already on screen, hand that page over
   var booted = false;
   window.addEventListener("sqldrills:react-ready", function () { if (booted && window.SQLDrillsReact.has(route.name, "admin")) render(); });
   api("/topics").then(function (m) {
     META = m;
     window.addEventListener("hashchange", render);
-    booted = true;
-    render();
-    refreshCounts();
+    whenReact(function () {
+      booted = true;
+      render();
+      refreshCounts();
+    });
   }).catch(fail);
 })();

@@ -56,7 +56,8 @@ const baseStyle = css({
   justifyContent: 'center',
   position: 'relative',
   textDecoration: 'none',
-  textTransform: 'capitalize',
+  // SQL Drills: labels are shown as written (sentence case), so the screen text matches the app's own words
+  textTransform: 'none',
   transition: '0.15s',
   verticalAlign: 'baseline',
   whiteSpace: 'nowrap',
