@@ -29,7 +29,7 @@ test("app.js exposes the shared pieces the wrappers use, as the one copy", () =>
   const used = [...new Set([...shared.matchAll(/\bs\.(\w+)\(/g)].map((m) => m[1]))].sort();
   for (const u of used) assert.ok(names.includes(u), "the wrappers call " + u + ", which app.js does not expose");
   // each is a function, or a value (Engine, LEARN_STEPS), defined once in app.js
-  const defs = (fn) => (app.match(new RegExp("function " + fn + "\\(|var " + fn + " = ", "g")) || []).length;
+  const defs = (fn) => (app.match(new RegExp("function " + fn + "\\(|\\n  var " + fn + " = ", "g")) || []).length; // top-level vars only
   for (const fn of names) assert.strictEqual(defs(fn), 1, fn + " is defined once in app.js (found " + defs(fn) + ")");
   // the wrappers render through app.js, never their own copies of the old markup builders
   const code = shared.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");

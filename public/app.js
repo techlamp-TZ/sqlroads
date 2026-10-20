@@ -872,7 +872,7 @@
       (prev ? '<a class="btn" href="' + href(prev) + '" id="exPrev" aria-label="Previous exercise" aria-keyshortcuts="Alt+ArrowLeft" title="Previous (Alt+←)">' + icon("chevLeft") + "</a>" : "") + (next ? '<a class="btn" href="' + href(next) + '" id="exNext" aria-keyshortcuts="Alt+ArrowRight" title="Next (Alt+→)">Next ' + icon("chevRight") + "</a>" : "") + "</div></div>";
     var lvlS = itemsIn(d.level), atS = lvlS.indexOf(d), fromS = Math.max(0, atS - 6), nearS = lvlS.slice(fromS, fromS + 14);
     html += '<div class="ex-split"><div class="ws-left">';
-    html += '<section class="card card-pad ws-task" id="task"><div class="card-h"><h3>' + icon("target") + 'Your task</h3></div><div class="dq"><p class="muted">Loading…</p></div></section>';
+    html += '<section class="card card-pad ws-task" id="task"><div class="card-h"><h2 class="rail-h">' + icon("target") + 'Your task</h2></div><div class="dq"><p class="muted">Loading…</p></div></section>';
     if (d.clock) html += '<div class="self-note clock-note">' + icon("bulb") + "<div><strong>Today is " + new Date(d.clock + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) + " in this exercise.</strong> Queries that use the current date (date('now'), CURRENT_DATE …) all see this day, so your answer and the solution are compared on the same date.</div></div>";
     if (d.sample) html += '<div class="self-note clock-note">' + icon("bulb") + "<div><strong>A random sample.</strong> Any " + (d.sample === true ? "" : d.sample + " ") + "rows of the right set count as correct: they don't have to be the solution's rows.</div></div>";
     if (d.check === "run") html += '<div class="self-note nc-note">' + icon("bulb") + "<div><strong>Practice · not checked.</strong> This drill doesn't have a reference answer yet, so your result isn't compared with anything: it counts as done as soon as your query runs without an error. Read your result against the task to judge it yourself.</div></div>";
@@ -883,7 +883,18 @@
       '</div><a class="link" href="#/level/' + d.level + '" style="margin-top:8px">Whole level (' + lvlS.length + ") " + icon("chevRight") + "</a></section>";
     html += '</div><div class="ws-right">';
     if (server) html += '<div id="dbBanner"></div>';
-    html += '<section class="card editor-card"><div class="ed-bar"><button class="btn primary" data-act="run">' + icon("play") + 'Run <kbd style="background:transparent;color:inherit;border-color:rgb(255 255 255 / .4)">Ctrl+Enter</kbd></button>' +
+    html += drillEditorHtml(d);
+    html += '<div id="extra"></div>';
+    html += quickCheck(d);
+    html += "</div></div></div></div>";
+    view.innerHTML = html;
+    schemaMount(view);
+    drillWire(d);
+  }
+  // the exercise page's editor card (Run, Submit / Mark as done, hint, format, solution, engine, Reset data, the editor and the output)
+  function drillEditorHtml(d) {
+    var server = d.engine === "server";
+    return '<section class="card editor-card"><div class="ed-bar"><button class="btn primary" data-act="run">' + icon("play") + 'Run <kbd style="background:transparent;color:inherit;border-color:rgb(255 255 255 / .4)">Ctrl+Enter</kbd></button>' +
       (d.check === "self" ? '<button class="btn ok" data-act="mark-done">' + icon("check") + (isDone(d) ? "Done ✓" : "Mark as done") + "</button>"
         : server || d.check === "solution" || d.check === "state" ? '<button class="btn ok" data-act="check" aria-keyshortcuts="Control+Shift+Enter">' + icon("checkCircle") + 'Submit <kbd class="kbd-in">Ctrl+Shift+Enter</kbd></button>' : "") +
       '<button class="btn" data-act="hint" aria-keyshortcuts="Control+I">' + icon("bulb") + "<span>" + hintLabel(d) + "</span></button>" + '<button class="btn" data-act="format">' + icon("wand") + "Format</button>" +
@@ -901,11 +912,10 @@
         : d.check === "state" ? "Ctrl+Enter runs your SQL on a fresh MySQL copy of the dataset (nothing is kept, so every run starts from the original data). Submit (Ctrl+Shift+Enter) compares the database you end up with against the reference answer's."
         : d.check === "solution" ? "Ctrl+Enter runs your query and shows the result. Submit (Ctrl+Shift+Enter) checks it against the answer."
         : "Ctrl+Enter runs the query (select text to run just that part). Running it marks the exercise done.") + " Ctrl+I asks for a hint.</p></div></section>";
-    html += '<div id="extra"></div>';
-    html += quickCheck(d);
-    html += "</div></div></div></div>";
-    view.innerHTML = html;
-    schemaMount(view);
+  }
+  // after the exercise page is on screen: the draft, a reflection asked for by the Today plan, the editor, the task text
+  function drillWire(d) {
+    var server = d.engine === "server";
     var draft = store("sqldrills.draft." + d.id);
     $("#sql").value = draft || "-- " + d.title + "\n";
     // from the Today plan: a reflection on an exercise you just tried
@@ -937,7 +947,7 @@
       if (ex.idea) more += "<details><summary>The idea in plain English</summary><pre class=\"course-pre\">" + esc(ex.idea) + "</pre></details>";
       if (ex.example_sql) more += "<details><summary>Worked example</summary>" + (ex.example_intro ? '<pre class="course-pre">' + esc(ex.example_intro) + "</pre>" : "") + '<pre class="mcq-code">' + highlight(ex.example_sql) + "</pre>" + (ex.example_output ? '<pre class="course-pre mono">' + esc(ex.example_output) + "</pre>" : "") + "</details>";
       if (more) task += '<div class="course-more">' + more + "</div>";
-      $("#task").innerHTML = '<div class="card-h"><h3>' + icon("target") + "Your task</h3></div>" + task;
+      $("#task").innerHTML = '<div class="card-h"><h2 class="rail-h">' + icon("target") + "Your task</h2></div>" + task; // h2: it follows the page's h1
       // the course's own table notes stand in when the schema can't be read (database offline)
       Object.keys(SP).forEach(function (k) { if (SP[k].src.item === d.id) SP[k].fallback = ex.tables_text || ""; });
       var extra = "";
@@ -1284,7 +1294,7 @@
   function refreshDone(d) {
     var a = view.querySelector(".mini-list a.on .mn");
     if (a) { a.classList.add("done"); a.innerHTML = icon("check"); }
-    var pill = view.querySelector(".dhead .pill");
+    var pill = view.querySelector(".dhead .pill, [data-drill-status] .pill"); // (the React exercise page keeps it in [data-drill-status])
     if (pill) pill.outerHTML = statusHtml(d);
     var mb = $('[data-act="mark-done"]');
     if (mb) mb.innerHTML = icon("check") + (isDone(d) ? "Done ✓" : "Mark as done");
@@ -1592,9 +1602,11 @@
     return loadConcept(slug).then(function () {
       if (route.name !== "concept" || route.args[0] !== slug) return;
       if (cardsInProgress()) { S.deferredConcept = slug; return; }
-      viewConcept(slug);
+      conceptRender(slug);
     });
   }
+  // a concept page re-render: the old view, or (when React owns the page) an event it listens for
+  function conceptRender(slug) { var R = window.SQLDrillsReact; if (R && R.has("concept", "learner")) window.dispatchEvent(new CustomEvent("sqldrills:concept-render", { detail: { slug: slug } })); else viewConcept(slug); }
   function loadConcept(slug) { return learnApi("/concept/" + encodeURIComponent(slug)).then(function (c) { S.learn.concept[slug] = c; return c; }); }
   function viewConcept(slug) {
     var c = S.learn.concept[slug];
@@ -2075,9 +2087,9 @@
     var ct = t.closest("[data-ctab]");
     if (ct) { var q = new URLSearchParams(route.q); q.set("tab", ct.getAttribute("data-ctab")); history.replaceState(null, "", "#/concept/" + route.args[0] + "?" + q); route.q = q; viewConcept(route.args[0]); var nt = $("#tab-" + ct.getAttribute("data-ctab")); if (nt) nt.focus(); return; }
     var cs = t.closest("[data-concept-seen]");
-    if (cs) { cs.disabled = true; learnApi("/concept/" + cs.getAttribute("data-concept-seen") + "/seen", {}).then(function (r) { if (r.first) learnEvent("card", cs.getAttribute("data-concept-seen")); return loadConcept(route.args[0]); }).then(function () { S.learn.levels = {}; if (cardsInProgress()) cs.outerHTML = '<span class="pill done">' + icon("check") + "Read</span>"; else viewConcept(route.args[0]); toast("Marked as read"); }).catch(function (er) { cs.disabled = false; toast(er.message); }); return; }
+    if (cs) { cs.disabled = true; learnApi("/concept/" + cs.getAttribute("data-concept-seen") + "/seen", {}).then(function (r) { if (r.first) learnEvent("card", cs.getAttribute("data-concept-seen")); return loadConcept(route.args[0]); }).then(function () { S.learn.levels = {}; if (cardsInProgress()) cs.outerHTML = '<span class="pill done">' + icon("check") + "Read</span>"; else conceptRender(route.args[0]); toast("Marked as read"); }).catch(function (er) { cs.disabled = false; toast(er.message); }); return; }
     var mp = t.closest("[data-more-practice]");
-    if (mp) { S.morePractice = mp.getAttribute("data-more-practice"); viewConcept(route.args[0]); return; }
+    if (mp) { S.morePractice = mp.getAttribute("data-more-practice"); conceptRender(route.args[0]); return; }
     var pc = t.closest("[data-po-check]");
     if (pc) { predictCheck(pc.getAttribute("data-po-check")); return; }
     var pr = t.closest("[data-po-reveal]");
@@ -2992,6 +3004,12 @@
     spotBugUsable: spotBugUsable, spotBugHtml: spotBugHtml, spotBugCheck: spotBugCheck, Engine: Engine, lastResult: lastResult,
     predictOptions: predictOptions, inputsHtml: inputsHtml, outcomeHtml: outcomeHtml, numberedScript: numberedScript,
     confHtml: confHtml, confOf: confOf, verdictHtml: verdictHtml,
+    // Phase 4 group 4 (the concept page, the exercise page)
+    stageRing: stageRing, stagesDone: stagesDone, stagesUsed: stagesUsed, masteryList: masteryList, newItemsHtml: newItemsHtml,
+    stageMark: stageMark, stagePanel: stagePanel, STAGES: STAGES, STAGE_LABEL: STAGE_LABEL, STAGE_STATUS: STAGE_STATUS, CTABS: CTABS,
+    levelName: levelName, diffBadge: diffBadge, statusHtml: statusHtml, CHECK_LABEL: CHECK_LABEL, toggleBookmark: toggleBookmark,
+    spIsPhone: spIsPhone, dialect: dialect, quickCheck: quickCheck, itemsIn: itemsIn, drillEditorHtml: drillEditorHtml, drillWire: drillWire,
+    refreshConcept: refreshConcept, takeConceptStale: function () { var v = !!viewConcept.stale; viewConcept.stale = false; return v; },
   };
 
   // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
