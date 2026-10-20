@@ -45,7 +45,7 @@ if (/:4000\b/.test(BASE)) { console.error("Run this against a server on a copy o
     const lib = await (await fetch(BASE + "/api/library")).json();
     const ex = (lib.items || lib).find((d) => d.level === 2 && d.check === "solution" && d.dataset);
     await shot("schema.jpg", "/#/drill/" + ex.id, { wait: "#sql", pause: 2000 });
-    await shot("docs.jpg", "/#/docs?t=az&c=" + concept, { wait: ".doc-body .ln-try" });
+    await shot("docs.jpg", "/#/docs?t=az&c=" + concept, { wait: ".wf-doc-body .ln-try, .doc-body .ln-try" });
     await shot("admin-generate.jpg", "/admin#/generate", { admin: true, wait: "#view .page" });
     await shot("admin-create.jpg", "/admin#/create", { admin: true, wait: "#c-type" });
     await shot("admin-review.jpg", "/admin#/review", { admin: true, wait: "#view .page", pause: 2500 });
