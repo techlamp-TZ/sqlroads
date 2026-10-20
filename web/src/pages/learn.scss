@@ -1,0 +1,82 @@
+// Learn: the overview and the three-column workspace (step | tables | guidance), on the tokens
+@use "../tokens/tokens.scss" as *;
+
+.wf-ln-bar { display: flex; align-items: center; gap: $wf-space-12; margin: $wf-space-8 0; }
+.wf-bar { flex: 1; height: 8px; border-radius: 99px; background: $wf-border; overflow: hidden; display: block;
+  > span { display: block; height: 100%; background: $wf-accent; border-radius: 99px; }
+}
+.wf-ln-start-h { display: flex; justify-content: space-between; align-items: center; gap: $wf-space-12; flex-wrap: wrap; h2 { margin: 2px 0; } }
+.wf-ln-jump { display: flex; flex-direction: column; gap: $wf-space-4; margin-top: $wf-space-8; font-weight: $wf-font-weight-bold; font-size: $wf-font-size-200;
+  select { max-width: 100%; font-weight: 400; }
+}
+.wf-ln-levels { display: flex; flex-direction: column; gap: $wf-space-8; }
+.wf-ln-level { background: $wf-surface; border-radius: $wf-radius-small; box-shadow: 0 0 0 1px $wf-border, $wf-shadow-sm; padding: $wf-space-16 $wf-space-24;
+  summary { cursor: pointer; }
+  .wf-ln-lt { font-weight: $wf-font-weight-bold; }
+  summary .wf-ln-bar { margin: $wf-space-4 0 0; }
+}
+.wf-ln-list { margin: $wf-space-8 0 0; padding: 0; list-style: none; columns: 2 260px;
+  li { break-inside: avoid; }
+  a { display: flex; gap: $wf-space-8; align-items: center; padding: $wf-space-4; color: $wf-text; text-decoration: none; border-radius: $wf-radius-small; }
+  a:hover { background: $wf-surface-raised; text-decoration: underline; }
+}
+.wf-ln-mark { width: 18px; height: 18px; flex: none; color: $wf-ok-text; svg { width: 18px; height: 18px; } }
+.wf-ln-qnote { margin: $wf-space-12 0 $wf-space-4; }
+.wf-ln-nav { display: flex; justify-content: space-between; gap: $wf-space-12; margin: $wf-space-16 0 $wf-space-24; flex-wrap: wrap; a, button { white-space: normal; } }
+
+.wf-crumbs { display: flex; align-items: center; gap: $wf-space-8; color: $wf-text-muted; font-size: $wf-font-size-200; flex-wrap: wrap; margin-bottom: $wf-space-12;
+  a { color: $wf-text-muted; } a:hover { color: $wf-accent-text; }
+  svg { width: 13px; height: 13px; }
+}
+
+.wf-lw-page { padding: $wf-space-24 $wf-space-24 $wf-space-32; @include wf-below(md) { padding: $wf-space-16; } }
+.wf-lw { display: grid; gap: $wf-space-16; grid-template-columns: minmax(0, 1fr); grid-template-areas: "head" "main" "schema" "side"; max-width: 1640px; margin: 0 auto; width: 100%; }
+.wf-lw-head { grid-area: head; min-width: 0; } .wf-lw-main { grid-area: main; min-width: 0; } .wf-lw-schema-col { grid-area: schema; min-width: 0; }
+.wf-lw-side { grid-area: side; min-width: 0; display: flex; flex-direction: column; gap: $wf-space-12; }
+.wf-lw-main > * + * { margin-top: $wf-space-12; }
+@media (min-width: 720px) { .wf-lw { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "head head" "main main" "schema side"; align-items: start; } .wf-lw.no-schema { grid-template-areas: "head head" "main main" "side side"; } }
+@media (min-width: 1200px) { .wf-lw { grid-template-columns: minmax(0, 1fr) 280px; grid-template-areas: "head head" "main schema" "side side"; } .wf-lw.no-schema { grid-template-areas: "head head" "main main" "side side"; } .wf-lw-side { flex-direction: row; flex-wrap: wrap; } .wf-lw-side > * { flex: 1 1 260px; } .wf-lw-schema-col { position: sticky; top: 12px; } }
+@media (min-width: 1440px) { .wf-lw { grid-template-columns: minmax(0, 1fr) 270px 290px; grid-template-areas: "head head side" "main schema side"; } .wf-lw.no-schema { grid-template-columns: minmax(0, 1fr) 290px; grid-template-areas: "head side" "main side"; } .wf-lw-side { flex-direction: column; grid-row: 1 / span 2; } .wf-lw-side > * { flex: none; } }
+@media (min-width: 1440px) and (max-width: 1599px) { .wf-lw { grid-template-columns: minmax(0, 1fr) 250px 270px; } .wf-lw.no-schema { grid-template-columns: minmax(0, 1fr) 270px; } }
+
+.wf-lw-over { padding: $wf-space-16 $wf-space-24; }
+.wf-lw-over-top { display: flex; justify-content: space-between; gap: $wf-space-16; flex-wrap: wrap; }
+.wf-lw-over-txt { flex: 1 1 340px; min-width: 0; h1 { margin: $wf-space-4 0; font-size: $wf-font-size-650; line-height: 1.2; } }
+.wf-lw-obj { margin: 0; color: $wf-text-muted; }
+.wf-lw-over-meta { display: flex; flex-direction: column; align-items: flex-end; gap: $wf-space-8; min-width: 180px; .wf-ln-bar { width: 200px; margin: 0; }
+  @media (max-width: 600px) { align-items: stretch; width: 100%; .wf-ln-bar { width: 100%; } .wf-dialect { align-self: flex-start; } }
+}
+.wf-dialect { display: inline-flex; align-items: center; gap: $wf-space-4; padding: $wf-space-4 $wf-space-12; border-radius: $wf-radius-small; box-shadow: inset 0 0 0 1px $wf-border-strong; font-size: $wf-font-size-200; font-weight: $wf-font-weight-bold; color: $wf-text-muted; background: $wf-surface;
+  svg { width: 14px; height: 14px; color: $wf-accent-text; }
+}
+.wf-lw-steps { display: flex; list-style: none; padding: 0; margin: $wf-space-12 0 $wf-space-8; gap: $wf-space-8; flex-wrap: wrap;
+  li { flex: 1 1 150px; }
+  a { display: flex; align-items: center; gap: $wf-space-8; padding: $wf-space-8 $wf-space-12; border-radius: $wf-radius-small; box-shadow: inset 0 0 0 1px $wf-border; background: $wf-surface-raised; color: $wf-text; text-decoration: none; font-weight: $wf-font-weight-bold; font-size: $wf-font-size-200; min-height: 44px; }
+  .wf-lw-stepi { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; box-shadow: inset 0 0 0 1.5px $wf-border-strong; font-size: $wf-font-size-100; flex: none; background: $wf-surface; svg { width: 14px; height: 14px; } }
+  li.done a { background: $wf-surface; box-shadow: inset 0 0 0 1px $wf-ok; }
+  li.done .wf-lw-stepi { background: $wf-ok; box-shadow: none; color: $wf-on-ok; }
+  li.on a { background: $wf-accent; box-shadow: none; color: $wf-on-accent; }
+  li.on .wf-lw-stepi { background: $wf-on-accent; color: $wf-accent; box-shadow: none; }
+}
+.wf-lw-own { display: flex; gap: $wf-space-8; align-items: flex-start; svg { width: 18px; height: 18px; color: $wf-accent-text; flex: none; margin-top: 2px; } p { margin: 0; } }
+.wf-lw-side-card { padding: $wf-space-16; p { margin: 0; color: $wf-text-muted; } }
+.wf-lw-side-h { display: flex; align-items: center; gap: $wf-space-8; margin: 0 0 $wf-space-8; font-size: $wf-font-size-300; svg { width: 18px; height: 18px; color: $wf-accent-text; } }
+.wf-lw-prog-top { display: flex; align-items: center; gap: $wf-space-12; margin-bottom: $wf-space-8; }
+.wf-lw-ring { width: 52px; height: 52px; transform: rotate(-90deg); flex: none; circle { fill: none; stroke-width: 5; } }
+.wf-lw-ring-bg { stroke: $wf-border; } .wf-lw-ring-fg { stroke: $wf-accent; stroke-linecap: round; }
+.wf-lw-prog-list { list-style: none; margin: 0; padding: 0;
+  li { display: flex; gap: $wf-space-8; padding: $wf-space-8; border-radius: $wf-radius-small; }
+  li.now { background: $wf-surface-raised; }
+  a { display: flex; flex-direction: column; color: $wf-text; text-decoration: none; min-width: 0; }
+  li.now b { color: $wf-accent-text; }
+}
+.wf-lw-dot { width: 22px; height: 22px; border-radius: 50%; box-shadow: inset 0 0 0 1.5px $wf-border-strong; display: inline-grid; place-items: center; flex: none; margin-top: 1px; background: $wf-surface; svg { width: 13px; height: 13px; } }
+.wf-lw-prog-list li.done .wf-lw-dot { background: $wf-ok; box-shadow: none; color: $wf-on-ok; }
+.wf-lw-prog-list li.now .wf-lw-dot { box-shadow: inset 0 0 0 4px $wf-surface, inset 0 0 0 9px $wf-accent; }
+.wf-lw-keys { margin: 0; padding-left: $wf-space-16; color: $wf-text-muted; li { margin: $wf-space-4 0; } }
+.wf-lw-tip { background: $wf-surface-raised; box-shadow: inset 0 0 0 1px $wf-border; border-radius: $wf-radius-small; padding: $wf-space-16; p { margin: 0; color: $wf-text-muted; } }
+.wf-lw-side-fold { background: $wf-surface; border-radius: $wf-radius-small; box-shadow: 0 0 0 1px $wf-border; padding: $wf-space-16;
+  summary { cursor: pointer; font-weight: $wf-font-weight-bold; }
+  > * + * { margin-top: $wf-space-12; }
+}
+@media (prefers-reduced-motion: reduce) { .wf-lw *, .wf-lw *::before, .wf-lw *::after { transition: none !important; animation: none !important; } }
