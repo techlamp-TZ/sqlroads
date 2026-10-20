@@ -1,4 +1,4 @@
-// Catalog and test page only: boots the real old front end (public/app.js and the scripts it needs) in the page,
+// Catalog and test page only: boots the real old front end (src/legacy/app.js and the scripts it needs) in the page,
 // with the shell elements app.js expects (the chrome is hidden), so the wrappers can be shown next to the old
 // pieces with their real handlers. /api and the app's files must reach a server on a database copy (:4100).
 const SCRIPTS = [
@@ -6,7 +6,6 @@ const SCRIPTS = [
   "/compare.js",
   "/cards.js",
   "/help.js",
-  "/app.js",
 ];
 
 // the elements of public/index.html that app.js looks up; everything but #view and #toast is hidden (inline
@@ -38,15 +37,13 @@ export function legacyApp() {
   if (!booting) {
     booting = (async () => {
       if (!document.getElementById("view")) {
-        const css = document.createElement("link");
-        css.rel = "stylesheet"; css.href = "/app.css";
-        document.head.appendChild(css);
+        await import("../../legacy/app.css");
         const wrap = document.createElement("div");
         wrap.innerHTML = SHELL;
         while (wrap.firstChild) document.body.appendChild(wrap.firstChild);
       }
       const booted = new Promise((ok) => window.addEventListener("sqldrills:booted", ok, { once: true }));
-      if (!window.SQLDrillsShared) for (const src of SCRIPTS) await loadScript(src);
+      if (!window.SQLDrillsShared) { for (const src of SCRIPTS) await loadScript(src); await import("../../legacy/app.js"); }
       if (!window.SQLDrillsShared.booted) await booted;
       await new Promise((r) => setTimeout(r, 0)); // app.js renders its first page right after booting
     })();

@@ -47,7 +47,8 @@ test("the generated files are up to date with web/tokens", () => {
 });
 
 test("no hard-coded colour in web/src outside the generated tokens", () => {
-  const files = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? (e.name === "tokens" ? [] : files(path.join(d, e.name))) : [path.join(d, e.name)]);
+  // (src/legacy/ is the old front end, moved as it was in Phase 6: its CSS and JS are not on the tokens yet)
+  const files = (d) => fs.readdirSync(d, { withFileTypes: true }).flatMap((e) => e.isDirectory() ? (e.name === "tokens" || e.name === "legacy" ? [] : files(path.join(d, e.name))) : [path.join(d, e.name)]);
   // a literal colour: hex, rgb()/hsl() with a number, or a bare colour keyword used as a value (not part of a name)
   const COLOUR = /#[0-9a-fA-F]{3,8}\b|\brgba?\(\s*[\d.]|\bhsla?\(\s*[\d.]|(?<![-\w$.'"])(white|black)(?=\s*[;,)])|['"](white|black)['"]/;
   const hits = [];
@@ -101,9 +102,15 @@ test("public/index.html loads the built bundle, and the files exist", () => {
   const block = /<!-- waffles:start -->([\s\S]*?)<!-- waffles:end -->/.exec(html);
   assert.ok(block, "waffles markers in index.html");
   const refs = [...block[1].matchAll(/(?:href|src)="\/app\/([^"]+)"/g)].map((m) => m[1]);
-  assert.ok(refs.some((r) => /^assets\/main-[\w-]+\.js$/.test(r)) && refs.some((r) => /^assets\/main-[\w-]+\.css$/.test(r)), refs.join(" "));
+  assert.ok(refs.some((r) => /^assets\/main-[\w-]+\.js$/.test(r)) && refs.some((r) => /^assets\/app-styles-[\w-]+\.css$/.test(r)) && refs.some((r) => /^assets\/[\w-]+\.css$/.test(r)), refs.join(" "));
   for (const r of refs) assert.ok(fs.existsSync(path.join(ROOT, "public/app", r)), r);
   assert.match(block[1], /<script type="module"/);
-  // the old app's scripts still load first (the bundle is a deferred module)
-  assert.ok(html.indexOf('src="app.js"') > 0);
+  // Phase 6: the old front end is retired from public/ (its code is bundled from web/src/legacy/); the shared
+  // classic scripts still load, before the module
+  for (const f of ["app.js", "admin.js", "app.css", "admin.css"]) assert.ok(!fs.existsSync(path.join(ROOT, "public", f)), "public/" + f + " is retired");
+  assert.ok(!html.includes('src="app.js"') && !html.includes('href="app.css"'));
+  for (const f of ["compare.js", "cards.js", "help.js"]) assert.ok(html.indexOf('src="' + f + '"') > 0, f);
+  const admin = fs.readFileSync(path.join(ROOT, "public/admin.html"), "utf8");
+  assert.ok(!admin.includes('src="admin.js"') && !admin.includes('href="admin.css"') && !admin.includes('href="app.css"'));
+  assert.match(admin, /<script type="module" src="\/app\/assets\/admin-[\w-]+\.js"/);
 });

@@ -16,12 +16,13 @@ test("public/cards.js and public/compare.js exist once: no copy in web/ or in th
   // their code is not bundled into the React build either (it reads them from the page)
   for (const f of files(path.join(ROOT, "public", "app")).filter((f) => f.endsWith(".js"))) {
     const js = fs.readFileSync(f, "utf8");
-    assert.ok(!/diagnoseAttempt|checkJoinMapper|SqlCompare\s*=/.test(js), "card engine code inside " + path.basename(f));
+    // (the old app, bundled since Phase 6, calls Cards.diagnoseAttempt and friends: only a definition is a copy)
+    assert.ok(!/function diagnoseAttempt\(|function checkJoinMapper\(|diagnoseAttempt:function|\bSqlCompare\s*=[^=]/.test(js), "card engine code inside " + path.basename(f));
   }
 });
 
 test("app.js exposes the shared pieces the wrappers use, as the one copy", () => {
-  const app = fs.readFileSync(path.join(ROOT, "public", "app.js"), "utf8");
+  const app = fs.readFileSync(path.join(ROOT, "web", "src", "legacy", "app.js"), "utf8");
   const block = /window\.SQLDrillsShared = \{([\s\S]*?)\n  \};/.exec(app);
   assert.ok(block, "window.SQLDrillsShared in app.js");
   const names = [...block[1].matchAll(/(\w+): \1\b/g)].map((m) => m[1]).sort();
@@ -37,7 +38,7 @@ test("app.js exposes the shared pieces the wrappers use, as the one copy", () =>
 });
 
 test("exampleBox: the lesson card still renders its example through it", () => {
-  const app = fs.readFileSync(path.join(ROOT, "public", "app.js"), "utf8");
+  const app = fs.readFileSync(path.join(ROOT, "web", "src", "legacy", "app.js"), "utf8");
   const card = /function lessonCard\(l, opts\) \{[\s\S]*?\n  \}/.exec(app)[0];
   assert.match(card, /exampleBox\(l\)/);
   assert.doesNotMatch(card, /lessonExample\(|The real result/);

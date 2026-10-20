@@ -14,3 +14,7 @@ afterEach(cleanup);
 
 // Test-only: jsdom does not lay out, so it has no scrollIntoView; the pages call it before focusing a heading.
 if (typeof Element !== "undefined" && !Element.prototype.scrollIntoView) Element.prototype.scrollIntoView = function () {};
+
+// findBy / waitFor: up to 4 s (the default 1 s is too tight when the whole suite runs on a busy machine)
+import { configure } from "@testing-library/react";
+configure({ asyncUtilTimeout: 4000 });

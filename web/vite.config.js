@@ -40,7 +40,8 @@ export default defineConfig({
     manifest: "manifest.json",
     sourcemap: false,
     rollupOptions: {
-      input: { main: here("./src/main.jsx") },
+      // the old apps' stylesheets are entries of their own, so each page gets them first and in the old order
+      input: { main: here("./src/main.jsx"), admin: here("./src/admin-main.jsx"), "app-styles": here("./src/legacy/app.css"), "admin-styles": here("./src/legacy/admin.css") },
       output: { entryFileNames: "assets/[name]-[hash].js", chunkFileNames: "assets/[name]-[hash].js", assetFileNames: "assets/[name]-[hash][extname]" },
     },
   },
