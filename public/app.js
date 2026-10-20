@@ -481,7 +481,7 @@
     return api("/api/library/review").then(function (r) {
       S.review = r; renderNav();
       var changed = JSON.stringify(r.due.map(function (e) { return e.id; })) !== beforeDue;
-      if (changed && route.name === "home") viewHome();
+      if (changed && route.name === "home") render();
       // the review page shows "Coming up" too: a new mistake due tomorrow must appear at once
       if (ids(r) !== before && route.name === "review") viewReviewMistakes();
     }).catch(function () {});
@@ -552,13 +552,15 @@
     var nodes = S.levels.map(function (L) {
       var list = itemsIn(L.n), done = list.filter(isDone).length, sp = levelSplit(list), p = pct(done, list.length), isCur = L.n === cur, lock = lockedLevel(L.n), full = levelIsComplete(L.n, list, done);
       var bar = ["easy", "medium", "hard"].map(function (k) { return sp[k] ? '<span class="' + k + '" style="flex:' + sp[k] + '" title="' + sp[k] + " " + k + '"></span>' : ""; }).join("");
-      var label = "Level " + L.n + ", " + L.title + ", " + p + "% done (" + sp.easy + " easy, " + sp.medium + " medium, " + sp.hard + " hard)" + (isCur ? ", current level" : "") + (lock ? ", locked until 70% of level " + (L.n - 1) + " is done" : "");
+      var shown = (lock || full ? "" : L.n + " ") + L.title + " " + p + "% done" + (isCur ? " Current" : "");
+      var label = shown + " (Level " + L.n + ": " + sp.easy + " easy, " + sp.medium + " medium, " + sp.hard + " hard" + (isCur ? ", current level" : "") + (lock ? ", locked until 70% of level " + (L.n - 1) + " is done" : "") + ")";
       var secs = L.sections ? '<span class="lp-secs">' + L.sections.map(function (s) { return '<a href="#/level/' + L.n + "?section=" + s.key + '" class="lp-sec">' + esc(s.title) + " <b>" + list.filter(function (i) { return i.section === s.key; }).length + "</b></a>"; }).join("") + "</span>" : "";
       return '<li class="lp-step' + (isCur ? " current" : "") + (full ? " complete" : "") + (lock ? " locked" : "") + '">' +
-        '<a class="lp-node" href="#/level/' + L.n + '"' + (lock ? ' data-locked="' + L.n + '" aria-disabled="true"' : "") + ' aria-label="' + esc(label) + '"' + (isCur ? ' aria-current="step"' : "") + ">" +
-        '<span class="lp-num" aria-hidden="true">' + (lock ? icon("lock") : full ? icon("check") : L.n) + "</span>" +
-        '<span class="lp-body" aria-hidden="true"><span class="lp-name">' + esc(L.title) + '</span><span class="lp-pct">' + p + "% done</span>" +
-        '<span class="lp-bar">' + bar + "</span>" + (isCur ? '<span class="lp-cur">Current</span>' : "") + "</span></a>" + secs + "</li>";
+        '<a class="lp-node" href="#/level/' + L.n + '"' + (lock ? ' data-locked="' + L.n + '" aria-disabled="true"' : "") + ' aria-describedby="lp-d' + L.n + '"' + (isCur ? ' aria-current="step"' : "") + ">" +
+        '<span class="lp-num">' + (lock ? icon("lock") : full ? icon("check") : L.n + '<span class="sr-only"> </span>') + "</span>" +
+        '<span class="lp-body"><span class="lp-name">' + esc(L.title) + '<span class="sr-only"> </span></span><span class="lp-pct">' + p + "% done</span>" +
+        '<span class="lp-bar" aria-hidden="true">' + bar + "</span>" + (isCur ? '<span class="lp-cur"><span class="sr-only"> </span>Current</span>' : "") + "</span>" +
+        '<span id="lp-d' + L.n + '" hidden>' + esc(label) + "</span></a>" + secs + "</li>";
     }).join("");
     return '<section class="lpath card" aria-labelledby="lpath-h"><div class="card-h"><h2 id="lpath-h">' + icon("levels") + 'Your level path</h2><a class="more link" href="#/levels">All levels ' + icon("chevRight") + '</a></div><ol class="lp-track">' + nodes + "</ol></section>";
   }
@@ -591,20 +593,20 @@
     var html = "";
     if (d) {
       var list = itemsIn(d.level), done = list.filter(isDone).length;
-      html += '<section class="card card-pad continue"><div class="card-h"><h3>' + icon("graduation") + 'Continue Learning</h3><a class="more" href="' + href(d) + '" aria-label="Continue">' + icon("chevRight") + "</a></div>" +
+      html += '<section class="card card-pad continue"><div class="card-h"><h2 class="rail-h">' + icon("graduation") + 'Continue Learning</h2><a class="more" href="' + href(d) + '" aria-label="Continue">' + icon("chevRight") + "</a></div>" +
         '<div class="cl-item"><span class="ic">' + icon("file") + "</span><div><strong>" + esc(d.title) + "</strong><small>" + esc(levelName(d.level)) + " · " + d.seq + " of " + list.length + "</small></div></div>" +
         '<div class="cl-bar"><span class="bar"><span style="width:' + pct(done, list.length) + '%"></span></span>' + pct(done, list.length) + "%</div>" +
         '<a class="btn" href="' + href(d) + '">Continue ' + icon("chevRight") + "</a></section>";
     }
-    html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("target") + 'Daily Goal</h3><button class="more link" data-act="set-goal" title="Change the daily goal">' + icon("chevRight") + "</button></div>" +
+    html += '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("target") + 'Daily Goal</h2><button class="more link" data-act="set-goal" title="Change the daily goal">' + icon("chevRight") + "</button></div>" +
       '<div class="goal">' + ring(st.today / goal, 104, 10, Math.min(st.today, 99) + "/" + goal, "done") + "<div><p>" +
       (st.today >= goal ? "Goal reached today. Great work!" : "Do " + plural(goal, "activity").replace("activitys", "activities") + " today (exercises, flashcards, predictions, reflections) to keep your streak alive!") + '</p><a class="btn primary" href="#/progress">View Progress</a></div></div></section>';
-    html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("bulb") + 'SQL Concept of the Day</h3><a class="more" href="#/guide/commands/' + concept.id + '" aria-label="Open the SQL Concept of the Day">' + icon("chevRight") + "</a></div>" +
-      '<div class="concept"><h4>' + esc(concept.name) + "</h4><p>" + esc(concept.text) + '</p><a class="btn sm ghost-accent" href="#/guide/commands/' + concept.id + '">Read More ' + icon("chevRight") + "</a></div></section>";
+    html += '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("bulb") + 'SQL Concept of the Day</h2><a class="more" href="#/guide/commands/' + concept.id + '" aria-label="Open the SQL Concept of the Day">' + icon("chevRight") + "</a></div>" +
+      '<div class="concept"><h3 class="cotd-h">' + esc(concept.name) + "</h3><p>" + esc(concept.text) + '</p><a class="btn sm ghost-accent" href="#/guide/commands/' + concept.id + '">Read More ' + icon("chevRight") + "</a></div></section>";
     var cheat = CHEATS[lvNow] || [];
-    if (cheat.length) html += '<section class="card card-pad cheat" aria-labelledby="cheat-h"><div class="card-h"><h3 id="cheat-h">' + icon("file") + "Level " + lvNow + ' cheat sheet</h3></div><dl class="cheat-list">' +
+    if (cheat.length) html += '<section class="card card-pad cheat" aria-labelledby="cheat-h"><div class="card-h"><h2 class="rail-h" id="cheat-h">' + icon("file") + "Level " + lvNow + ' cheat sheet</h2></div><dl class="cheat-list">' +
       cheat.map(function (c) { return "<div><dt>" + esc(c[0]) + '</dt><dd><code>' + esc(c[1]) + "</code></dd></div>"; }).join("") + "</dl></section>";
-    html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("link") + 'Quick Links</h3></div><div class="qlinks">' +
+    html += '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("link") + 'Quick Links</h2></div><div class="qlinks">' +
       '<a href="#/guide/commands">' + icon("file") + 'Common SQL Commands<span class="go">' + icon("chevRight") + "</span></a>" +
       '<a href="#/guide/tips">' + icon("tips") + 'Practice Tips<span class="go">' + icon("chevRight") + "</span></a></div></section>";
     return '<aside class="rail">' + html + "</aside>";
@@ -2387,7 +2389,7 @@
     if (!orig) return emptyStage("code", "This lesson has no example to run.", null);
     var local = exampleLocal(l), engine = local ? "SQLite" : "MySQL", id = "ex-" + String(slug).replace(/[^\w-]/g, ""), sql = S.learnDraft[slug] != null ? S.learnDraft[slug] : orig;
     return '<section class="card ws-card ln-try" data-ex="' + esc(slug) + '" data-ex-mode="' + (local ? "local" : "server") + '" data-dataset="' + esc(l.dataset || "") + '" aria-labelledby="' + id + '-h">' +
-      '<div class="ws-head"><div><h3 id="' + id + '-h">' + icon("code") + "Try the example</h3><p class=\"muted small\">Edit and run the SQL query. Check the results below.</p></div></div>" +
+      '<div class="ws-head"><div><h' + (opts.hLevel || 3) + ' id="' + id + '-h">' + icon("code") + "Try the example</h" + (opts.hLevel || 3) + "><p class=\"muted small\">Edit and run the SQL query. Check the results below.</p></div></div>" +
       '<div class="ws-ed"><div class="ws-ed-bar"><span class="ws-dialect" title="Where this query runs">' + icon("db") + esc(engine) + '</span><button type="button" class="ws-copy" data-ex-copy aria-label="Copy the query">' + icon("copy") + "<span>Copy</span></button></div>" +
       '<div class="editor ide"><div class="gutter" aria-hidden="true">1</div><div class="ed-inner"><pre class="hl" aria-hidden="true"></pre><label class="sr-only" for="' + id + '">The example query (' + engine + ")</label>" +
       '<textarea id="' + id + '" class="ln-sql" spellcheck="false" autocomplete="off" data-orig="' + esc(orig) + '">' + esc(sql) + "</textarea></div></div></div>" +
@@ -2597,6 +2599,7 @@
       (s !== 1 && l && l.tip ? '<section class="lw-tip" aria-labelledby="lw-tip"><h2 class="lw-side-h" id="lw-tip">' + icon("code") + "Watch out</h2><p>" + lessonText(l.tip) + "</p></section>" : "");
   }
   function learnSideRefresh() {
+    window.dispatchEvent(new Event("sqldrills:learn-changed"));
     var box = view.querySelector(".lw-side"); if (!box || route.name !== "learn" || !route.args[0]) return;
     var c = S.learn.concept[route.args[0]]; if (!c) return;
     // only on the quick-check screen: the questions it shows, answered there
@@ -2701,6 +2704,7 @@
   }
   function challengeDone(right) {
     S.learn.today = null; viewConcept.stale = true;
+    window.dispatchEvent(new CustomEvent("sqldrills:challenge-done", { detail: { right: right } })); // the React page shows its own box
     var box = view.querySelector(".ch-done");
     if (box) { box.innerHTML = '<section class="card card-pad"><p>' + (right ? "Saved. It comes back when it is due." : "Saved. It comes back tomorrow.") + '</p><div class="actions"><a class="btn primary" href="#/home">Back to Today</a></div></section>'; box.querySelector("a").focus(); }
   }
@@ -2975,8 +2979,30 @@
     highlight: highlight, icon: icon, esc: esc,
     api: api, rail: rail, emptyStage: emptyStage, levelOf: levelOf, levels: function () { return S.levels; },
     get booted() { return booted; },
+    // Phase 4 group 3 (Home, Learn, Flashcards, Notes, Challenge): the app's state and the pieces those pages use
+    state: S, route: function () { return route; }, store: store, toast: toast, plural: plural, pct: pct, href: href, seeded: seeded,
+    renderNav: renderNav, learnEvent: learnEvent, versionHeaders: versionHeaders, watchVersion: watchVersion,
+    markConceptStale: function () { viewConcept.stale = true; },
+    levelPath: levelPath, progressStrip: progressStrip, quizPicker: quizPicker, compactRow: compactRow,
+    streak: streak, dailyGoal: dailyGoal, currentLevel: currentLevel, isWeekend: isWeekend, loadReview: loadReview,
+    learnPathLoad: learnPathLoad, loadConcept: loadConcept, learnFlat: learnFlat, learnContinue: learnContinue, learnBar: learnBar,
+    learnStepsOf: learnStepsOf, learnStepDone: learnStepDone, learnStepState: learnStepState, learnChecks: learnChecks,
+    learnCheckAnswered: learnCheckAnswered, lessonText: lessonText, exampleSqlOf: exampleSqlOf, exampleLocal: exampleLocal, LEARN_STEPS: LEARN_STEPS,
+    predictCard: predictCard, mcqBlock: mcqBlock, isDone: isDone,
+    spotBugUsable: spotBugUsable, spotBugHtml: spotBugHtml, spotBugCheck: spotBugCheck, Engine: Engine, lastResult: lastResult,
+    predictOptions: predictOptions, inputsHtml: inputsHtml, outcomeHtml: outcomeHtml, numberedScript: numberedScript,
+    confHtml: confHtml, confOf: confOf, verdictHtml: verdictHtml,
   };
 
+  // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
+  function scrollersFocusable() {
+    [].forEach.call(document.querySelectorAll(".tbl-wrap, .table-wrap, .grid-wrap, .result-box"), function (el) {
+      var over = el.scrollWidth > el.clientWidth + 1, ours = el.hasAttribute("data-scroll-focus");
+      if (over && !el.hasAttribute("tabindex")) { el.setAttribute("tabindex", "0"); el.setAttribute("data-scroll-focus", el.hasAttribute("role") ? "" : "role"); if (!el.hasAttribute("role")) { el.setAttribute("role", "group"); if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Table, scrolls sideways"); } }
+      else if (!over && ours) { el.removeAttribute("tabindex"); if (el.getAttribute("data-scroll-focus") === "role") { el.removeAttribute("role"); if (el.getAttribute("aria-label") === "Table, scrolls sideways") el.removeAttribute("aria-label"); } el.removeAttribute("data-scroll-focus"); }
+    });
+  }
+  (function () { var t; var later = function () { clearTimeout(t); t = setTimeout(scrollersFocusable, 80); }; new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); window.addEventListener("resize", later); })();
   // ---------- boot ----------
   // the React bundle (a module script, so it runs after this one) owns some routes: the first render waits for it,
   // so an owned page is not drawn (and fetched) twice; a bundle that fails to load, or takes over 4 s, leaves the old page

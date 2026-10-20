@@ -28,8 +28,9 @@ test("app.js exposes the shared pieces the wrappers use, as the one copy", () =>
   const shared = fs.readFileSync(path.join(ROOT, "web", "src", "shared", "shared.jsx"), "utf8");
   const used = [...new Set([...shared.matchAll(/\bs\.(\w+)\(/g)].map((m) => m[1]))].sort();
   for (const u of used) assert.ok(names.includes(u), "the wrappers call " + u + ", which app.js does not expose");
-  for (const fn of names) assert.match(app, new RegExp("function " + fn + "\\("), fn + " is defined once in app.js");
-  for (const fn of names) assert.strictEqual((app.match(new RegExp("function " + fn + "\\(", "g")) || []).length, 1, fn + " defined twice");
+  // each is a function, or a value (Engine, LEARN_STEPS), defined once in app.js
+  const defs = (fn) => (app.match(new RegExp("function " + fn + "\\(|var " + fn + " = ", "g")) || []).length;
+  for (const fn of names) assert.strictEqual(defs(fn), 1, fn + " is defined once in app.js (found " + defs(fn) + ")");
   // the wrappers render through app.js, never their own copies of the old markup builders
   const code = shared.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
   assert.doesNotMatch(code, /<(section|dialog|table|textarea)\b|class(Name)?=["'{][^"'}]*\b(schema-panel|ws-card|xcard|sp-|grid rdiff)/, "a wrapper builds old markup itself");

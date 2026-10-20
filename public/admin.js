@@ -2229,6 +2229,15 @@
     ({ overview: viewOverview, generate: viewGenerate, review: viewReview, mcqs: viewMcqs, drills: viewDrills, recent: viewRecent, learners: viewLearners, settings: viewSettings,
       library: viewLibrary, item: viewItem, health: viewHealth, backups: viewBackups, concepts: viewConcepts, create: viewCreate, help: viewHelp }[route.name] || viewOverview)();
   }
+  // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
+  function scrollersFocusable() {
+    [].forEach.call(document.querySelectorAll(".tbl-wrap, .table-wrap, .grid-wrap, .result-box"), function (el) {
+      var over = el.scrollWidth > el.clientWidth + 1, ours = el.hasAttribute("data-scroll-focus");
+      if (over && !el.hasAttribute("tabindex")) { el.setAttribute("tabindex", "0"); el.setAttribute("data-scroll-focus", el.hasAttribute("role") ? "" : "role"); if (!el.hasAttribute("role")) { el.setAttribute("role", "group"); if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Table, scrolls sideways"); } }
+      else if (!over && ours) { el.removeAttribute("tabindex"); if (el.getAttribute("data-scroll-focus") === "role") { el.removeAttribute("role"); if (el.getAttribute("aria-label") === "Table, scrolls sideways") el.removeAttribute("aria-label"); } el.removeAttribute("data-scroll-focus"); }
+    });
+  }
+  (function () { var t; var later = function () { clearTimeout(t); t = setTimeout(scrollersFocusable, 80); }; new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); window.addEventListener("resize", later); })();
   // ---------- shared with the React pages (web/src/admin): the one copy of each piece stays here ----------
   window.SQLDrillsAdmin = {
     api: api, toast: toast, askConfirm: askConfirm, confirmClick: confirmClick, esc: esc, icon: icon, fmtDate: fmtDate, plural: plural,

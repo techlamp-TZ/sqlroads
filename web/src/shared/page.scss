@@ -54,3 +54,6 @@
   &:hover { border-color: $wf-accent-text; }
   &.is-on { background: $wf-accent; border-color: $wf-accent; color: $wf-on-accent; font-weight: $wf-font-weight-bold; }
 }
+
+// a heading or box focused by the page itself (tabindex -1, for screen readers): no ring
+.wf-root [tabindex="-1"]:focus { outline: none; }

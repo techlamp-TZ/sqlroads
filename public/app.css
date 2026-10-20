@@ -107,8 +107,8 @@ kbd { font-size: 11px; color: var(--muted); border: 1px solid var(--line); backg
 .card { background: var(--card); border: 1px solid var(--line); border-radius: var(--r); box-shadow: var(--shadow); }
 .card-pad { padding: 18px 20px; }
 .card-h { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-.card-h h3 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
-.card-h h3 svg { width: 22px; height: 22px; color: var(--accent); }
+.card-h h3, .card-h h2.rail-h { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.card-h h3 svg, .card-h h2.rail-h svg { width: 22px; height: 22px; color: var(--accent); }
 .card-h .more { margin-left: auto; color: var(--muted); display: grid; place-items: center; }
 .card-h .more svg { width: 18px; height: 18px; }
 .muted { color: var(--muted); }
@@ -264,8 +264,8 @@ a.stat:hover { border-color: var(--accent); }
 
 /* ---------- rail cards ---------- */
 .continue { background: linear-gradient(140deg, #1453cf, #0c3ea8); color: #fff; border: 0; }
-.continue .card-h h3 { color: #fff; }
-.continue .card-h h3 svg, .continue .card-h .more { color: #fff; }
+.continue .card-h h3, .continue .card-h h2.rail-h { color: #fff; }
+.continue .card-h h3 svg, .continue .card-h h2.rail-h svg, .continue .card-h .more { color: #fff; }
 .continue .cl-item { display: flex; align-items: center; gap: 12px; background: rgb(255 255 255 / .1); border-radius: 10px; padding: 12px; margin-bottom: 14px; }
 .continue .cl-item .ic { width: 38px; height: 38px; border-radius: 10px; background: rgb(255 255 255 / .16); display: grid; place-items: center; }
 .continue .cl-item .ic svg { width: 20px; height: 20px; }
@@ -282,7 +282,7 @@ a.stat:hover { border-color: var(--accent); }
 .ring-txt { font-weight: 800; fill: var(--fg); }
 .ring-sub { fill: var(--muted); font-size: 11px; }
 .concept { background: var(--soft); border-radius: 10px; padding: 14px 16px; }
-.concept h4 { font-size: 15px; margin-bottom: 6px; }
+.concept h4, .concept h3.cotd-h { font-size: 15px; margin-bottom: 6px; }
 .concept p { margin: 0 0 12px; color: var(--fg-2); font-size: 13px; line-height: 1.55; }
 .qlinks { display: flex; flex-direction: column; }
 .qlinks a { display: flex; align-items: center; gap: 12px; padding: 9px 2px; color: var(--fg); font-size: 13.5px; font-weight: 500; }
@@ -694,9 +694,9 @@ pre.code { margin: 0; padding: 14px 16px; overflow: auto; max-height: 520px; fon
 .lp-pct { font-size: 12px; color: var(--fg-2); }
 .lp-bar { display: flex; height: 5px; border-radius: 3px; overflow: hidden; background: var(--soft); }
 .lp-bar .easy { background: var(--ok); } .lp-bar .medium { background: var(--warn); } .lp-bar .hard { background: var(--bad, #c0262d); }
-.lp-cur { justify-self: start; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--accent); color: #fff; }
+.lp-cur { justify-self: start; font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 999px; background: var(--accent-fill, var(--accent)); color: #fff; }
 .lp-step.current .lp-node { border: 2px solid var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
-.lp-step.current .lp-num { background: var(--accent); border-color: var(--accent); color: #fff; }
+.lp-step.current .lp-num { background: var(--accent-fill, var(--accent)); border-color: var(--accent-fill, var(--accent)); color: #fff; }
 .lp-step.complete .lp-num { background: var(--ok-soft); color: var(--ok); border-color: var(--ok); }
 .lp-step.locked .lp-node { background: var(--soft); border-style: dashed; cursor: not-allowed; }
 .lp-step.locked .lp-name { color: var(--fg-2); }
