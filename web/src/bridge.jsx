@@ -8,13 +8,18 @@ import { flushSync } from "react-dom";
 import Licenses from "./pages/Licenses.jsx";
 import Help from "./pages/Help.jsx";
 import Docs from "./pages/Docs.jsx";
+import Home from "./pages/Home.jsx";
+import Learn from "./pages/Learn.jsx";
+import Notes from "./pages/Notes.jsx";
+import Flashcards from "./pages/Flashcards.jsx";
+import Challenge from "./pages/Challenge.jsx";
 import Create from "./pages/admin/Create.jsx";
 import Settings from "./pages/admin/Settings.jsx";
 import Backups from "./pages/admin/Backups.jsx";
 import Health from "./pages/admin/Health.jsx";
 
 // the routes React owns in each app (learner: index.html, admin: admin.html)
-export const PAGES = { learner: { licenses: Licenses, help: Help, docs: Docs }, admin: { help: Help, create: Create, settings: Settings, backups: Backups, health: Health } };
+export const PAGES = { learner: { licenses: Licenses, help: Help, docs: Docs, home: Home, learn: Learn, notes: Notes, flashcards: Flashcards, challenge: Challenge }, admin: { help: Help, create: Create, settings: Settings, backups: Backups, health: Health } };
 
 export function createBridge(pages = PAGES) {
   const byApp = pages.learner || pages.admin ? pages : { learner: pages }; // a flat map means the learner app
