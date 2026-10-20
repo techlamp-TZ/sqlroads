@@ -17,7 +17,7 @@ describe("bridge", () => {
     expect(b.has("toString")).toBe(false);
     expect(createBridge().has("licenses")).toBe(true);
     expect(createBridge().has("licenses", "admin")).toBe(false);
-    expect(Object.keys(PAGES.learner)).toEqual(["licenses", "help", "docs", "home", "learn", "notes", "flashcards", "challenge"]);
+    expect(Object.keys(PAGES.learner)).toEqual(["licenses", "help", "docs", "home", "learn", "notes", "flashcards", "challenge", "concept", "drill"]);
     expect(Object.keys(PAGES.admin)).toEqual(["help", "create", "settings", "backups", "health"]);
     expect(createBridge().has("help", "admin")).toBe(true);
     expect(createBridge().has("docs", "admin")).toBe(false);

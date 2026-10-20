@@ -13,13 +13,15 @@ import Learn from "./pages/Learn.jsx";
 import Notes from "./pages/Notes.jsx";
 import Flashcards from "./pages/Flashcards.jsx";
 import Challenge from "./pages/Challenge.jsx";
+import Concept from "./pages/Concept.jsx";
+import Drill from "./pages/Drill.jsx";
 import Create from "./pages/admin/Create.jsx";
 import Settings from "./pages/admin/Settings.jsx";
 import Backups from "./pages/admin/Backups.jsx";
 import Health from "./pages/admin/Health.jsx";
 
 // the routes React owns in each app (learner: index.html, admin: admin.html)
-export const PAGES = { learner: { licenses: Licenses, help: Help, docs: Docs, home: Home, learn: Learn, notes: Notes, flashcards: Flashcards, challenge: Challenge }, admin: { help: Help, create: Create, settings: Settings, backups: Backups, health: Health } };
+export const PAGES = { learner: { licenses: Licenses, help: Help, docs: Docs, home: Home, learn: Learn, notes: Notes, flashcards: Flashcards, challenge: Challenge, concept: Concept, drill: Drill }, admin: { help: Help, create: Create, settings: Settings, backups: Backups, health: Health } };
 
 export function createBridge(pages = PAGES) {
   const byApp = pages.learner || pages.admin ? pages : { learner: pages }; // a flat map means the learner app

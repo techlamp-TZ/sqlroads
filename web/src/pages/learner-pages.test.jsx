@@ -152,6 +152,7 @@ test("Flashcards session: Space shows the answer, Y grades and moves on, the end
   fireEvent.keyDown(document.body, { key: "y" });
   await screen.findByText("Card 2 of 2");
   expect(s.api).toHaveBeenCalledWith("/api/learn/flash/k1", { correct: true });
+  await waitFor(() => expect(document.activeElement.textContent).toContain("Show the answer")); // the next card is ready for keys
   fireEvent.keyDown(document.body, { key: "Enter" });
   await screen.findByText("The table");
   fireEvent.keyDown(document.body, { key: "n" });
