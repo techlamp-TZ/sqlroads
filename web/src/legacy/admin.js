@@ -129,7 +129,6 @@
 
   // ---------- shared bits ----------
   function topicLabel(t) { return (META && META.topics[t]) ? META.topics[t].replace(/ \(.*\)$/, "") : t; }
-  function siteName(id) { var s = META && META.sites.filter(function (x) { return x.id === id; })[0]; return s ? s.name : id; }
   // drafts an AI rewrote in a repair round: who, what, and the version before (when it was kept)
   function rwBadge(v) {
     var r = v && v.rewritten;
@@ -168,9 +167,7 @@
   function selectHtml(name, options, value, all) {
     return '<select name="' + name + '">' + (all ? '<option value="">' + all + "</option>" : "") + options.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (String(o[0]) === String(value) ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>";
   }
-  function topicOptions() { return Object.keys(META.topics).map(function (k) { return [k, topicLabel(k)]; }); }
   function diffOptions() { return META.diffs.map(function (d) { return [d, d.charAt(0).toUpperCase() + d.slice(1)]; }); }
-  function siteOptions() { return META.sites.map(function (s) { return [s.id, s.name]; }); }
   var LEVEL_TOPIC = { 1: "select", 2: "where", 3: "order", 4: "functions", 5: "group", 6: "join", 7: "subquery", 8: "set", 9: "window", 10: "modify", 11: "ddl", 12: "views", 13: "tx", 14: "group" };
   var TOPIC_LEVEL = { select: 1, where: 2, order: 3, functions: 4, dates: 4, group: 5, aggregates: 5, join: 6, subquery: 7, set: 8, window: 9, modify: 10, ddl: 11, views: 12, tx: 13, security: 13 };
   function siteOfDataset(key) { for (var k in DATASET_OF_SITE) if (DATASET_OF_SITE[k] === key) return k; return key; }
@@ -301,9 +298,6 @@
         '<table class="admin-t"><thead><tr><th scope="col">Role</th><th scope="col">Provider</th><th scope="col">Model</th><th scope="col">Price</th><th scope="col">Key</th></tr></thead><tbody>' +
         roles.map(function (r) { return "<tr><td>" + ROLE_LABEL[r.role] + "</td><td>" + esc(PROV_LABEL[r.provider]) + '</td><td class="mono">' + esc(r.model) + '</td><td class="small">' + price(r.price) + "</td><td>" + (r.configured ? '<span class="ok-txt">set</span>' : '<span class="bad-n">missing</span>') + "</td></tr>"; }).join("") + "</tbody></table>";
     }).catch(function (e) { box.innerHTML = '<div class="err">' + esc(e.message) + "</div>"; });
-  }
-  function providersList(list) {
-    return list.map(function (p) { return '<div class="prov"><span class="st' + (p.configured ? " on" : "") + '"></span><div><b>' + esc(p.label) + "</b>" + (p.model ? ' <span class="muted small">' + esc(p.model) + "</span>" : "") + '</div><span class="muted small">' + (p.configured ? "ready" : "no API key") + "</span></div>"; }).join("");
   }
   // --- generate: numbered steps, live summary, checks, the selected level, generation runs
   var pollTimer = null;
@@ -1091,99 +1085,12 @@
 
   // --- provider order for Generate and Review
   var orderState = null;
-  function orderList(kind, title, help) {
-    var names = { claude: "Claude", openai: "OpenAI", deepseek: "DeepSeek" };
-    return '<div class="order-col"><h4>' + title + '</h4><p class="muted small">' + help + '</p><ol class="order-list" aria-label="' + title + '">' + orderState[kind].map(function (id, k, all) {
-      return '<li><span class="mono muted">' + (k + 1) + "</span><b>" + names[id] + '</b><span class="grow"></span><button type="button" class="btn sm" data-ord="' + kind + '" data-id="' + id + '" data-dir="-1" aria-label="Move ' + names[id] + ' up in ' + title + '"' + (k === 0 ? " disabled" : "") + '>↑</button><button type="button" class="btn sm" data-ord="' + kind + '" data-id="' + id + '" data-dir="1" aria-label="Move ' + names[id] + ' down in ' + title + '"' + (k === all.length - 1 ? " disabled" : "") + ">↓</button></li>";
-    }).join("") + "</ol></div>";
-  }
-  function paintOrder() {
-    var card = $("#orderCard");
-    if (!card) return;
-    card.innerHTML = '<div class="card-h"><h3>' + icon("layers") + 'Provider order</h3></div><div class="order-grid">' +
-      orderList("generate", "Generate", "Who drafts new content. Auto tries them in this order and moves on when one fails.") +
-      orderList("review", "Review", "Who checks a draft independently: the first in this list that did not generate it.") +
-      '</div><div class="actions"><button type="button" class="btn primary sm" data-ord-save>Save order</button><button type="button" class="btn sm" data-ord-reset>Back to the defaults</button><span class="muted small" id="ordMsg" aria-live="polite"></span></div>';
-  }
-  function loadOrder() {
-    api("/settings/providers").then(function (o) { orderState = o; paintOrder(); });
-    var card = $("#orderCard");
-    card.onclick = function (e) {
-      var b = e.target.closest("[data-ord]");
-      if (b) {
-        var list = orderState[b.getAttribute("data-ord")], i = list.indexOf(b.getAttribute("data-id")), j = i + Number(b.getAttribute("data-dir"));
-        if (j < 0 || j >= list.length) return;
-        list.splice(j, 0, list.splice(i, 1)[0]);
-        paintOrder();
-        var again = card.querySelector('[data-ord="' + b.getAttribute("data-ord") + '"][data-id="' + b.getAttribute("data-id") + '"][data-dir="' + b.getAttribute("data-dir") + '"]');
-        if (again && !again.disabled) again.focus();
-        $("#ordMsg").textContent = "Not saved yet";
-        return;
-      }
-      if (e.target.closest("[data-ord-reset]")) { orderState.generate = orderState.defaults["order.generate"].slice(); orderState.review = orderState.defaults["order.review"].slice(); paintOrder(); $("#ordMsg").textContent = "Defaults restored: not saved yet"; return; }
-      if (e.target.closest("[data-ord-save]")) api("/settings/providers", "PUT", { generate: orderState.generate, review: orderState.review }).then(function (o) { orderState = o; paintOrder(); $("#ordMsg").textContent = "Saved"; toast("Provider order saved"); });
-    };
-  }
 
-  // --- settings
-  function viewSettings() {
-    api("/providers").then(function (list) {
-      var html = '<div class="page admin"><div class="col"><div class="hero"><div><div class="eyebrow">AI & settings</div><h2 class="h1">AI providers</h2><p>Used for learners\' hints and for the content generation machine. Keys live in sql-drills-server/.env (never in the browser).</p></div></div>';
-      html += '<section class="card card-pad">' + providersList(list) + '<div class="actions" style="margin-top:14px"><select class="inp" id="tp" style="width:auto">' + list.filter(function (p) { return p.configured; }).map(function (p) { return '<option value="' + esc(p.id) + '">' + esc(p.label) + "</option>"; }).join("") + '</select><button class="btn" data-act="test">' + icon("play") + 'Send a test prompt</button><span id="tpOut" class="muted small"></span></div></section>';
-      html += '<section class="card card-pad" id="rolesCard" aria-labelledby="roles-h"><div class="empty-sm">Loading…</div></section>';
-      html += '<section class="card card-pad" id="orderCard"><div class="empty-sm">Loading…</div></section>';
-      html += '<section class="card card-pad" id="sysChanges" aria-labelledby="sc-h"><div class="card-h"><h3 id="sc-h">' + icon("server") + 'System</h3><span class="muted small">changes made to this computer\'s MySQL server for SQL Drills</span></div><div class="empty-sm">Checking…</div></section>';
-      html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("cog") + 'Configuration (.env)</h3></div><table class="admin-t"><tbody>' +
-        [["OPENAI_API_KEY / OPENAI_MODEL", "OpenAI key, and the model for learners' hints (default gpt-5-nano)"], ["GENERATOR_MODEL", "OpenAI model for content generation (default gpt-4.1-mini)"], ["ANTHROPIC_API_KEY / ANTHROPIC_MODEL", "Claude key and model (default claude-haiku-4-5)"], ["DEEPSEEK_API_KEY / DEEPSEEK_MODEL", "DeepSeek key and model (default deepseek-flash; the reviewer)"], ["HINT_PROVIDER_ORDER", "Fallback order for Auto, e.g. openai,claude,deepseek"]]
-          .map(function (r) { return "<tr><td><code>" + r[0] + "</code></td><td class=\"muted\">" + r[1] + "</td></tr>"; }).join("") + '</tbody></table><p class="muted small" style="margin:12px 0 0">Edit .env, then restart with npm start.</p></section></div></div>';
-      view.innerHTML = html;
-      loadRoles($("#rolesCard"), true);
-      loadOrder();
-      api("/settings/system").then(function (list) {
-        var card = $("#sysChanges");
-        if (!card) return;
-        var labels = { now: "Now", persisted: "Persisted by MySQL", myIni: "In my.ini", exists: "User exists", scratchNow: "Scratch databases right now", error: "Status" };
-        card.querySelector(".empty-sm").outerHTML = list.map(function (c) {
-          return '<div class="sys-change"><div class="sys-change-h"><b class="mono">' + esc(c.what) + '</b><span class="muted small mono">' + esc(c.at) + "</span></div>" +
-            '<p class="small" style="margin:4px 0">' + esc(c.why) + '</p><p class="small muted" style="margin:0 0 6px">' + esc(c.how) + "</p>" +
-            (c.live ? '<dl class="kv-inline">' + Object.keys(c.live).map(function (k) { var info = (c.info || []).indexOf(k) > -1; return '<div' + (info ? ' class="info"' : "") + "><dt>" + esc(labels[k] || k) + '</dt><dd class="mono">' + (info ? '<span class="info-dot" aria-hidden="true">i</span>' : "") + esc(String(c.live[k])) + "</dd></div>"; }).join("") + "</dl>" : "") + "</div>";
-        }).join("");
-      }).catch(function (er) { var card = $("#sysChanges"); if (card) card.querySelector(".empty-sm").textContent = er.message; });
-      // course databases: reset to the clean starting state (a backup is made first)
-      var courseBox = function (st) {
-        var last = st && st.last;
-        return '<div class="sys-change" id="courseDb"><div class="sys-change-h"><b>Course databases</b><span class="muted small">MySQL practice, manual, sqlbolt · PostgreSQL sql_course</span></div>' +
-          '<p class="small" style="margin:4px 0">Resetting reloads them from the course\x27s own seed scripts, as on day 1: every change made in course exercises is undone, and the hidden setup exercises run again the next time they are needed. A full backup (SQL files) is made first.</p>' +
-          '<p class="small muted" style="margin:0 0 8px">' + (last ? "Last reset " + fmtDate(last.at, true) + " · backup in <span class=\"mono\">" + esc(last.backup) + "</span>" : "Not reset from here yet.") + "</p>" +
-          '<button type="button" class="btn sm danger" data-course-reset>Reset course database</button> <span class="small" id="courseMsg" aria-live="polite"></span></div>';
-      };
-      api("/settings/course-db").then(function (st) { var card = $("#sysChanges"); if (card) card.insertAdjacentHTML("beforeend", courseBox(st)); });
-      $("#sysChanges").addEventListener("click", function (e) {
-        var b = e.target.closest("[data-course-reset]");
-        if (!b) return;
-        if (!confirmClick(b, "Reset the course databases?\n\nMySQL practice, manual and sqlbolt and the PostgreSQL sql_course schemas are reloaded from the course's seed scripts. Everything changed in course exercises is undone.\n\nA full backup is saved first (backups/course-<time>/).", "Back up and reset")) return;
-        b.disabled = true;
-        $("#courseMsg").textContent = "Backing up, then resetting… (a few seconds)";
-        api("/settings/course-db/reset", "POST").then(function (r) {
-          $("#courseMsg").innerHTML = "Done in " + r.seconds + " s. Backup: <span class=\"mono\">" + esc(r.backup.dir) + "</span> (" + r.backup.files.length + " files).";
-          toast("Course databases reset; backup saved");
-          b.disabled = false;
-        }).catch(function (er) { $("#courseMsg").textContent = er.message; b.disabled = false; });
-      });
-      view.onclick = function (e) {
-        var a = e.target.closest('[data-act="test"]');
-        if (!a) return;
-        $("#tpOut").textContent = "Asking…";
-        api("/providers/test", "POST", { provider: $("#tp").value }).then(function (r) { $("#tpOut").textContent = r.label + " (" + r.model + ") answered in " + r.ms + " ms: " + r.text; }).catch(function (er) { $("#tpOut").textContent = er.message; });
-      };
-    }).catch(fail);
-  }
 
   // ================= phase 2: overview, health, backups, recently added, write, import =================
   var DIFF_COLORS = { easy: "#4ADE80", medium: "#F59E0B", hard: "#9F1239" };
   function fmtDate(iso, withTime) { if (!iso) return "–"; var d = new Date(iso); return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" }) + (withTime ? ", " + d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : ""); }
   function n(v) { return '<span class="mono">' + (v == null ? "–" : Number(v).toLocaleString()) + "</span>"; }
-  function pctTxt(v) { return v == null ? "–" : v + "%"; }
   function stateDot(state) {
     var ok = state === "online" || state === "ready", bad = state === "offline" || state === "failing" || state === "missing";
     var label = { online: "Online", offline: "Offline", ready: "Ready", failing: "Failing", missing: "Key missing" }[state] || "Unknown";
@@ -1202,146 +1109,6 @@
       '<ul class="spend-list" aria-label="AI spend per model">' + s.byModel.map(function (r) { return '<li><span class="spend-m">' + esc(r.model) + ' <span class="muted small">' + esc(r.provider) + '</span></span><span class="mono spend-c">' + usd(r.cost) + '</span><span class="muted small spend-d">' + n(r.calls) + (r.calls === 1 ? " call · " : " calls · ") + n(r.input) + " in / " + n(r.output) + " out tokens</span></li>"; }).join("") + "</ul>" +
       (s.unpriced ? '<p class="muted small">' + n(s.unpriced) + " calls used a model with no price in hints.js and count as $0.</p>" : "") + "</div>";
   }
-  function viewOverview() {
-    view.innerHTML = '<div class="page admin"><div class="loading">Loading…</div></div>';
-    api("/dashboard").then(function (d) {
-      if (route.name !== "overview" && route.name !== "") return; // left the page while it loaded
-      var k = d.kpis, s = d.summary;
-      var html = '<div class="page admin ov"><div class="col">';
-      html += '<div class="hero"><div><div class="eyebrow">Overview</div><h2 class="h1">Content &amp; learning</h2><p>' + n(k.exercises) + " exercises in " + s.levels.length + " levels, " + n(k.mcq.total) + ' live MCQs. Library built <span class="mono">' + fmtDate(s.builtAt, true) + '</span>.</p></div><div class="muted small">Last backup: <span class="mono">' + fmtDate(d.lastBackup, true) + "</span></div></div>";
-      // KPI strip
-      var cell = function (label, value, sub, href) { return '<a class="kpi" href="' + href + '"><span class="kpi-l">' + label + '</span><span class="kpi-v mono">' + value + '</span><span class="kpi-s">' + sub + "</span></a>"; };
-      html += '<section class="card kpis" aria-label="Key numbers">' +
-        cell("Exercises", k.exercises.toLocaleString(), n(k.browser) + " in browser · " + n(k.server) + " on server", "#/library") +
-        cell("Self-check", k.selfCheck.toLocaleString(), k.selfPct + "% can't be auto-checked", "#/library?check=self") +
-        cell("MCQs", k.mcq.total.toLocaleString(), n(k.mcq.easy) + " easy · " + n(k.mcq.medium) + " medium · " + n(k.mcq.hard) + " hard", "#/mcqs") +
-        cell("Review queue", k.queue.toLocaleString(), k.queue ? n(k.queue) + " waiting" : "nothing waiting", "#/review") +
-        cell("Completed by learners", k.completed30.toLocaleString(), "last 30 days", "#/learners") + "</section>";
-      // quick actions
-      var tile = function (ic, title, text, attrs) { return '<' + (attrs.indexOf("href") === 0 ? "a " : 'button type="button" ') + attrs + ' class="qa">' + '<span class="qa-ic">' + icon(ic) + '</span><span class="qa-t">' + title + '</span><span class="qa-s">' + text + "</span></" + (attrs.indexOf("href") === 0 ? "a" : "button") + ">"; };
-      html += '<div class="qas">' + tile("spark", "Generate drills", "AI drafts, checked, then reviewed", 'href="#/generate?kind=drill"') +
-        tile("edit", "Write an exercise", "Level, prompt, solution; validated first", 'data-act="write"') +
-        tile("download", "Import exercises", "CSV or JSON, every solution is run", 'data-act="import"') +
-        tile("archive", "Back up library", 'Last backup: <span class="mono" id="lastBk">' + fmtDate(d.lastBackup, true) + "</span>", 'data-act="backup"') + "</div>";
-      html += '<div class="ov-grid"><div class="ov-main">';
-      html += '<section class="card card-pad" aria-labelledby="lm-h"><div class="card-h"><h3 id="lm-h">' + icon("layers") + 'Learning model coverage</h3><a class="more link" href="#/concepts">Concepts</a></div><div id="lmCard" aria-live="polite"><div class="empty-sm">Loading…</div></div></section>';
-      html += '<section class="card card-pad" aria-labelledby="lvl-h"><div class="card-h"><h3 id="lvl-h">' + icon("levels") + 'Library by level</h3><a class="more link" href="#/library">Open the library</a></div><div id="lvlTools"></div><div class="table-wrap" id="lvlTable"></div></section>';
-      html += '</div><div class="ov-side">';
-      // content gaps
-      html += '<section class="card card-pad" aria-labelledby="gap-h"><div class="card-h"><h3 id="gap-h">' + icon("warn") + "Content gaps</h3></div>" +
-        (d.gaps.length ? '<div class="gaps">' + d.gaps.map(function (g) { return '<div class="gap ' + g.kind + '"><b>' + esc(g.title) + "</b><p>" + esc(g.text) + '</p><a class="btn sm" href="' + g.href + '">' + esc(g.action) + "</a></div>"; }).join("") + "</div>" : '<div class="empty-sm">No level is flagged.</div>') + "</section>";
-      html += '<section class="card card-pad" aria-labelledby="h-h"><div class="card-h"><h3 id="h-h">' + icon("heart") + 'Library health</h3><a class="more link" href="#/health">Open</a></div><div id="healthCard">' + healthList(d.health) + "</div></section>";
-      // recently added
-      html += '<section class="card card-pad" aria-labelledby="r-h"><div class="card-h"><h3 id="r-h">' + icon("clock") + 'Recently added</h3><a class="more link" href="#/recent">Open</a></div>' +
-        (d.recent.count ? '<p class="big-n">' + n(d.recent.count) + ' <span class="muted small">new since the starting library</span></p><ul class="mini">' + d.recent.items.map(function (i) { return "<li>" + (i.kind === "exercise" ? '<a href="#/item/' + i.id + '">' + esc(i.title) + "</a>" : esc(i.title)) + ' <span class="muted small">· ' + (i.level ? "L" + i.level + " · " : "") + esc(i.diff || "") + " · " + i.origin + " · " + fmtDate(i.added_at) + "</span></li>"; }).join("") + "</ul>"
-          : '<p class="muted" style="margin:0">' + n(0) + " new since the starting library (" + n(d.recent.baseline) + " imported 12–13 Oct).</p>") + "</section>";
-      // AI generation
-      html += '<section class="card card-pad" aria-labelledby="g-h"><div class="card-h"><h3 id="g-h">' + icon("spark") + 'AI generation</h3><a class="more link" href="#/generate">Generate</a></div><dl class="kv3">' +
-        "<div><dt>Runs this week</dt><dd>" + n(d.gen.runs) + "</dd></div><div><dt>Drafts passed all checks</dt><dd class=\"mono\">" + pctTxt(d.gen.passedPct) + "</dd></div><div><dt>Drafts approved</dt><dd class=\"mono\">" + pctTxt(d.gen.approvedPct) + "</dd></div></dl>" + spendHtml(d.spend) + "</section>";
-      // system
-      html += '<section class="card card-pad" aria-labelledby="s-h"><div class="card-h"><h3 id="s-h">' + icon("cog") + 'System</h3><span class="muted small" id="sysAt">checking…</span></div><div id="sysBody" aria-live="polite"><div class="empty-sm">Checking…</div></div>' +
-        '<p class="sys-foot">' + n(d.footer.links) + " cross-links · " + n(d.footer.duplicates) + " duplicates removed · " + n(d.footer.bookmarks) + " bookmarks</p></section>";
-      var total30 = Object.keys(d.activity).reduce(function (a, x) { return a + d.activity[x]; }, 0);
-      html += '<section class="card card-pad wide" aria-labelledby="act-h"><div class="card-h"><h3 id="act-h">' + icon("chart") + "Learner activity</h3></div>" + (total30 ? barChart(d.activity) : '<div class="empty-sm">No completions yet. The 30-day chart appears once learners complete exercises.</div>') + "</section>";
-      html += "</div></div></div></div>";
-      view.innerHTML = html;
-      renderLevels(s);
-      loadLearningCard();
-      loadSystem();
-      sysTimer = setInterval(loadSystem, 60000);
-      if (d.health.running) pollHealth();
-      view.onclick = function (e) {
-        var a = e.target.closest("[data-act]");
-        if (!a) return;
-        var act = a.getAttribute("data-act");
-        if (act === "write") openEditor("drill", null, function () { refreshCounts(); viewOverview(); }, { write: true });
-        else if (act === "import") openImport();
-        else if (act === "backup") makeBackup(a);
-        else if (act === "health-run") runHealth(a);
-        else if (act === "lvl-sort") { lvlState.sort = a.getAttribute("data-v"); renderLevels(s); }
-      };
-      view.onchange = function (e) { if (e.target.id === "attn") { lvlState.attention = e.target.checked; renderLevels(s); } };
-    }).catch(fail);
-  }
-  function renderLevels(s) {
-    var max = Math.max.apply(null, s.levels.map(function (L) { return L.total; }));
-    var rows = s.levels.slice();
-    if (lvlState.attention) rows = rows.filter(function (L) { return L.flags.length; });
-    var by = { level: function (a, b) { return a.n - b.n; }, largest: function (a, b) { return b.total - a.total; }, easy: function (a, b) { return a.easy / a.total - b.easy / b.total; }, self: function (a, b) { return b.selfCheck / b.total - a.selfCheck / a.total; } }[lvlState.sort];
-    rows.sort(by);
-    var sortBtn = function (v, label) { return '<button type="button" class="seg' + (lvlState.sort === v ? " on" : "") + '" data-act="lvl-sort" data-v="' + v + '" aria-pressed="' + (lvlState.sort === v) + '">' + label + "</button>"; };
-    $("#lvlTools").innerHTML = '<div class="lvl-tools"><div class="segs" role="group" aria-label="Sort levels">' + sortBtn("level", "Level order") + sortBtn("largest", "Largest") + sortBtn("easy", "Fewest easy (by %)") + sortBtn("self", "Most self-check (by %)") + "</div>" +
-      '<label class="switch"><input type="checkbox" role="switch" id="attn"' + (lvlState.attention ? " checked" : "") + '><span class="sw" aria-hidden="true"></span>Only levels that need attention</label></div>';
-    var sum = function (k) { return rows.reduce(function (a, L) { return a + L[k]; }, 0); };
-    var totals = { total: sum("total"), easy: sum("easy"), medium: sum("medium"), hard: sum("hard"), self: sum("selfCheck"), done: sum("done") };
-    $("#lvlTable").innerHTML = '<table class="admin-t lvl-t"><caption class="sr-only">Library by level</caption><thead><tr><th scope="col">Level</th><th scope="col">Size &amp; mix</th><th scope="col" class="n">Total</th><th scope="col" class="n">E / M / H</th><th scope="col" class="n">Self-check</th><th scope="col" class="n">Done %</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>' +
-      (rows.length ? rows.map(function (L) {
-        var w = max ? (100 * L.total / max) : 0;
-        var seg = function (k) { return L[k] ? '<span style="flex:' + L[k] + ";background:" + DIFF_COLORS[k] + '"></span>' : ""; };
-        return '<tr><th scope="row" class="lvl-name"><span class="mono muted">' + L.n + "</span> " + esc(L.title) + (L.flags.length ? '<span class="flags">' + L.flags.map(function (f) { return '<span class="flag ' + f.kind + '">' + esc(f.text) + "</span>"; }).join("") + "</span>" : "") + "</th>" +
-          '<td class="mix-cell"><div class="mix" role="img" aria-label="' + L.total + " exercises: " + L.easy + " easy, " + L.medium + " medium, " + L.hard + ' hard"><div class="mix-bar" style="width:' + w.toFixed(1) + '%">' + seg("easy") + seg("medium") + seg("hard") + "</div></div></td>" +
-          '<td class="n">' + L.total.toLocaleString() + '</td><td class="n">' + L.easy + " / " + L.medium + " / " + L.hard + '</td><td class="n">' + L.selfCheck + ' <span class="muted">(' + L.selfPct + '%)</span></td><td class="n">' + L.donePct + "%</td>" +
-          '<td class="acts"><a class="btn sm" href="#/library?level=' + L.n + '" aria-label="Open level ' + L.n + '">Open</a> <a class="btn sm" href="#/generate?level=' + L.n + '" aria-label="Add exercises to level ' + L.n + '">' + icon("plus") + "Add</a></td></tr>";
-      }).join("") : '<tr><td colspan="7" class="empty-sm">No level needs attention.</td></tr>') +
-      '</tbody><tfoot><tr><th scope="row">' + (rows.length === s.levels.length ? "All " + rows.length + " levels" : rows.length + " levels shown") + '</th><td></td><td class="n">' + totals.total.toLocaleString() + '</td><td class="n">' + totals.easy + " / " + totals.medium + " / " + totals.hard + '</td><td class="n">' + totals.self + '</td><td class="n">' + (totals.total ? Math.round(100 * totals.done / totals.total) : 0) + "%</td><td></td></tr></tfoot></table>" +
-      '<div class="mix-key" aria-hidden="true"><span><i style="background:' + DIFF_COLORS.easy + '"></i>Easy</span><span><i style="background:' + DIFF_COLORS.medium + '"></i>Medium</span><span><i style="background:' + DIFF_COLORS.hard + '"></i>Hard</span></div>';
-  }
-  function loadSystem() {
-    if (!$("#sysBody")) { clearInterval(sysTimer); return; }
-    api("/system").then(function (s) {
-      if (!$("#sysBody")) return;
-      var row = function (name, state, sub) { return '<div class="sys-row"><div><b>' + name + "</b>" + (sub ? '<span class="muted small">' + sub + "</span>" : "") + "</div>" + stateDot(state) + "</div>"; };
-      var ready = s.providers.filter(function (p) { return p.state === "ready"; }).length;
-      $("#sysBody").innerHTML = '<div class="sys-row"><div><b>AI providers (Auto chain)</b><span class="muted small">' + s.providers.map(function (p) { return esc(p.label) + ": " + esc(p.detail.split(" · ")[0]); }).join(" · ") + "</span></div>" + stateDot(ready === s.providers.length ? "ready" : ready ? "failing" : "missing") + "</div>" +
-        '<div class="sys-sub">' + s.providers.map(function (p) { return '<div class="sys-row sm"><span>' + esc(p.label) + ' <span class="muted mono small">' + esc(p.model || "") + "</span></span>" + stateDot(p.state) + "</div>"; }).join("") + "</div>" +
-        row("MySQL checker", s.mysql.state, "serves " + s.mysql.serves.toLocaleString() + " exercises") +
-        row("PostgreSQL checker", s.postgres.state, s.postgres.serves.toLocaleString() + " exercises have a PostgreSQL version") +
-        row("Browser datasets", s.browser.state, s.browser.datasets + " datasets · " + s.browser.serves.toLocaleString() + " exercises");
-      $("#sysAt").innerHTML = 'checked <span class="mono">' + new Date(s.checkedAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit" }) + "</span>";
-    }).catch(function () { if ($("#sysBody")) $("#sysBody").innerHTML = '<div class="sys-row"><b>Status</b>' + stateDot("unknown") + "</div>"; });
-  }
-  function healthList(h) {
-    var head = '<div class="h-run"><button type="button" class="btn sm" data-act="health-run"' + (h.running ? " disabled" : "") + ">" + icon("play") + (h.running ? "Running…" : "Run health check") + '</button><span class="muted small" id="hProg">' + (h.running ? esc(h.progress || "Running…") : h.lastRun ? 'Last run: <span class="mono">' + fmtDate(h.lastRun, true) + "</span>" : "Not run yet") + "</span></div>";
-    if (h.lastError) head += '<div class="err">' + esc(h.lastError) + "</div>";
-    if (!h.checks.length) return head + '<div class="empty-sm">Run the check to see near-duplicates, failing solutions, leftover text, missing summaries and broken links.</div>';
-    var o = h.outcome;
-    if (o) head += '<div class="outcome" role="img" aria-label="Every exercise counted once: ' + o.ok + " ran OK, " + o.failed + " failed, " + o.self + " self-check, " + o.dependent + " depend on an earlier exercise, " + o.noref + " have no reference answer, " + o.total + ' in total"><div class="ob">' +
-      [["ok", o.ok], ["failed", o.failed], ["self", o.self], ["dependent", o.dependent], ["noref", o.noref]].map(function (x) { return x[1] ? '<span class="' + x[0] + '" style="flex:' + x[1] + '"></span>' : ""; }).join("") + '</div><ul class="ol">' +
-      [["ok", "ran OK", o.ok], ["failed", "failed", o.failed], ["self", "self-check", o.self], ["dependent", "depend on an earlier exercise", o.dependent], ["noref", "no reference answer", o.noref]].map(function (x) { return '<li><i class="' + x[0] + '"></i><span class="mono">' + x[2].toLocaleString() + "</span> " + x[1] + "</li>"; }).join("") +
-      '<li class="tot"><span class="mono">= ' + o.total.toLocaleString() + "</span> exercises, each counted once</li></ul></div>";
-    var dr = h.drills;
-    if (dr) head += '<div class="outcome" role="img" aria-label="Built-in drills: ' + dr.auto + " auto-checked, " + dr.self + " self-check, " + dr.review + " in review, " + dr.unchecked + " still unchecked, of " + dr.total + '"><div class="ob">' +
-      [["ok", dr.auto], ["selfchk", dr.self], ["self", dr.review], ["noref", dr.unchecked]].map(function (x) { return x[1] ? '<span class="' + x[0] + '" style="flex:' + x[1] + '"></span>' : ""; }).join("") + '</div><ul class="ol">' +
-      [["ok", "auto-checked", dr.auto], ["selfchk", "self-check", dr.self], ["self", "in review", dr.review], ["noref", "still unchecked", dr.unchecked]].map(function (x) { return '<li><i class="' + x[0] + '"></i><span class="mono">' + x[2].toLocaleString() + "</span> " + x[1] + "</li>"; }).join("") +
-      '<li class="tot"><span class="mono">= ' + dr.total.toLocaleString() + '</span> built-in drills · <a href="#/review">review queue</a></li></ul></div>';
-    return head + '<ul class="h-list">' + h.checks.map(function (c) {
-      return '<li><a href="#/health?check=' + c.key + '"><span>' + esc(c.label) + '</span><span class="h-n mono ' + (c.issue ? (c.count ? "bad" : "ok") : "info") + '">' + c.count.toLocaleString() + "</span></a></li>";
-    }).join("") + "</ul>";
-  }
-  function runHealth(btn) {
-    btn.disabled = true;
-    api("/health/run", "POST").then(function (r) { toast(r.started ? "Health check started: it runs in the background" : r.message); pollHealth(); }).catch(function (e) { btn.disabled = false; toast(e.message); });
-  }
-  function pollHealth() {
-    clearTimeout(healthTimer);
-    api("/health").then(function (h) {
-      var card = $("#healthCard");
-      if (card) card.innerHTML = healthList(h);
-      counts.health = h.open; renderNav();
-      if (h.running) healthTimer = setTimeout(pollHealth, 2000);
-      else if (route.name === "health") viewHealth();
-    });
-  }
-  function makeBackup(btn) {
-    btn.disabled = true;
-    api("/backups", "POST").then(function (b) {
-      btn.disabled = false;
-      if ($("#lastBk")) $("#lastBk").textContent = fmtDate(b.created_at, true);
-      toast("Backup saved: " + b.name);
-      var link = document.createElement("a"); link.href = "/api/admin/backups/" + encodeURIComponent(b.name) + "/download"; link.download = b.name; document.body.appendChild(link); link.click(); link.remove();
-      if (route.name === "backups") viewBackups();
-    }).catch(function (e) { btn.disabled = false; toast(e.message); });
-  }
 
   // --- library health page
   var HEALTH_HELP = {
@@ -1352,72 +1119,7 @@
     broken_links: "Links inside a prompt to an exercise that is no longer in the library.",
     auto_setup: "Setup exercises hidden from learners: the checker runs them silently before the exercises listed under each one.",
   };
-  function viewHealth() {
-    var key = route.q.get("check");
-    Promise.all([api("/health"), key ? api("/health/" + key) : Promise.resolve(null)]).then(function (r) {
-      var h = r[0], det = r[1];
-      counts.health = h.open; renderNav();
-      var html = '<div class="page admin"><div class="col"><div class="hero"><div><div class="eyebrow">Library health</div><h2 class="h1">' + (h.checks.length ? n(h.open) + " open issues" : "Not checked yet") + "</h2><p>Checks run in the background; the counts below are from the last run.</p></div></div>";
-      html += '<section class="card card-pad" id="healthCard">' + healthList(h) + "</section>";
-      html += '<section class="card card-pad" id="refsCard" aria-live="polite"><div class="empty-sm">Loading…</div></section>';
-      if (det) {
-        var c = h.checks.filter(function (x) { return x.key === key; })[0];
-        html += '<section class="card card-pad"><div class="card-h"><h3>' + esc(c ? c.label : key) + ' <span class="mono muted">' + (c ? c.count : det.rows.length) + '</span></h3><a class="more link" href="#/health">Close</a></div><p class="muted small" style="margin:0 0 12px">' + esc(HEALTH_HELP[key] || "") + (c && c.note ? " " + esc(c.note) + "." : "") + "</p>";
-        if (!det.rows.length) html += '<div class="empty-sm">Nothing here.</div>';
-        else if (key === "near_dups") {
-          var page = Number(route.q.get("page")) || 0, size = 15, rows = det.rows.slice(page * size, page * size + size);
-          var side = function (x, label) { return '<div class="pair-side"><div class="muted small">' + label + " · Level " + x.level + " · " + esc(x.diff) + ' · <span class="mono">' + esc(x.tables.join(", ") || x.dataset) + '</span></div><a href="#/item/' + x.id + '"><b>' + esc(x.title) + '</b></a><p class="small">' + esc(x.body.slice(0, 260)) + "</p></div>"; };
-          html += rows.map(function (p) {
-            return '<div class="pair" data-a="' + p.a + '" data-b="' + p.b + '"><div class="pair-h"><span class="mono">' + p.sim + "% similar</span>" + (p.sameDataset ? '<span class="flag self">same dataset</span>' : '<span class="muted small">different datasets</span>') + '</div><div class="pair-body">' + side(p.left, "A") + side(p.right, "B") + "</div>" +
-              '<div class="actions"><button type="button" class="btn sm" data-dec="keep_both">Keep both</button><button type="button" class="btn sm" data-dec="merge" data-keep="' + p.a + '">Merge, keep A</button><button type="button" class="btn sm" data-dec="merge" data-keep="' + p.b + '">Merge, keep B</button><span class="grow"></span><button type="button" class="btn sm danger" data-dec="delete" data-keep="' + p.b + '">Delete A</button><button type="button" class="btn sm danger" data-dec="delete" data-keep="' + p.a + '">Delete B</button></div></div>';
-          }).join("");
-          var pages = Math.ceil(det.rows.length / size);
-          if (pages > 1) html += '<div class="pager-row"><span class="mono">' + (page * size + 1) + "–" + Math.min(det.rows.length, (page + 1) * size) + " of " + det.rows.length + '</span><span class="grow"></span>' + (page ? '<a class="btn sm" href="#/health?check=near_dups&page=' + (page - 1) + '" aria-label="Previous page">' + icon("chevLeft") + "</a>" : "") + (page < pages - 1 ? '<a class="btn sm" href="#/health?check=near_dups&page=' + (page + 1) + '" aria-label="Next page">' + icon("chevRight") + "</a>" : "") + "</div>";
-        } else if (key === "auto_setup") {
-          html += det.rows.map(function (x) { return '<div class="setup"><a href="#/item/' + x.id + '"><b>' + esc(x.title) + '</b></a> <span class="muted small">' + esc(x.detail) + '</span><ul class="mini">' + x.supports.map(function (p) { return '<li><a href="#/item/' + p.id + '">' + esc(p.title) + '</a> <span class="muted small">· Level ' + p.level + "</span></li>"; }).join("") + "</ul></div>"; }).join("");
-        } else {
-          html += '<div class="table-wrap"><table class="admin-t"><thead><tr><th scope="col">Exercise</th><th scope="col">Level</th><th scope="col">Detail</th></tr></thead><tbody>' + det.rows.map(function (x) { return '<tr><td class="q"><a class="t-link" href="#/item/' + x.id + '"><b>' + esc(x.title) + "</b></a></td><td>" + x.level + '</td><td class="small">' + esc(x.detail || "") + "</td></tr>"; }).join("") + "</tbody></table></div>";
-        }
-        html += "</section>";
-      }
-      html += "</div></div>";
-      view.innerHTML = html;
-      if (h.running) pollHealth();
-      loadRefs();
-      view.onclick = function (e) {
-        var run = e.target.closest('[data-act="health-run"]');
-        if (run) return runHealth(run);
-        var b = e.target.closest("[data-dec]");
-        if (!b) return;
-        var pair = b.closest(".pair"), dec = b.getAttribute("data-dec"), keep = b.getAttribute("data-keep");
-        var words = { keep_both: "Keep both exercises?", merge: "Merge: keep the chosen one and move the other's progress to it?", delete: "Delete the other exercise from the library? (Its source text stays on disk.)" }[dec];
-        if (!confirmClick(b, words)) return;
-        api("/health/decide", "POST", { a: pair.getAttribute("data-a"), b: pair.getAttribute("data-b"), decision: dec, keep: keep }).then(function () { toast(dec === "keep_both" ? "Kept both" : dec === "merge" ? "Merged" : "Deleted"); refreshCounts(); viewHealth(); }).catch(function (er) { toast(er.message); });
-      };
-    }).catch(fail);
-  }
 
-  // --- backups page
-  function viewBackups() {
-    api("/backups").then(function (list) {
-      var html = '<div class="page admin"><div class="col"><div class="hero"><div><div class="eyebrow">Backups</div><h2 class="h1">' + plural(list.length, "backup") + '</h2><p>Each backup is a .zip with a copy of the database (exercises, MCQs, progress, settings tables) and the non-secret settings. API keys and passwords are never included.</p></div><div class="actions"><button type="button" class="btn primary" data-act="backup">' + icon("archive") + 'Back up now</button></div></div>';
-      html += '<p class="muted">Last backup: <span class="mono" id="lastBk">' + fmtDate(list[0] && list[0].created_at, true) + "</span> · stored in sql-drills-server/backups</p>";
-      html += '<section class="card"><div class="table-wrap"><table class="admin-t"><thead><tr><th scope="col">Created</th><th scope="col" class="n">Size</th><th scope="col" class="n">Exercises</th><th scope="col">Note</th><th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>' +
-        (list.length ? list.map(function (b) {
-          return '<tr data-name="' + esc(b.name) + '"><td class="mono">' + fmtDate(b.created_at, true) + '</td><td class="n">' + (b.bytes / 1048576).toFixed(1) + ' MB</td><td class="n">' + (b.exercises != null ? b.exercises.toLocaleString() : "–") + "</td><td>" + (b.label === "before-restore" ? "Automatic, before a restore" : b.label === "manual" ? "Backed up from admin" : esc(b.label)) + '</td><td class="acts"><a class="btn sm" href="/api/admin/backups/' + encodeURIComponent(b.name) + '/download" download>' + icon("download") + 'Download</a> <button type="button" class="btn sm danger" data-act="restore">' + icon("reset") + "Restore</button></td></tr>";
-        }).join("") : '<tr><td colspan="5" class="empty-sm">No backups yet.</td></tr>') + "</tbody></table></div></section></div></div>";
-      view.innerHTML = html;
-      view.onclick = function (e) {
-        var a = e.target.closest("[data-act]");
-        if (!a) return;
-        if (a.getAttribute("data-act") === "backup") return makeBackup(a);
-        var name = a.closest("[data-name]").getAttribute("data-name");
-        if (prompt("Restore " + name + "?\n\nThe current database (exercises, progress, settings tables) is replaced by the backup. A backup of the current state is taken first.\n\nType RESTORE to confirm.") !== "RESTORE") return;
-        a.disabled = true;
-        api("/backups/" + encodeURIComponent(name) + "/restore", "POST", { confirm: "RESTORE" }).then(function (r) { toast("Restored " + r.rows.toLocaleString() + " rows. Safety backup: " + r.safety); refreshCounts(); viewBackups(); }).catch(function (er) { a.disabled = false; toast(er.message); });
-      };
-    }).catch(fail);
-  }
 
   // --- recently added
   function viewRecent() {
@@ -1608,83 +1310,6 @@
     else { main = live.transfer + (live.transfer === 1 ? " task" : " tasks"); sub = d.transfer ? "+" + d.transfer + " draft" : ""; }
     var fixedByDrafts = gap && c.gapsWithDrafts.indexOf(stage) < 0;
     return '<td class="n' + (gap ? " lc-gap" : "") + '"><span class="mono">' + esc(main) + "</span>" + (gap ? '<span class="lc-flag">' + (fixedByDrafts ? "Gap · drafts waiting" : "Gap") + "</span>" : "") + (sub ? '<span class="lc-sub">' + esc(sub) + "</span>" : "") + "</td>";
-  }
-  function viewConcepts() {
-    var lvq = Number(route.q.get("level")) || 0;
-    view.innerHTML = '<div class="page admin"><div class="loading">Loading…</div></div>';
-    api("/learning/coverage").then(function (cov) {
-      var html = '<div class="page admin lconcepts"><div class="col"><div class="hero"><div><div class="eyebrow">Learning model</div><h2 class="h1">Concepts</h2><p>' + n(cov.total) + " concepts in 14 levels. A stage is covered when its live (approved) items reach the target: " +
-        cov.target.flashcards + " flashcards, " + cov.target.predicts + " predict-the-output, " + cov.target.practise + " practise exercises and " + cov.target.transfer + " transfer task. Reflect is covered by the learner's reflection box. Level 14 has no flashcards and no practise.</p>" +
-        '<p class="small"><b>Understand exceptions:</b> ' + esc(((cov.exceptions && cov.exceptions.flashcards) || []).join(", ")) + ": " + cov.target.flashcards + "+ flashcards and 1+ MCQ (no predict items). Level 14 project concepts: the concept card + project tasks. " + (cov.exceptions && cov.exceptions.noPractiseTransfer && cov.exceptions.noPractiseTransfer.length ? esc(cov.exceptions.noPractiseTransfer.join(", ")) + ": no practise or transfer (random results can't be checked). " : "") + " Predict items for data/structure concepts can be \"predict the end state\" items (a short MySQL or PostgreSQL script: final table or failing statement).</p></div></div>";
-      html += '<section class="card kpis" aria-label="Coverage"><div class="kpi"><span class="kpi-l">All 5 stages covered</span><span class="kpi-v mono">' + cov.pct + '%</span><span class="kpi-s">' + cov.covered + " of " + cov.total + " concepts, live</span></div>" +
-        '<div class="kpi"><span class="kpi-l">Once drafts are approved</span><span class="kpi-v mono">' + cov.pctWithDrafts + '%</span><span class="kpi-s">' + cov.coveredWithDrafts + " of " + cov.total + ' concepts</span></div>' +
-        LSTAGES.filter(function (s) { return s !== "reflect"; }).map(function (s) { return '<div class="kpi"><span class="kpi-l">' + LSTAGE_LABEL[s] + ' gaps</span><span class="kpi-v mono' + (cov.gapCount[s] ? " bad" : "") + '">' + cov.gapCount[s] + '</span><span class="kpi-s">concepts below target</span></div>'; }).join("") + "</section>";
-      html += '<div class="segs lvl-pick" role="group" aria-label="Level"><a class="seg' + (!lvq ? " on" : "") + '" href="#/concepts"' + (!lvq ? ' aria-current="true"' : "") + ">All</a>" + cov.levels.map(function (L) { return '<a class="seg' + (lvq === L.level ? " on" : "") + '" href="#/concepts?level=' + L.level + '"' + (lvq === L.level ? ' aria-current="true"' : "") + ">" + L.level + (L.covered < L.total ? ' <span class="seg-gap" aria-label="' + (L.total - L.covered) + ' with gaps">' + (L.total - L.covered) + "</span>" : "") + "</a>"; }).join("") + "</div>";
-      cov.levels.filter(function (L) { return !lvq || L.level === lvq; }).forEach(function (L) {
-        html += '<section class="card card-pad" aria-labelledby="lc-' + L.level + '"><div class="card-h"><h3 id="lc-' + L.level + '">' + icon("levels") + "Level " + L.level + '</h3><span class="muted small">' + L.covered + " of " + L.total + ' concepts fully covered</span><a class="btn sm" href="#/generate?kind=stage&level=' + L.level + '">' + icon("spark") + "Fill gaps for this level</a></div>" +
-          '<div class="table-wrap"><table class="admin-t lcov-t"><caption class="sr-only">Stage coverage of the Level ' + L.level + ' concepts</caption><thead><tr><th scope="col">Concept</th>' + LSTAGES.map(function (s) { return '<th scope="col" class="n">' + LSTAGE_LABEL[s] + "</th>"; }).join("") + '<th scope="col"><span class="sr-only">Actions</span></th></tr></thead><tbody>' +
-          L.concepts.map(function (c) {
-            return '<tr data-slug="' + esc(c.slug) + '"><th scope="row" class="lc-name"><span class="mono muted">' + c.ord + "</span> <b>" + esc(c.name) + "</b>" + (c.tagsInReview ? ' <a class="flag warn" href="#/review?type=tag">' + c.tagsInReview + " tag" + (c.tagsInReview === 1 ? "" : "s") + " in review</a>" : "") + '<div class="muted small">' + esc(c.summary || "") + "</div></th>" +
-              LSTAGES.map(function (s) { return stageCell(c, s); }).join("") +
-              '<td class="acts"><button type="button" class="btn sm" data-lc="edit" aria-expanded="false">' + icon("edit") + "Edit</button> <button type=\"button\" class=\"btn sm\" data-lc=\"items\" aria-expanded=\"false\">" + icon("book") + "Items</button> <button type=\"button\" class=\"btn sm\" data-lc=\"retag\">" + icon("reset") + "Re-tag</button></td></tr>";
-          }).join("") + "</tbody></table></div></section>";
-      });
-      html += "</div></div>";
-      view.innerHTML = html;
-      var byslug = {};
-      cov.levels.forEach(function (L) { L.concepts.forEach(function (c) { byslug[c.slug] = c; }); });
-      view.onclick = function (e) {
-        var b = e.target.closest("[data-lc]");
-        if (!b) return;
-        var tr = b.closest("tr"), slug = tr && tr.getAttribute("data-slug"), c = byslug[slug], act = b.getAttribute("data-lc");
-        if (act === "edit") {
-          var open = tr.nextElementSibling && tr.nextElementSibling.classList.contains("lc-edit");
-          if (open) { tr.nextElementSibling.remove(); b.setAttribute("aria-expanded", "false"); return; }
-          b.setAttribute("aria-expanded", "true");
-          tr.insertAdjacentHTML("afterend", '<tr class="lc-edit"><td colspan="7"><form class="lc-form" data-slug="' + esc(slug) + '"><label>Name <input class="inp" name="name" value="' + esc(c.name) + '" required></label><label>One-line summary <input class="inp" name="summary" value="' + esc(c.summary || "") + '"></label>' +
-            '<label>Keywords <span class="muted small">(comma separated)</span><input class="inp mono" name="keywords" value="' + esc(kwList(c.keywords).join(", ")) + '"></label><label>Order <input class="inp" name="ord" type="number" min="1" value="' + c.ord + '"></label>' +
-            '<div class="actions"><button class="btn sm primary" type="submit">' + icon("check") + 'Save</button><button class="btn sm" type="button" data-lc="cancel">Cancel</button></div></form></td></tr>');
-          tr.nextElementSibling.querySelector("input").focus();
-        } else if (act === "cancel") { var er = b.closest("tr.lc-edit"); var prevRow = er.previousElementSibling; er.remove(); var eb = prevRow.querySelector('[data-lc="edit"]'); eb.setAttribute("aria-expanded", "false"); eb.focus(); }
-        else if (act === "items") {
-          var openRow = tr.nextElementSibling && tr.nextElementSibling.classList.contains("lc-items");
-          if (openRow) { tr.nextElementSibling.remove(); b.setAttribute("aria-expanded", "false"); return; }
-          b.setAttribute("aria-expanded", "true");
-          tr.insertAdjacentHTML("afterend", '<tr class="lc-items"><td colspan="7"><div class="empty-sm">Loading…</div></td></tr>');
-          api("/learning/concepts/" + slug + "/items").then(function (r) {
-            var cell = tr.nextElementSibling.querySelector("td");
-            cell.innerHTML = '<p class="muted small" style="margin:0 0 8px">' + r.items.length + " tagged exercises and MCQs. Changing a stage here sets only that item's stage (the concept isn't re-tagged); it is logged in Review → History and can be undone there. An item tagged with several concepts has one stage for all of them.</p>" +
-              '<div class="table-wrap"><table class="admin-t"><thead><tr><th scope="col">Item</th><th scope="col">Level</th><th scope="col">Stage</th></tr></thead><tbody>' +
-              r.items.map(function (it) { return "<tr><td>" + (it.kind === "mcq" ? '<span class="tag mcq-tag">MCQ</span> ' : "") + esc(it.title) + (it.main ? "" : ' <span class="muted small">(secondary concept)</span>') + (it.status === "review" ? ' <span class="flag warn">tag in review</span>' : "") + (it.source === "admin" ? ' <span class="flag info">set by hand</span>' : "") + '</td><td class="n">' + it.level + "</td><td>" + stagePicker(it.key, it.kind, it.stage) + "</td></tr>"; }).join("") + "</tbody></table></div>" +
-              (r.drafts.length ? '<p class="muted small" style="margin:8px 0 0">Generated drafts waiting in the review queue: ' + r.drafts.map(function (x) { return esc(x.title) + " (" + esc(x.stage) + ")"; }).join(", ") + "</p>" : "");
-          }).catch(function (er) { tr.nextElementSibling.querySelector("td").innerHTML = '<div class="err">' + esc(er.message) + "</div>"; });
-        }
-        else if (act === "retag") {
-          if (!confirmClick(b, "Re-tag the exercises and MCQs of “" + c.name + "”? The AI proposes their concepts again and a second provider reviews them; disagreements go to the review queue. Each item keeps its learning stage. Costs about $0.01–0.05.", "Re-tag")) return;
-          b.disabled = true; b.innerHTML = '<span class="spin" aria-hidden="true"></span>Re-tagging…';
-          api("/learning/concepts/" + slug + "/retag", "POST", {}).then(function (r) { toast("Re-tagged " + r.items + " items: " + r.changed + " changed, " + r.review + " to review · $" + r.cost.toFixed(3)); refreshCounts(); viewConcepts(); })
-            .catch(function (er2) { b.disabled = false; b.innerHTML = icon("reset") + "Re-tag"; toast(er2.message); });
-        }
-      };
-      view.onchange = function (e) { if (e.target.matches("[data-tagstage]")) setTagStage(e.target); };
-      view.onsubmit = function (e) {
-        var f = e.target.closest(".lc-form");
-        if (!f) return;
-        e.preventDefault();
-        var body = { name: f.elements.name.value, summary: f.elements.summary.value, keywords: f.elements.keywords.value, ord: f.elements.ord.value };
-        api("/learning/concepts/" + f.getAttribute("data-slug"), "POST", body).then(function () { toast("Concept saved"); viewConcepts(); }).catch(function (er) { toast(er.message); });
-      };
-    }).catch(fail);
-  }
-  // Overview: "Learning model coverage"
-  function loadLearningCard() {
-    var box = $("#lmCard");
-    if (!box) return;
-    api("/learning/coverage").then(function (cov) {
-      box.innerHTML = '<div class="lm-big"><span class="mono">' + cov.pct + '%</span><span>of concepts have all 5 stages covered<br><span class="muted small">' + cov.covered + " of " + cov.total + " live · " + cov.pctWithDrafts + "% once drafts are approved</span></span></div>" +
-        '<div class="lm-bar" role="img" aria-label="' + cov.pct + '% covered"><span style="width:' + cov.pct + '%"></span></div>' +
-        '<ul class="mini lm-gaps">' + LSTAGES.filter(function (s) { return s !== "reflect"; }).map(function (s) { return "<li>" + LSTAGE_LABEL[s] + ': <b class="mono' + (cov.gapCount[s] ? " bad-n" : "") + '">' + cov.gapCount[s] + "</b> " + (cov.gapCount[s] === 1 ? "concept" : "concepts") + " below target</li>"; }).join("") + "<li>Reflect: covered by the reflection box</li></ul>";
-    }).catch(function (e) { box.innerHTML = '<div class="err">' + esc(e.message) + "</div>"; });
   }
   // Generate → Learning stages
   function viewStageGen() {
@@ -1982,95 +1607,6 @@
   var CM = null, CS = null; // create meta; the form's state { id, src }
   var NEEDS_DATASET = function (t) { return ["exercise", "predict", "lesson", "flashcard_blank", "flashcard_order", "flashcard_error"].indexOf(t) > -1; };
   var HAS_LEVEL = function (t) { return t === "exercise" || t === "mcq"; };
-  function cField(f, val) {
-    var id = "cf-" + f[0], v = val == null ? "" : val, lab = '<label for="' + id + '">' + esc(f[1]) + "</label>";
-    if (f[2] === "check") return '<label class="c-check"><input type="checkbox" id="' + id + '" data-cf="' + f[0] + '"' + (v ? " checked" : "") + "><span>" + esc(f[1]) + "</span></label>";
-    if (f[2] === "select") return '<div class="c-f">' + lab + '<select class="inp" id="' + id + '" data-cf="' + f[0] + '">' + f[3].map(function (o) { return '<option' + (o === v ? " selected" : "") + ">" + esc(o) + "</option>"; }).join("") + "</select></div>";
-    if (f[2] === "num") return '<div class="c-f c-num">' + lab + '<input class="inp" type="number" min="1" id="' + id + '" data-cf="' + f[0] + '" value="' + esc(v) + '"></div>';
-    if (f[2] === "text") return '<div class="c-f">' + lab + '<input class="inp" id="' + id + '" data-cf="' + f[0] + '" value="' + esc(v) + '"></div>';
-    if (f[2] === "table") return '<fieldset class="c-f c-table"><legend>' + esc(f[1]) + '</legend><label for="' + id + '-n">Table name</label><input class="inp mono" id="' + id + '-n" data-cf="' + f[0] + '_name" value="' + esc((CS.vals || {})[f[0] + "_name"] || "") + '">' +
-      '<label for="' + id + '-c">Rows: the first line holds the column names; comma or tab separated</label><textarea class="inp mono" rows="6" id="' + id + '-c" data-cf="' + f[0] + '_csv" spellcheck="false">' + esc((CS.vals || {})[f[0] + "_csv"] || "") + "</textarea></fieldset>";
-    if (f[2] === "inputs") {
-      var rows = Array.isArray(v) && v.length ? v : [{ table: "", where: "" }];
-      return '<fieldset class="c-f c-inputs"><legend>' + esc(f[1]) + "</legend>" + rows.map(function (r, k) { return '<div class="c-in"><label><span class="sr-only">Table ' + (k + 1) + '</span><input class="inp mono" placeholder="table" data-ci="table" value="' + esc(r.table) + '"></label><label class="grow"><span class="sr-only">WHERE for table ' + (k + 1) + '</span><input class="inp mono" placeholder="WHERE condition, e.g. id <= 4" data-ci="where" value="' + esc(r.where) + '"></label></div>'; }).join("") +
-        (rows.length < 3 ? '<button type="button" class="btn sm" data-c="add-input">' + icon("plus") + "Another table</button>" : "") + "</fieldset>";
-    }
-    if (f[2] === "answer" || f[2] === "whywrong") return '<div class="c-f" data-cdyn="' + f[2] + '"></div>';
-    var rowsN = f[2] === "area" ? 3 : f[2] === "list" ? 4 : 5;
-    return '<div class="c-f">' + lab + '<textarea class="inp' + (f[2] === "sql" ? " mono" : "") + '" rows="' + rowsN + '" id="' + id + '" data-cf="' + f[0] + '"' + (f[2] === "sql" ? ' spellcheck="false"' : "") + ">" + esc(Array.isArray(v) ? v.join("\n") : v) + "</textarea></div>";
-  }
-  // MCQ: the right option and a "why not" per wrong option follow the options as they are typed
-  function cDyn() {
-    var box = $('[data-cdyn="answer"]'), ww = $('[data-cdyn="whywrong"]'), ta = $('[data-cf="options"]');
-    if (!box || !ta) return;
-    var opts = ta.value.split("\n").map(function (x) { return x.trim(); }).filter(Boolean).slice(0, 5), cur = $('[data-cf="answer"]'), a = cur ? Number(cur.value) : Number((CS.vals || {}).answer || 0);
-    var prevWhy = $$("[data-cw]").reduce(function (o, el) { o[el.getAttribute("data-cw")] = el.value; return o; }, (CS.vals && CS.vals.why_wrong ? CS.vals.why_wrong.slice() : []));
-    box.innerHTML = '<label for="cf-answer">Right option</label><select class="inp" id="cf-answer" data-cf="answer">' + opts.map(function (o, k) { return '<option value="' + k + '"' + (k === a ? " selected" : "") + ">" + "ABCDE".charAt(k) + ". " + esc(o) + "</option>"; }).join("") + "</select>";
-    ww.innerHTML = '<fieldset class="c-why"><legend>Why each wrong option is wrong</legend>' + (opts.length < 2 ? '<p class="muted small">Type at least two options first.</p>' : opts.map(function (o, k) { return k === a ? "" : '<label for="cw-' + k + '">' + "ABCDE".charAt(k) + ". " + esc(o) + '</label><input class="inp" id="cw-' + k + '" data-cw="' + k + '" value="' + esc(prevWhy[k] || "") + '">'; }).join("")) + "</fieldset>";
-  }
-  function cConceptOf(text) {
-    var t = String(text || "").trim().toLowerCase();
-    return (CM.concepts.filter(function (c) { return c.slug === t || (c.name + " (Level " + c.level + ")").toLowerCase() === t || c.name.toLowerCase() === t; })[0]) || null;
-  }
-  function cCommon() {
-    var t = CS.type, v = CS.vals || {}, c = CM.concepts.filter(function (x) { return x.slug === CS.concept; })[0];
-    var ds = '<div class="c-f"><label for="c-ds">Dataset</label><select class="inp" id="c-ds"><option value="">Choose…</option>' + CM.datasets.map(function (d) { return '<option value="' + esc(d.key) + '"' + (d.key === CS.dataset ? " selected" : "") + ">" + esc(d.label) + "</option>"; }).join("") + '<option value="__new">+ New dataset…</option></select></div>';
-    return '<div class="c-grid">' +
-      '<div class="c-f c-wide"><label for="c-concept">Concept' + (HAS_LEVEL(t) ? " (optional)" : "") + '</label><input class="inp" id="c-concept" list="c-concepts" autocomplete="off" placeholder="Type to search 161 concepts" value="' + esc(c ? c.name + " (Level " + c.level + ")" : "") + '"><datalist id="c-concepts">' + CM.concepts.map(function (x) { return '<option value="' + esc(x.name + " (Level " + x.level + ")") + '">'; }).join("") + "</datalist></div>" +
-      (HAS_LEVEL(t) ? '<div class="c-f"><label for="c-level">Level</label><select class="inp" id="c-level"' + (c ? " disabled" : "") + ">" + CM.levels.map(function (L) { return '<option value="' + L.n + '"' + (L.n === (c ? c.level : CS.level) ? " selected" : "") + ">" + L.n + ". " + esc(L.title) + "</option>"; }).join("") + "</select></div>" +
-        '<div class="c-f"><label for="c-diff">Difficulty</label><select class="inp" id="c-diff">' + CM.diffs.map(function (d) { return '<option' + (d === (CS.diff || "medium") ? " selected" : "") + ">" + d + "</option>"; }).join("") + "</select></div>" : "") +
-      (t === "exercise" ? '<div class="c-f"><label for="c-stage">Stage</label><select class="inp" id="c-stage"><option value="practise"' + (CS.stage !== "transfer" ? " selected" : "") + '>Practise</option><option value="transfer"' + (CS.stage === "transfer" ? " selected" : "") + ">Transfer</option></select></div>" : "") +
-      (t === "mcq" ? '<div class="c-f"><label for="c-stage">Stage</label><select class="inp" id="c-stage"><option value="understand"' + (CS.stage !== "memorize" ? " selected" : "") + '>Understand</option><option value="memorize"' + (CS.stage === "memorize" ? " selected" : "") + ">Memorize</option></select></div>" : "") +
-      (NEEDS_DATASET(t) ? ds : "") + "</div>" + (NEEDS_DATASET(t) ? '<div id="c-newds" hidden></div>' : "");
-  }
-  function viewCreate() {
-    var editId = route.q.get("id");
-    view.innerHTML = '<div class="page admin"><div class="loading">Loading…</div></div>';
-    Promise.all([CM ? Promise.resolve(CM) : api("/create/meta"), editId ? api("/create/item/" + encodeURIComponent(editId)) : Promise.resolve(null)]).then(function (r) {
-      CM = r[0];
-      var it = r[1];
-      CS = it ? { id: it.id, type: it.form.type, concept: it.form.concept, level: Number(it.form.level) || 1, diff: it.form.diff, stage: it.form.stage, dataset: it.form.dataset, vals: it.form.fields || {}, status: it.status, mine: it.mine } : (CS && !CS.id ? CS : { type: route.q.get("type") || "exercise", level: 1, vals: {} });
-      var tab = route.q.get("tab") === "import" ? "import" : "one";
-      var groups = {};
-      CM.types.forEach(function (t) { (groups[t.group] = groups[t.group] || []).push(t); });
-      var html = '<div class="page admin c-page"><div class="hero"><div><div class="eyebrow">Content</div><h2 class="h1">' + (CS.id ? "Edit an item" : "Create by hand") + '</h2><p>Every item runs the same checks as generated ones before it is saved, and shows each failure. Saved items are marked <span class="tag plain">Mine</span> and logged in Review → History, with Undo.</p></div></div>' +
-        (CS.id ? "" : '<div class="tabs" role="tablist"><a role="tab" href="#/create" class="' + (tab === "one" ? "on" : "") + '" aria-selected="' + (tab === "one") + '">' + icon("plus") + 'One item</a><a role="tab" href="#/create?tab=import" class="' + (tab === "import" ? "on" : "") + '" aria-selected="' + (tab === "import") + '">' + icon("download") + "Bulk import</a></div>");
-      if (tab === "import" && !CS.id) { view.innerHTML = html + importHtml() + "</div>"; view.onclick = createClick; return; }
-      html += '<div class="c-cols"><form class="card card-pad c-form" id="cForm" novalidate>' +
-        '<div class="c-f"><label for="c-type">Type</label><select class="inp" id="c-type"' + (CS.id ? " disabled" : "") + ">" + Object.keys(groups).map(function (g) { return '<optgroup label="' + esc(g) + '">' + groups[g].map(function (t) { return '<option value="' + t.type + '"' + (t.type === CS.type ? " selected" : "") + ">" + esc(t.label) + "</option>"; }).join("") + "</optgroup>"; }).join("") + "</select></div>" +
-        '<div id="cCommon">' + cCommon() + '</div><div id="cFields">' + CF[CS.type].map(function (f) { return cField(f, CS.vals[f[0]]); }).join("") + "</div>" +
-        '<fieldset class="c-save"><legend>When saved</legend><label class="c-check"><input type="radio" name="c-pub" value="1"' + (CS.id && CS.status === "draft" ? "" : " checked") + '><span>Publish now</span></label><label class="c-check"><input type="radio" name="c-pub" value="0"' + (CS.id && CS.status === "draft" ? " checked" : "") + '><span>Save as draft (review queue)</span></label>' +
-        '<label class="c-check"><input type="checkbox" id="c-review"><span>Ask DeepSeek to review (a second opinion, about $0.001)</span></label></fieldset>' +
-        '<div class="actions"><button type="button" class="btn" data-c="check">' + icon("checkCircle") + 'Check</button><button type="submit" class="btn primary" data-c="save">' + icon("check") + (CS.id ? "Save changes" : "Save") + '</button><span class="grow"></span>' + (CS.id ? '<a class="btn sm" href="#/create">New item</a>' : "") + "</div>" +
-        '<div id="cOut" aria-live="polite"></div></form>' +
-        '<section class="card card-pad c-prev" aria-labelledby="cp-h"><div class="card-h"><h3 id="cp-h">' + icon("eye") + 'Learner preview</h3><span class="muted small">the real learner view · answers aren\'t saved</span></div><iframe id="cPrev" src="/#/preview" title="Learner preview of this item" loading="lazy"></iframe><p class="muted small" id="cPrevNote">Press Check to see the item as learners will.</p></section></div></div>';
-      view.innerHTML = html;
-      cDyn();
-      view.onchange = createChange; view.oninput = function (e) { if (e.target.matches('[data-cf="options"]')) cDyn(); };
-      view.onclick = createClick;
-      view.onsubmit = function (e) { e.preventDefault(); createSave(); };
-    }).catch(fail);
-  }
-  function cCollect() {
-    var vals = {};
-    $$("[data-cf]").forEach(function (el) { vals[el.getAttribute("data-cf")] = el.type === "checkbox" ? el.checked : el.value; });
-    if (CS.type === "mcq") { vals.answer = Number(vals.answer || 0); vals.why_wrong = []; $$("[data-cw]").forEach(function (el) { vals.why_wrong[Number(el.getAttribute("data-cw"))] = el.value; }); }
-    if ($(".c-inputs")) vals.inputs = $$(".c-in").map(function (r) { return { table: r.querySelector('[data-ci="table"]').value, where: r.querySelector('[data-ci="where"]').value }; });
-    CS.vals = vals;
-    var ce = $("#c-concept"), c = ce ? cConceptOf(ce.value) : null;
-    CS.concept = c ? c.slug : "";
-    if ($("#c-level")) CS.level = Number($("#c-level").value);
-    if ($("#c-diff")) CS.diff = $("#c-diff").value;
-    if ($("#c-stage")) CS.stage = $("#c-stage").value;
-    if ($("#c-ds")) CS.dataset = $("#c-ds").value === "__new" ? "" : $("#c-ds").value;
-    return { type: CS.type, concept: CS.concept, level: CS.level, diff: CS.diff, stage: CS.stage, dataset: CS.dataset, fields: vals, review: !!($("#c-review") && $("#c-review").checked), publish: ($('[name="c-pub"]:checked') || {}).value !== "0" };
-  }
-  function checksHtml(r) {
-    var mark = function (c) { return c.ok ? '<span class="ok-txt">' + icon("check") + '<span class="sr-only">passed</span></span>' : c.warn ? '<span class="warn-txt">' + icon("warn") + '<span class="sr-only">warning</span></span>' : '<span class="bad-txt">' + icon("x") + '<span class="sr-only">failed</span></span>'; };
-    var failed = r.checks.filter(function (c) { return !c.ok && !c.warn; }).length, warned = r.checks.filter(function (c) { return !c.ok && c.warn; }).length;
-    return '<div class="c-res ' + r.status + '" role="status"><p class="c-sum"><b>' + (r.status === "fail" ? plural(failed, "check") + " failed: nothing was saved." : r.status === "warn" ? "Passes, with " + plural(warned, "warning") + "." : "Every check passes.") + "</b></p>" +
-      '<ul class="c-checks">' + r.checks.map(function (c) { return '<li class="' + (c.ok ? "ok" : c.warn ? "warn" : "bad") + '">' + mark(c) + "<span>" + esc(c.label) + (c.detail ? ' <span class="muted">' + esc(c.detail) + "</span>" : "") + "</span></li>"; }).join("") + "</ul></div>";
-  }
   // the learner app in the iframe renders the item with its own renderers (#/preview: answers there aren't saved)
   function previewItem(r) {
     var d = r.data;
@@ -2081,78 +1617,6 @@
     if (r.type === "lesson") return { kind: "lesson", l: Object.assign({ id: "ls-preview" }, d) };
     if (/^flashcard_/.test(r.type)) return { kind: "flashcard", f: Object.assign({ id: "fc-preview" }, d) };
     return { kind: "card", c: Object.assign({ id: "cd-preview" }, d) };
-  }
-  function sendPreview(r) {
-    var fr = $("#cPrev"), item = previewItem(r);
-    $("#cPrevNote").textContent = item ? "" : "The preview appears once the item's own checks pass.";
-    if (!fr || !item) return;
-    var post = function () { fr.contentWindow.postMessage({ type: "sqld-preview", item: item }, location.origin); };
-    post(); fr.onload = post;
-  }
-  function createRun(save) {
-    var body = cCollect(), out = $("#cOut"), btn = $(save ? '[data-c="save"]' : '[data-c="check"]');
-    btn.disabled = true; out.innerHTML = '<p class="muted small">' + (save ? "Checking and saving…" : "Checking…") + "</p>";
-    var req = save ? (CS.id ? api("/create/item/" + encodeURIComponent(CS.id), "PUT", body) : api("/create", "POST", body)) : api("/create/check", "POST", body);
-    return req.then(function (r) {
-      btn.disabled = false;
-      out.innerHTML = checksHtml(r) + (save && r.ok ? '<p class="c-saved ok-txt" tabindex="-1">' + icon("checkCircle") + (CS.id ? "Saved" : "Saved as ") + (r.status === "published" ? "published" : "a draft") + ' · <span class="tag plain">Mine</span> · <a href="#/create?id=' + encodeURIComponent(r.id) + '">Edit it</a> · <a href="#/review?view=history">History (Undo)</a></p>' : "");
-      sendPreview(r);
-      var f = out.querySelector(save && r.ok ? ".c-saved" : ".c-sum"); if (f) { f.setAttribute("tabindex", "-1"); f.focus(); }
-      if (save && r.ok) { refreshCounts(); if (!CS.id) CS = { type: CS.type, level: CS.level, concept: CS.concept, dataset: CS.dataset, diff: CS.diff, stage: CS.stage, vals: {} }; }
-    }).catch(function (e) { btn.disabled = false; out.innerHTML = '<p class="bad-txt" role="alert">' + esc(e.message) + "</p>"; });
-  }
-  function createSave() { return createRun(true); }
-  function createChange(e) {
-    var t = e.target;
-    if (t.id === "c-type") { cCollect(); CS = { type: t.value, level: CS.level, concept: CS.concept, dataset: CS.dataset, diff: CS.diff, vals: {} }; $("#cCommon").innerHTML = cCommon(); $("#cFields").innerHTML = CF[CS.type].map(function (f) { return cField(f, ""); }).join(""); cDyn(); $("#cOut").innerHTML = ""; return; }
-    if (t.id === "c-concept") { var c = cConceptOf(t.value); if (c && $("#c-level")) { $("#c-level").value = c.level; $("#c-level").disabled = true; } else if ($("#c-level")) $("#c-level").disabled = false; return; }
-    if (t.matches('[data-cf="answer"]')) { cDyn(); return; }
-    if (t.id === "c-ds") { var box = $("#c-newds"); if (t.value === "__new") { box.hidden = false; box.innerHTML = datasetFormHtml(); box.querySelector("input").focus(); } else { box.hidden = true; box.innerHTML = ""; } }
-    if (t.name === "c-dsmode") { $("#c-dstables").hidden = t.value !== "tables"; $("#c-dsscript").hidden = t.value !== "script"; }
-  }
-  function createClick(e) {
-    var b = e.target.closest && e.target.closest("[data-c]");
-    if (!b) return;
-    var a = b.getAttribute("data-c");
-    if (a === "check") createRun(false);
-    if (a === "add-input") { cCollect(); CS.vals.inputs = (CS.vals.inputs || []).concat([{ table: "", where: "" }]); var fs = b.closest("fieldset"); fs.outerHTML = cField(CF.predict[2], CS.vals.inputs); var ins = $$(".c-in [data-ci='table']"); ins[ins.length - 1].focus(); }
-    if (a === "ds-add") { var w = document.createElement("div"); w.innerHTML = dsTableHtml($$(".c-dst").length); b.parentNode.insertBefore(w.firstChild, b); }
-    if (a === "ds-check" || a === "ds-save") datasetRun(a === "ds-save");
-    if (a === "imp-check" || a === "imp-save") importRun(a === "imp-save");
-  }
-  // ---------- a new dataset: pasted rows / CSV per table, or a CREATE TABLE + INSERT script ----------
-  function dsTableHtml(k) { return '<fieldset class="c-dst"><legend>Table ' + (k + 1) + '</legend><label for="dsn-' + k + '">Name</label><input class="inp mono" id="dsn-' + k + '" data-dsn><label for="dsc-' + k + '">Rows: first line the column names; paste from a sheet or CSV</label><textarea class="inp mono" rows="6" id="dsc-' + k + '" data-dsc spellcheck="false"></textarea></fieldset>'; }
-  function datasetFormHtml() {
-    return '<section class="c-ds card card-pad" aria-labelledby="ds-h"><h4 id="ds-h">New dataset</h4><p class="muted small">It must run with every row on SQLite, a MySQL scratch schema and PostgreSQL (rolled back) before it is saved.</p>' +
-      '<label for="ds-label">Name</label><input class="inp" id="ds-label" placeholder="e.g. Pet clinic">' +
-      '<fieldset class="c-save"><legend>From</legend><label class="c-check"><input type="radio" name="c-dsmode" value="tables" checked><span>Rows or CSV</span></label><label class="c-check"><input type="radio" name="c-dsmode" value="script"><span>A CREATE TABLE + INSERT script</span></label></fieldset>' +
-      '<div id="c-dstables">' + dsTableHtml(0) + '<button type="button" class="btn sm" data-c="ds-add">' + icon("plus") + "Another table</button></div>" +
-      '<div id="c-dsscript" hidden><label for="ds-script">Script</label><textarea class="inp mono" rows="8" id="ds-script" spellcheck="false" placeholder="CREATE TABLE pets (id INT PRIMARY KEY, name VARCHAR(40));\nINSERT INTO pets VALUES (1, \'Rex\');"></textarea></div>' +
-      '<div class="actions"><button type="button" class="btn" data-c="ds-check">Check dataset</button><button type="button" class="btn primary" data-c="ds-save">Create dataset</button></div><div id="ds-out" aria-live="polite"></div></section>';
-  }
-  function datasetRun(save) {
-    var mode = ($('[name="c-dsmode"]:checked') || {}).value || "tables", out = $("#ds-out");
-    var body = { label: $("#ds-label").value, mode: mode, script: ($("#ds-script") || {}).value, tables: $$(".c-dst").map(function (f) { return { name: f.querySelector("[data-dsn]").value, csv: f.querySelector("[data-dsc]").value }; }) };
-    out.innerHTML = '<p class="muted small">Running on SQLite, MySQL and PostgreSQL…</p>';
-    api(save ? "/create/dataset" : "/create/dataset/preview", "POST", body).then(function (r) {
-      out.innerHTML = '<ul class="c-checks">' + r.checks.map(function (c) { return '<li class="' + (c.ok ? "ok" : "bad") + '">' + (c.ok ? '<span class="ok-txt">' + icon("check") + '</span>' : '<span class="bad-txt">' + icon("x") + "</span>") + "<span>" + esc(c.label) + (c.detail ? ' <span class="muted">' + esc(c.detail) + "</span>" : "") + "</span></li>"; }).join("") + "</ul>" +
-        '<p class="small">' + r.tables.map(function (t) { return '<span class="mono">' + esc(t.name) + "</span> (" + t.rows + " rows)"; }).join(", ") + "</p>" +
-        (save ? (r.ok ? '<p class="ok-txt" tabindex="-1">Dataset “' + esc(r.label) + '” created and selected.</p>' : '<p class="bad-txt">Not saved: a check failed.</p>') : "");
-      if (save && r.ok) {
-        CM.datasets.push({ key: r.key, label: r.label }); cCollect(); CS.dataset = r.key; $("#cCommon").innerHTML = cCommon();
-        var nb = $("#c-newds"); nb.hidden = false; nb.innerHTML = '<p class="ok-txt" id="ds-out" role="status" tabindex="-1">' + icon("checkCircle") + "Dataset “" + esc(r.label) + "” created (" + r.tables.map(function (t) { return esc(t.name) + ", " + t.rows + " rows"; }).join("; ") + ") and selected.</p>"; nb.querySelector("p").focus();
-      }
-    }).catch(function (e) { out.innerHTML = '<p class="bad-txt" role="alert">' + esc(e.message) + "</p>"; });
-  }
-  // ---------- bulk import: exercises, MCQs or flashcards from CSV / JSON, a pass / fail summary first ----------
-  function importHtml() {
-    return '<section class="card card-pad c-imp" aria-labelledby="imp-h"><div class="card-h"><h3 id="imp-h">' + icon("download") + 'Import exercises, MCQs or flashcards</h3></div>' +
-      '<p class="muted small">Choose the row type, then provide flat CSV / JSON fields. Flashcards use: keyword = front, back; blank = prompt, sql, answer; order = prompt, parts (one clause per line or ||); error = prompt, wrong_sql, fixed_sql, explanation. Shared fields are level and concept; SQL-based cards also need dataset. Every row runs the same checks as one item; nothing is saved until you choose.</p>' +
-      '<div class="c-grid"><div class="c-f"><label for="imp-kind">Rows are</label><select class="inp" id="imp-kind"><option value="exercise">Exercises</option><option value="mcq">MCQs</option><option value="flashcard_keyword">Flashcards: keyword</option><option value="flashcard_blank">Flashcards: fill in the blank</option><option value="flashcard_order">Flashcards: clause order</option><option value="flashcard_error">Flashcards: spot the error</option></select></div>' +
-      '<div class="c-f"><label for="imp-file">CSV or JSON file</label><input type="file" class="inp" id="imp-file" accept=".csv,.json,.txt,text/csv,application/json"></div></div>' +
-      '<label for="imp-text">…or paste CSV / JSON</label><textarea class="inp mono" rows="8" id="imp-text" spellcheck="false"></textarea>' +
-      '<fieldset class="c-save"><legend>Rows that pass</legend><label class="c-check"><input type="radio" name="imp-pub" value="1" checked><span>Publish</span></label><label class="c-check"><input type="radio" name="imp-pub" value="0"><span>Save as drafts</span></label></fieldset>' +
-      '<div class="actions"><button type="button" class="btn" data-c="imp-check">' + icon("checkCircle") + 'Check rows</button><button type="button" class="btn primary" data-c="imp-save" disabled>Save the rows that pass</button></div><div id="imp-out" aria-live="polite"></div></section>';
   }
   function importRows(text) {
     text = String(text || "").trim();
@@ -2175,47 +1639,12 @@
     row.push(cur); rows.push(row);
     return rows;
   }
-  function importRun(save) {
-    var out = $("#imp-out"), f = $("#imp-file").files[0], kind = $("#imp-kind").value;
-    var read = f ? f.text() : Promise.resolve($("#imp-text").value);
-    read.then(function (text) {
-      var rows;
-      try { rows = importRows(text); } catch (e) { out.innerHTML = '<p class="bad-txt" role="alert">Couldn\'t read it: ' + esc(e.message) + "</p>"; return; }
-      if (!rows.length) { out.innerHTML = '<p class="bad-txt" role="alert">No rows found.</p>'; return; }
-      out.innerHTML = '<p class="muted small">Checking ' + plural(rows.length, "row") + " (write drills run on MySQL; this can take a minute)…</p>";
-      return api(save ? "/create/import" : "/create/import/preview", "POST", { kind: kind, rows: rows, publish: ($('[name="imp-pub"]:checked') || {}).value !== "0" }).then(function (r) {
-        out.innerHTML = '<p class="c-sum" role="status" tabindex="-1"><b>' + r.pass + " pass · " + r.warn + " with warnings · " + r.fail + " fail</b>" + (save ? " · " + plural(r.saved, "row") + " saved" : "") + "</p>" +
-          '<div class="table-wrap"><table class="admin-t"><caption class="sr-only">Rows checked</caption><thead><tr><th scope="col">Row</th><th scope="col">Item</th><th scope="col">Result</th></tr></thead><tbody>' +
-          r.rows.map(function (x) { return "<tr><td class=\"n mono\">" + x.row + "</td><td>" + esc(x.title || "") + (x.failed.length ? '<ul class="small muted">' + x.failed.map(function (m) { return "<li>" + esc(m) + "</li>"; }).join("") + "</ul>" : "") + '</td><td><span class="' + (x.status === "fail" ? "bad-txt" : x.status === "warn" ? "warn-txt" : "ok-txt") + '">' + x.status + "</span></td></tr>"; }).join("") + "</tbody></table></div>";
-        $('[data-c="imp-save"]').disabled = save || !(r.pass + r.warn);
-        out.querySelector(".c-sum").focus();
-        if (save) refreshCounts();
-      });
-    }).catch(function (e) { out.innerHTML = '<p class="bad-txt" role="alert">' + esc(e.message) + "</p>"; });
-  }
   // ---------- How to use (public/help.js): the admin guide here, the learner guide too; numbers from /api/help/numbers ----------
   var HELPNUM = null;
-  function viewHelp() {
-    var g = route.q.get("g") === "learner" ? "learner" : "admin", sec = route.q.get("s");
-    view.innerHTML = '<div class="page admin"><div class="loading">Loading…</div></div>';
-    (HELPNUM ? Promise.resolve(HELPNUM) : fetch("/api/help/numbers").then(function (r) { return r.json(); })).then(function (nums) {
-      HELPNUM = nums;
-      if (route.name !== "help") return;
-      var list = g === "admin" ? Help.ADMIN : Help.LEARNER;
-      view.innerHTML = '<div class="page admin help-page"><div class="hero"><div><div class="eyebrow">How to use</div><h2 class="h1">How to use SQL Drills</h2><p>The admin guide (making and reviewing content) and the learner guide. Every number comes from the app as it is now.</p></div></div>' +
-        '<div class="tabs" role="tablist"><a role="tab" href="#/help" class="' + (g === "admin" ? "on" : "") + '" aria-selected="' + (g === "admin") + '">' + icon("cog") + 'Admin guide</a><a role="tab" href="#/help?g=learner" class="' + (g === "learner" ? "on" : "") + '" aria-selected="' + (g === "learner") + '">' + icon("graduation") + "Learner guide</a></div>" +
-        '<nav class="card card-pad help-toc" aria-label="Sections"><ol>' + list.map(function (s) { return '<li><a href="#/help?' + (g === "learner" ? "g=learner&" : "") + "s=" + s.id + '">' + esc(s.title) + "</a></li>"; }).join("") + "</ol></nav>" +
-        list.map(function (s) {
-          return '<section class="card card-pad help-sec" aria-labelledby="hh-' + s.id + '"><h3 id="hh-' + s.id + '" tabindex="-1">' + esc(s.title) + "</h3>" + Help.textHtml(s.text, nums) +
-            (s.shot ? '<figure class="help-shot"><img src="/help/' + esc(s.shot) + '" alt="' + esc(s.alt) + '" loading="lazy" width="1200" height="750"><figcaption class="muted small">' + esc(s.alt) + " (from the app)</figcaption></figure>" : "") + "</section>";
-        }).join("") + "</div>";
-      var h = sec && $("#hh-" + sec); if (h) { h.scrollIntoView(); h.focus(); }
-    }).catch(fail);
-  }
   // the old view for a route (used by the router, and by a React page that hosts an old view)
   function viewFor(name) {
-    return ({ overview: viewOverview, generate: viewGenerate, review: viewReview, mcqs: viewMcqs, drills: viewDrills, recent: viewRecent, learners: viewLearners, settings: viewSettings,
-      library: viewLibrary, item: viewItem, health: viewHealth, backups: viewBackups, concepts: viewConcepts, create: viewCreate, help: viewHelp }[name] || null);
+    // the old views React still hosts (the other routes are React pages: web/src/bridge.jsx)
+    return ({ generate: viewGenerate, review: viewReview, mcqs: viewMcqs, drills: viewDrills, recent: viewRecent, learners: viewLearners, library: viewLibrary, item: viewItem }[name] || null);
   }
   function render() {
     view = viewRoot;
@@ -2228,12 +1657,11 @@
     renderNav();
     $("#side").classList.remove("open"); $("#scrim").classList.remove("open");
     viewRoot.scrollTop = 0;
-    // React pages (web/, the Waffles front end) take the admin routes they own; every other route stays here
-    var R = window.SQLDrillsReact;
-    if (R) R.unmount();
-    var name = viewFor(route.name) ? route.name : "overview"; // an unknown address shows the Overview
-    if (R && R.has(name, "admin")) { R.mount(name, view, { app: "admin", route: route, icon: icon }); return; }
-    viewFor(name)();
+    // React owns every route (it hosts the old views still in viewFor); an unknown address shows the Overview. The
+    // bridge is in the same bundle as this file, so it is always there by the time the router runs.
+    var R = window.SQLDrillsReact, name = R.has(route.name, "admin") ? route.name : "overview";
+    R.unmount();
+    R.mount(name, view, { app: "admin", route: route, icon: icon });
   }
   // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
   function scrollersFocusable() {
@@ -2264,7 +1692,7 @@
     openEditor: openEditor, openImport: openImport, barChart: barChart, spendHtml: spendHtml, stateDot: stateDot, DIFF_COLORS: DIFF_COLORS,
     LSTAGES: LSTAGES, LSTAGE_LABEL: LSTAGE_LABEL, stageCellParts: function (c, st) { var t = document.createElement("tr"); t.innerHTML = stageCell(c, st); var td = t.firstChild; return { cls: td.className, html: td.innerHTML }; },
     kwList: kwList, setTagStage: setTagStage, stagePicker: stagePicker,
-    hostView: function (name, el) { view = el; (viewFor(name) || viewOverview)(); },
+    hostView: function (name, el) { view = el; viewFor(name)(); },
     meta: function () { return META; }, route: function () { return route; },
   };
   // the React bundle (a module script, so it runs after this one) owns some routes: the first render waits for it,

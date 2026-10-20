@@ -437,17 +437,9 @@
   });
   var HINT_KEY = "sqldrills.hintProvider.v2";
   S.providers = [];
-  function loadProviders() {
-    api("/api/hint/providers").then(function (list) { S.providers = list || []; }).catch(function () { S.providers = []; });
-  }
   /** Hints use the provider order set in admin (AI & settings): the learner app doesn't choose. */
   function hintProvider() { return "auto"; }
 
-  // ---------- shared components ----------
-  function diffHtml(diff) {
-    var lvl = DIFF.indexOf(diff) + 1;
-    return '<span class="diff ' + diff + '"><span class="dots">' + [1, 2, 3, 4].map(function (i) { return "<i" + (i <= lvl + (lvl === 3 ? 1 : 0) ? ' class="f"' : "") + "></i>"; }).join("") + '</span><span class="lbl">' + DIFF_LABEL[diff] + "</span></span>";
-  }
   function statusHtml(d) { var s = statusOf(d); return s === "todo" ? "" : '<span class="pill ' + s + '">' + icon(s === "done" ? "checkCircle" : s === "fail" ? "x" : "clock") + STATUS_LABEL[s] + "</span>"; }
   // records a Check / Submit result; a wrong answer marks the exercise "Failed" until it is solved
   function recordAttempt(d, pass) {
@@ -615,22 +607,6 @@
   // ---------- views ----------
   var view = $("#view"), viewRoot = view; // view: where the current page draws (a React host box, or #view)
 
-  function viewHome() {
-    var done = doneCount(), total = S.items.length, st = streak(), started = S.items.filter(isStarted).length, lv = currentLevel();
-    var html = '<div class="page"><div class="col">';
-    html += '<div><div class="eyebrow">Welcome back</div><div class="hero"><div><h1>Your SQL dashboard</h1><p>One path from SELECT basics to capstone projects: ' + S.levels.length + " levels, " + total.toLocaleString() + " exercises, easiest first.</p></div></div></div>";
-    html += levelPath() + progressStrip();
-    var due = (S.review && S.review.due.length) || 0;
-    if (due) html += '<a class="card review-due" href="#/review">' + icon("reset") + "<span><b>Review due: " + due + "</b> " + (due === 1 ? "exercise" : "exercises") + " you got wrong or solved with a hint " + (due === 1 ? "is" : "are") + ' ready for another try.</span><span class="go">' + icon("chevRight") + "</span></a>";
-    html += todayHtml(lv);
-    var cont = nextItem(), lvl = itemsIn(cont ? cont.level : lv), from = cont ? lvl.indexOf(cont) + 1 : 0;
-    var up = [];
-    if (up.length) html += '<section aria-labelledby="upnext-h"><div class="card-h"><h2 class="rail-h" id="upnext-h">' + icon("play") + "Up next in " + esc(levelName(cont ? cont.level : lv)) + '</h2><a class="more link" href="#/level/' + (cont ? cont.level : lv) + '">Open level ' + icon("chevRight") + '</a></div><div class="legend-row">' + checkLegend() + '</div><div class="clist card">' + up.map(function (d) { return compactRow(d); }).join("") + "</div></section>";
-    html += quizPicker();
-    if (!viewHome.busy) { viewHome.busy = true; setTimeout(function () { loadReview().then(function () { viewHome.busy = false; }); }, 0); }
-    html += "</div>" + rail() + "</div>";
-    view.innerHTML = html;
-  }
 
   function viewLevels() {
     var html = '<div class="page"><div class="col"><div><div class="eyebrow">Levels</div><div class="hero"><div><h1>Your path, level by level</h1><p>Every exercise sits in one level, ordered from easy to hard, with any exercise it builds on placed first. Finish a level and the next one becomes your current level.</p></div></div></div>';
@@ -854,43 +830,6 @@
     view.innerHTML = html;
   }
 
-  // --- one exercise
-  function viewDrill(id) {
-    var d = S.byId[id];
-    if (!d) { view.innerHTML = '<div class="page full"><div class="card empty">That exercise doesn\'t exist any more. <a href="#/drills">Back to all exercises</a></div></div>'; return; }
-    store("sqldrills.lastItem", d.id);
-    var ctx = (S.lastList && S.lastList.indexOf(d) > -1) ? S.lastList : itemsIn(d.level);
-    var i = ctx.indexOf(d), prev = ctx[i - 1], next = ctx[i + 1];
-    var server = d.engine === "server";
-    var html = '<div class="page full"><div class="col">';
-    var secOf = levelOf(d.level).sections && levelOf(d.level).sections.filter(function (s) { return s.key === d.section; })[0];
-    html += '<div class="crumbs"><a href="#/levels">Levels</a>' + icon("chevRight") + '<a href="#/level/' + d.level + '">' + esc(levelName(d.level)) + "</a>" + icon("chevRight") + (secOf ? "<span>" + esc(secOf.title) + "</span>" + icon("chevRight") : "") + "<span>Exercise " + d.seq + " of " + itemsIn(d.level).length + "</span></div>";
-    html += '<div class="dhead"><div><h1>' + esc(d.title) + '</h1><div class="dmeta">' + diffBadge(d.diff) + statusHtml(d) +
-      (d.check === "self" ? '<span class="tag self-tag">' + icon("selfcheck") + "Self-check</span>" : '<span class="tag plain">' + esc(CHECK_LABEL[d.check] || "Auto-checked") + "</span>") +
-      (d.tables && d.tables.length ? '<span class="dset" title="' + esc(S.datasets[d.dataset] || "") + '">' + icon("table") + '<span class="mono">' + d.tables.map(esc).join(", ") + "</span></span>" : S.datasets[d.dataset] ? '<span class="dset">' + icon(server ? "server" : "db") + esc(S.datasets[d.dataset]) + "</span>" : "") + "</div></div>" +
-      '<div class="acts"><button class="btn' + (S.bookmarks[d.key] ? " ghost-accent" : "") + '" data-bm-btn="' + d.key + '">' + icon("bookmark") + (S.bookmarks[d.key] ? "Bookmarked" : "Bookmark") + "</button>" +
-      (prev ? '<a class="btn" href="' + href(prev) + '" id="exPrev" aria-label="Previous exercise" aria-keyshortcuts="Alt+ArrowLeft" title="Previous (Alt+←)">' + icon("chevLeft") + "</a>" : "") + (next ? '<a class="btn" href="' + href(next) + '" id="exNext" aria-keyshortcuts="Alt+ArrowRight" title="Next (Alt+→)">Next ' + icon("chevRight") + "</a>" : "") + "</div></div>";
-    var lvlS = itemsIn(d.level), atS = lvlS.indexOf(d), fromS = Math.max(0, atS - 6), nearS = lvlS.slice(fromS, fromS + 14);
-    html += '<div class="ex-split"><div class="ws-left">';
-    html += '<section class="card card-pad ws-task" id="task"><div class="card-h"><h2 class="rail-h">' + icon("target") + 'Your task</h2></div><div class="dq"><p class="muted">Loading…</p></div></section>';
-    if (d.clock) html += '<div class="self-note clock-note">' + icon("bulb") + "<div><strong>Today is " + new Date(d.clock + "T12:00:00").toLocaleDateString(undefined, { day: "numeric", month: "long", year: "numeric" }) + " in this exercise.</strong> Queries that use the current date (date('now'), CURRENT_DATE …) all see this day, so your answer and the solution are compared on the same date.</div></div>";
-    if (d.sample) html += '<div class="self-note clock-note">' + icon("bulb") + "<div><strong>A random sample.</strong> Any " + (d.sample === true ? "" : d.sample + " ") + "rows of the right set count as correct: they don't have to be the solution's rows.</div></div>";
-    if (d.check === "run") html += '<div class="self-note nc-note">' + icon("bulb") + "<div><strong>Practice · not checked.</strong> This drill doesn't have a reference answer yet, so your result isn't compared with anything: it counts as done as soon as your query runs without an error. Read your result against the task to judge it yourself.</div></div>";
-    if (d.check === "self") html += '<div class="self-note">' + icon("selfcheck") + "<div><strong>Self-check exercise.</strong> This one can't be marked automatically (it changes structure, needs judgement, or is about understanding). Do it, compare with the expected result and the solution, then press <b>Mark as done</b>.</div></div>";
-    html += schemaPanel(server ? { kind: "server", item: d.id, dialect: dialect() } : { kind: "sqlite", key: d.dataset }, { insert: true, open: !spIsPhone(), cls: "ws-schema", hint: "click a name to insert it" }) +
-      '<section class="card card-pad ws-levels"><div class="card-h"><h2 class="rail-h">' + icon("levels") + esc(levelName(d.level)) + '</h2></div><div class="mini-list">' +
-      nearS.map(function (x) { return '<a href="' + href(x) + '" class="' + (x === d ? "on" : "") + '"' + (x === d ? ' aria-current="page"' : "") + '><span class="mn' + (isDone(x) ? " done" : "") + '">' + (isDone(x) ? icon("check") : x.seq) + "</span><span>" + esc(x.title) + "</span></a>"; }).join("") +
-      '</div><a class="link" href="#/level/' + d.level + '" style="margin-top:8px">Whole level (' + lvlS.length + ") " + icon("chevRight") + "</a></section>";
-    html += '</div><div class="ws-right">';
-    if (server) html += '<div id="dbBanner"></div>';
-    html += drillEditorHtml(d);
-    html += '<div id="extra"></div>';
-    html += quickCheck(d);
-    html += "</div></div></div></div>";
-    view.innerHTML = html;
-    schemaMount(view);
-    drillWire(d);
-  }
   // the exercise page's editor card (Run, Submit / Mark as done, hint, format, solution, engine, Reset data, the editor and the output)
   function drillEditorHtml(d) {
     var server = d.engine === "server";
@@ -1211,12 +1150,6 @@
     };
     return '<div class="diff-legend small">' + (nMiss ? '<span class="lg miss">' + plural(nMiss, "expected row") + " missing from yours</span>" : "") + (nExtra ? '<span class="lg extra">' + plural(nExtra, "row") + " of yours not expected</span>" : "") + (colNote ? '<span class="lg cols">' + esc(colNote) + "</span>" : "") + "</div>" +
       '<div class="compare"><div><h4>Expected (' + plural(exp.count || exp.rows.length, "row") + ")</h4>" + table(exp, miss, "miss", "Expected result") + "</div><div><h4>Your result (" + plural(got.count || got.rows.length, "row") + ")</h4>" + table(got, extra, "extra", "Your result") + "</div></div>";
-  }
-  function canonCell(v) {
-    if (v === null || v === undefined) return "NULL";
-    if (typeof v === "number") return String(Number(v.toFixed(6)));
-    var t = String(v).trim();
-    return /^-?\d+(\.\d+)?$/.test(t) ? String(Number(Number(t).toFixed(6))) : t;
   }
   function checkItem(d) {
     var sql = selectedSql(), out = $("#out");
@@ -1605,8 +1538,8 @@
       conceptRender(slug);
     });
   }
-  // a concept page re-render: the old view, or (when React owns the page) an event it listens for
-  function conceptRender(slug) { var R = window.SQLDrillsReact; if (R && R.has("concept", "learner")) window.dispatchEvent(new CustomEvent("sqldrills:concept-render", { detail: { slug: slug } })); else viewConcept(slug); }
+  // a concept page re-render: the React concept page listens for this event
+  function conceptRender(slug) { window.dispatchEvent(new CustomEvent("sqldrills:concept-render", { detail: { slug: slug } })); }
   function loadConcept(slug) { return learnApi("/concept/" + encodeURIComponent(slug)).then(function (c) { S.learn.concept[slug] = c; return c; }); }
   function viewConcept(slug) {
     var c = S.learn.concept[slug];
@@ -1652,11 +1585,6 @@
     return '<ul class="mastery-list" aria-label="Mastery">' + rows.map(function (r) { return '<li class="' + (r[0] ? "ok" : "") + '">' + (r[0] ? icon("check") : '<span class="sm-dot" aria-hidden="true"></span>') + "<span>" + esc(r[1]) + '<span class="sr-only">' + (r[0] ? " (met)" : " (not yet)") + "</span></span></li>"; }).join("") + "</ul>";
   }
   function itemRows(ids) { return ids.map(function (id) { return S.byId[id]; }).filter(Boolean).map(function (d) { return compactRow(d); }).join(""); }
-  function viewLicenses() {
-    view.innerHTML = '<div class="page full"><div class="col"><div class="crumbs"><a href="#/home">Home</a>' + icon("chevRight") + "<span>Licenses</span></div>" +
-      '<section class="card card-pad licenses"><h1>Licenses</h1><p class="muted">Some lessons in this app are based on open material published under the MIT License. Its notice:</p>' +
-      '<pre class="license-text">MIT License\n\nCopyright (c) 2024 s-shemmee\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the "Software"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all\ncopies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE\nSOFTWARE.</pre></section></div></div>';
-  }
   // the tables a piece of SQL runs on (the schema panel), unless the SQL creates its own tables
   function tablesPanel(dataset, sql, open) {
     if (!dataset || /\bCREATE\s+(TEMP(ORARY)?\s+)?TABLE\b/i.test(String(sql || ""))) return "";
@@ -1920,13 +1848,6 @@
       (r.explain ? '<p class="note-text">' + esc(r.explain) + "</p>" : "") + (r.mistake ? '<p class="note-text"><b>Mistake:</b> ' + esc(r.mistake) + "</p>" : "") +
       (r.feedback ? '<div class="rf-feedback"><div class="muted small">AI feedback</div><p>' + esc(r.feedback) + "</p></div>" : "") + "</article>";
   }
-  function viewNotes() {
-    var q = S.learn.notesQ || "";
-    var html = '<div class="page"><div class="col"><div><div class="eyebrow">My notes</div><div class="hero"><div><h1>My notes</h1><p>Your reflections: what you explained, the mistakes you named and how confident you felt. Search them to revise.</p></div></div></div>' +
-      '<label class="notes-search"><span class="sr-only">Search my notes</span>' + icon("search") + '<input type="search" class="inp" data-act="notes-q" placeholder="Search notes, exercises, concepts…" value="' + esc(q) + '"></label><div id="notesList" aria-live="polite"><p class="muted small">Loading…</p></div></div>' + rail() + "</div>";
-    view.innerHTML = html;
-    loadNotes();
-  }
   view.addEventListener("click", function (e) {
     if (!e.target.closest || !e.target.closest('[data-act="notes-clear"]')) return;
     S.learn.notesQ = ""; var inp = $('[data-act="notes-q"]'); if (inp) { inp.value = ""; inp.focus(); } loadNotes();
@@ -1981,22 +1902,6 @@
         if (box) { box.value = typing.value; box.focus(); box.selectionStart = box.selectionEnd = Math.min(typing.pos, typing.value.length); }
       }
     }).catch(function (e) { view.innerHTML = '<div class="page full"><div class="card empty"><div class="bad-txt">' + esc(e.message) + '</div></div></div>'; });
-  }
-  function viewFlashcards() {
-    var slug = route.q && route.q.get("concept");
-    var selectedCard = route.q && route.q.get("card");
-    if (!slug && route.q.get("study") !== "1") { viewFlashcardLibrary(); return; }
-    view.innerHTML = '<div class="page full"><div class="col fc-page"><div class="card card-pad" aria-busy="true"><p class="muted">Loading cards…</p></div></div></div>';
-    var sessionQ = []; if (slug) sessionQ.push("concept=" + encodeURIComponent(slug)); if (selectedCard) sessionQ.push("card=" + encodeURIComponent(selectedCard));
-    learnApi("/flash/session" + (sessionQ.length ? "?" + sessionQ.join("&") : "")).then(function (s) {
-      if (route.name !== "flashcards") return;
-      S.fc = { slug: slug, cards: s.cards, i: 0, right: 0, wrong: 0, later: s.later, results: [] };
-      if (!s.cards.length && slug) {
-        // nothing due: practise the concept's cards anyway (the schedule only moves when a card is due)
-        return loadConcept(slug).then(function (c) { S.fc.cards = c.flashcards.map(function (f) { return Object.assign({ conceptName: c.name }, f); }); S.fc.extra = true; flashStep(); });
-      }
-      flashStep();
-    }).catch(function (e) { view.innerHTML = '<div class="page full"><div class="card empty">' + esc(e.message) + "</div></div>"; });
   }
   function flashShell(inner) {
     var F = S.fc, c = F.cards[F.i];
@@ -2084,8 +1989,6 @@
   }
   view.addEventListener("click", function (e) {
     var t = e.target;
-    var ct = t.closest("[data-ctab]");
-    if (ct) { var q = new URLSearchParams(route.q); q.set("tab", ct.getAttribute("data-ctab")); history.replaceState(null, "", "#/concept/" + route.args[0] + "?" + q); route.q = q; viewConcept(route.args[0]); var nt = $("#tab-" + ct.getAttribute("data-ctab")); if (nt) nt.focus(); return; }
     var cs = t.closest("[data-concept-seen]");
     if (cs) { cs.disabled = true; learnApi("/concept/" + cs.getAttribute("data-concept-seen") + "/seen", {}).then(function (r) { if (r.first) learnEvent("card", cs.getAttribute("data-concept-seen")); return loadConcept(route.args[0]); }).then(function () { S.learn.levels = {}; if (cardsInProgress()) cs.outerHTML = '<span class="pill done">' + icon("check") + "Read</span>"; else conceptRender(route.args[0]); toast("Marked as read"); }).catch(function (er) { cs.disabled = false; toast(er.message); }); return; }
     var mp = t.closest("[data-more-practice]");
@@ -2134,12 +2037,6 @@
     } else { var nextBtn = view.querySelector("[data-fc-part]:not(:disabled)"); if (nextBtn) nextBtn.focus(); }
   }
   document.addEventListener("keydown", function (e) {
-    if (route.name === "concept" && e.target.closest && e.target.closest("[data-ctab]") && (e.key === "ArrowRight" || e.key === "ArrowLeft" || e.key === "Home" || e.key === "End")) {
-      e.preventDefault();
-      var i = CTABS.indexOf(e.target.getAttribute("data-ctab")), N = CTABS.length, n = e.key === "Home" ? 0 : e.key === "End" ? N - 1 : (i + (e.key === "ArrowRight" ? 1 : N - 1)) % N;
-      var b = $('[data-ctab="' + CTABS[n] + '"]'); if (b) b.click();
-      return;
-    }
     if (route.name !== "flashcards" || !S.fc || e.ctrlKey || e.metaKey || e.altKey) return;
     var typing = e.target.closest && e.target.closest("input,textarea");
     if (typing) { if (e.key === "Enter" && e.target.id === "fcAnswer" && !e.target.readOnly) { e.preventDefault(); var ck = view.querySelector('[data-fc="check"]'); if (ck) ck.click(); } return; }
@@ -2457,27 +2354,6 @@
   });
   view.addEventListener("input", function (e) { if (e.target.classList && e.target.classList.contains("ln-sql")) { S.learnDraft[e.target.closest("[data-ex]").getAttribute("data-ex")] = e.target.value; wsSync(e.target); } });
   view.addEventListener("keydown", function (e) { if (e.target.classList && e.target.classList.contains("ln-sql") && e.key === "Enter" && (e.ctrlKey || e.metaKey)) { e.preventDefault(); exampleRun(e.target.closest("[data-ex]")); } });
-  // ---------- How to use: the learner and admin guides (public/help.js), numbers from /api/help/numbers ----------
-  function helpNumbers() { return S.helpNums ? Promise.resolve(S.helpNums) : api("/api/help/numbers").then(function (n) { S.helpNums = n; return n; }); }
-  function helpSectionHtml(s, nums) {
-    return '<section class="card card-pad help-sec" id="h-' + s.id + '" aria-labelledby="hh-' + s.id + '"><h2 class="h3" id="hh-' + s.id + '" tabindex="-1">' + esc(s.title) + "</h2>" + Help.textHtml(s.text, nums) +
-      (s.shot ? '<figure class="help-shot"><img src="/help/' + esc(s.shot) + '" alt="' + esc(s.alt) + '" loading="lazy" width="1200" height="750"><figcaption class="muted small">' + esc(s.alt) + " (from the app)</figcaption></figure>" : "") + "</section>";
-  }
-  function viewHelp() {
-    var g = route.q && route.q.get("g") === "admin" ? "admin" : "learner", sec = route.q && route.q.get("s");
-    view.innerHTML = '<div class="page"><div class="col"><div class="card card-pad" aria-busy="true"><p class="muted">Loading…</p></div></div></div>';
-    helpNumbers().then(function (nums) {
-      if (route.name !== "help") return;
-      var list = g === "admin" ? Help.ADMIN : Help.LEARNER;
-      var html = '<div class="page"><div class="col help-page"><div><div class="eyebrow">How to use</div><div class="hero"><div><h1>How to use SQL Drills</h1><p>Two guides: one for learning, one for the admin where content is made and reviewed. Every number on this page comes from the app as it is now.</p></div></div></div>' +
-        '<div class="tabs" role="tablist"><a role="tab" href="#/help" class="' + (g === "learner" ? "on" : "") + '" aria-selected="' + (g === "learner") + '">' + icon("graduation") + 'Learner guide</a><a role="tab" href="#/help?g=admin" class="' + (g === "admin" ? "on" : "") + '" aria-selected="' + (g === "admin") + '">' + icon("gear") + "Admin guide</a></div>" +
-        '<nav class="card card-pad help-toc" aria-label="Sections"><ol>' + list.map(function (s) { return '<li><a href="#/help?' + (g === "admin" ? "g=admin&" : "") + "s=" + s.id + '">' + esc(s.title) + "</a></li>"; }).join("") + "</ol>" + (g === "admin" ? '<p class="small"><a href="/admin">Open the admin</a></p>' : "") + "</nav>" +
-        list.map(function (s) { return helpSectionHtml(s, nums); }).join("") + "</div>" + rail() + "</div>";
-      view.innerHTML = html;
-      var h = sec && $("#hh-" + sec);
-      if (h) { h.scrollIntoView(); h.focus(); }
-    }).catch(function (e) { view.innerHTML = '<div class="page"><div class="card empty">' + esc(e.message) + "</div></div>"; });
-  }
 
   // ---------- Docs: the SQL reference (every lesson A-Z and searchable, a cheat sheet per level, engine differences) ----------
   function docsLoad() { return S.docs ? Promise.resolve(S.docs) : learnApi("/docs").then(function (d) { S.docs = d; return d; }); }
@@ -2553,26 +2429,6 @@
     var next = flat.filter(function (c) { return !c.read; })[0];
     return next ? { c: next, s: 1, resume: false } : { c: flat[0], s: 1, done: true };
   }
-  function learnJump(p, current) {
-    return '<label class="ln-jump"><span>Jump to a concept</span><select class="inp" data-learn-jump>' + (current ? "" : '<option value="">Choose…</option>') +
-      p.levels.map(function (L) { return '<optgroup label="Level ' + L.n + " · " + esc(L.title) + '">' + L.concepts.map(function (c) { return '<option value="' + esc(c.slug) + '"' + (c.slug === current ? " selected" : "") + ">" + (c.read ? "✓ " : "") + esc(c.name) + "</option>"; }).join("") + "</optgroup>"; }).join("") + "</select></label>";
-  }
-  function viewLearn() {
-    view.innerHTML = '<div class="page"><div class="col"><div class="card card-pad" aria-busy="true"><p class="muted">Loading the path…</p></div></div>' + rail() + "</div>";
-    learnPathLoad(true).then(function (p) {
-      if (route.name !== "learn" || route.args[0]) return;
-      var go = learnContinue(p), cur = go.c.level;
-      var html = '<div class="page"><div class="col"><div><div class="eyebrow">Learn</div><div class="hero"><div><h1>Learn step by step</h1><p>All ' + p.total + " concepts in course order. Each step is a short lesson, its example to edit and run, then a quick check. Levels and exercises stay where they are; this is the guided way through them.</p></div></div></div>" +
-        '<section class="card card-pad ln-start"><div class="ln-start-h"><div><div class="eyebrow">' + (go.done ? "Every lesson read" : go.resume ? "Continue where you left off" : "Start") + '</div><h2 class="h3">' + esc(go.c.name) + '</h2><p class="muted small">Level ' + go.c.level + " · step " + go.s + " of 3: " + LEARN_STEPS[go.s - 1][1] + "</p></div>" +
-        '<a class="btn primary" href="#/learn/' + encodeURIComponent(go.c.slug) + "?s=" + go.s + '">' + icon("play") + (go.done ? "Start again" : go.resume ? "Continue" : "Start") + "</a></div>" +
-        learnBar(p.read, p.total, "Lessons read across all levels") + learnJump(p, "") + "</section>";
-      html += '<section aria-labelledby="ln-lv"><h2 class="h3" id="ln-lv">Levels</h2>' + p.levels.map(function (L) {
-        return '<details class="card card-pad ln-level"' + (L.n === cur ? " open" : "") + '><summary><span class="ln-lt">Level ' + L.n + " · " + esc(L.title) + "</span>" + learnBar(L.read, L.total, "Level " + L.n + " lessons read") + "</summary>" +
-          '<ol class="ln-list">' + L.concepts.map(function (c) { return '<li><a href="#/learn/' + encodeURIComponent(c.slug) + '?s=1"><span class="ln-mark" aria-hidden="true">' + (c.read ? icon("check") : "") + "</span><span>" + esc(c.name) + "</span>" + (c.read ? '<span class="sr-only"> (read)</span>' : "") + "</a></li>"; }).join("") + "</ol></details>";
-      }).join("") + "</section>";
-      view.innerHTML = html + "</div>" + rail() + "</div>";
-    }).catch(function (e) { view.innerHTML = '<div class="page"><div class="card empty">' + esc(e.message) + "</div></div>"; });
-  }
   // the quick check: up to 2 approved questions of the concept (a predict item, then an MCQ, else a card)
   function learnChecks(c) {
     var preds = (c.predicts || []).slice(), mcqs = (c.mcqs.understand || []).concat(c.mcqs.memorize || []).map(function (id) { return S.byMcq[id]; }).filter(Boolean), cards = (c.cards || []).filter(function (x) { return window.Cards && Cards.STANDALONE.indexOf(x.card_type) > -1; });
@@ -2619,48 +2475,6 @@
     if (shown && learnCheckAnswered(c, shown) && !learnStepsOf(route.args[0])[3]) { learnStepDone(route.args[0], 3); return; }
     box.innerHTML = learnSide(c, route.args[0], Math.min(3, Math.max(1, Number(route.q && route.q.get("s")) || 1)));
   }
-  // the schema column: the dataset's tables, the example's own first and open; an example with its own tables says so
-  function learnSchema(l) {
-    var sql = exampleSqlOf(l);
-    if (!l || !l.dataset) return "";
-    if (/\bCREATE\s+(TEMP(ORARY)?\s+)?TABLE\b/i.test(sql)) return '<section class="card card-pad lw-own" aria-label="Tables">' + icon("db") + "<p>This example creates its own tables: they are in its script.</p></section>";
-    return schemaPanel({ kind: "sqlite", key: l.dataset }, { open: true, hint: "its tables first", sql: sql, title: "Database schema", cls: "lw-schema" });
-  }
-  function viewLearnStep(slug) {
-    var s = Math.min(3, Math.max(1, Number(route.q && route.q.get("s")) || 1));
-    view.innerHTML = '<div class="page full"><div class="col"><div class="card card-pad" aria-busy="true"><p class="muted">Loading…</p></div></div></div>';
-    Promise.all([learnPathLoad(), loadConcept(slug)]).then(function (r) {
-      if (route.name !== "learn" || route.args[0] !== slug) return;
-      var p = r[0], c = r[1], flat = learnFlat(p), i = flat.map(function (x) { return x.slug; }).indexOf(slug), L = p.levels.filter(function (x) { return x.n === c.level; })[0];
-      store("sqldrills.learnAt", slug + "|" + s);
-      var l = (c.lessons || [])[0], prev = flat[i - 1], next = flat[i + 1], st = learnStepState(c, slug), ex = (l && l.example) || {};
-      var dialect = l && exampleSqlOf(l) ? (exampleLocal(l) ? "SQLite" : "MySQL") : "";
-      var head = '<nav class="crumbs" aria-label="Breadcrumb"><a href="#/learn">Learn</a>' + icon("chevRight") + '<a href="#/level/' + c.level + '">Level ' + c.level + "</a>" + icon("chevRight") + "<span>" + esc(L ? L.title : "") + "</span></nav>" +
-        '<section class="card card-pad lw-over ln-head" aria-labelledby="lw-title"><div class="lw-over-top"><div class="lw-over-txt"><div class="eyebrow">Concept ' + (i + 1) + " of " + flat.length + " · Level " + c.level + '</div><h1 id="lw-title">' + esc(c.name) + '</h1><p class="lw-obj">' + esc(c.summary || "") + "</p></div>" +
-        '<div class="lw-over-meta">' + (dialect ? '<span class="ws-dialect" title="Where the example runs">' + icon("db") + esc(dialect) + "</span>" : "") + (L ? learnBar(L.read, L.total, "Level " + c.level + " lessons read") : "") + "</div></div>" +
-        '<ol class="lw-steps" aria-label="Steps">' + LEARN_STEPS.map(function (x, k) { var n = k + 1, cls = n === s ? "on" : st[n] ? "done" : ""; return '<li class="' + cls + '"' + (n === s ? ' aria-current="step"' : "") + '><a href="#/learn/' + encodeURIComponent(slug) + "?s=" + n + '"><span class="lw-stepi" aria-hidden="true">' + (st[n] && n !== s ? icon("check") : n) + "</span><span>" + x[1] + '</span><span class="sr-only"> (' + (n === s ? "current" : st[n] ? "done" : "to do") + ")</span></a></li>"; }).join("") + "</ol>" + learnJump(p, slug) + "</section>";
-      var main = "";
-      if (s === 1) main = l ? lessonCard(l, { noTables: true }) : emptyStage("file", "No lesson for this concept yet.", ["#/concept/" + encodeURIComponent(slug), "Open the concept page"]);
-      if (s === 2) main = l ? sqlWorkspace(l, slug) : emptyStage("code", "No lesson for this concept yet.", ["#/concept/" + encodeURIComponent(slug), "Open the concept page"]);
-      if (s === 3) {
-        var qs = learnChecks(c);
-        S.learnQs = S.learnQs || {}; S.learnQs[slug] = qs;
-        main = '<p class="muted small ln-qnote">' + (qs.length ? "Answer " + (qs.length === 1 ? "this question" : "these " + qs.length + " questions") + ". A wrong answer comes back in Review mistakes." : "") + "</p>" +
-          (qs.length ? qs.map(function (q) { return q.kind === "predict" ? predictCard(q.item) : q.kind === "mcq" ? '<section class="card card-pad">' + mcqBlock(q.item, false, true) + "</section>" : xcardHtml(q.item); }).join("")
-            : emptyStage("checkCircle", "No quick-check question for this concept yet: they appear once they are approved.", ["#/concept/" + encodeURIComponent(slug) + "?tab=understand", "Open the concept page"]));
-      }
-      var back = s > 1 ? "#/learn/" + encodeURIComponent(slug) + "?s=" + (s - 1) : prev ? "#/learn/" + encodeURIComponent(prev.slug) + "?s=3" : null;
-      var navHtml = '<nav class="ln-nav" aria-label="Step navigation">' + (back ? '<a class="btn" href="' + back + '">' + icon("chevLeft") + "Back</a>" : "<span></span>") +
-        (s < 3 ? '<a class="btn primary" href="#/learn/' + encodeURIComponent(slug) + "?s=" + (s + 1) + '"' + (s === 1 ? ' data-learn-step-done="1"' : "") + ">Next: " + LEARN_STEPS[s][1] + " " + icon("chevRight") + "</a>"
-          : '<button type="button" class="btn primary" data-learn-finish="' + esc(slug) + '" data-next="' + esc(next ? next.slug : "") + '">' + (next ? "Done · next concept " : "Done · back to Learn ") + icon("chevRight") + "</button>") + "</nav>";
-      var schema = learnSchema(l), open = !window.matchMedia || window.matchMedia("(min-width: 900px)").matches;
-      view.innerHTML = '<div class="page full lw-page"><div class="lw' + (schema ? "" : " no-schema") + '"><div class="lw-head">' + head + '</div><div class="lw-main">' + main + navHtml + "</div>" +
-        (schema ? '<div class="lw-schema-col">' + schema + "</div>" : "") +
-        '<aside class="lw-side" aria-label="Learning guidance">' + (open ? learnSide(c, slug, s) : '<details class="card card-pad lw-side-fold"><summary>Learning goal, progress and key points</summary>' + learnSide(c, slug, s) + "</details>") + "</aside></div></div>";
-      schemaMount(view); wsMount(view);
-      var h = view.querySelector("#lw-title"); if (h) { h.setAttribute("tabindex", "-1"); h.focus(); }
-    }).catch(function (e) { view.innerHTML = '<div class="page full"><div class="card empty">' + esc(e.message) + ' <a href="#/learn">Back to Learn</a></div></div>'; });
-  }
   // a quick-check answer in Learn: a mistake goes into Review mistakes (the same 1, 3, 7-day steps as exercises)
   function learnAnswered(kind, ref, right) { if (route.name === "learn" && ref) { S.learnAnswered = S.learnAnswered || {}; S.learnAnswered[kind + ":" + ref] = 1; learnApi("/quickcheck", { kind: kind, ref: ref, correct: !!right }).catch(function () {}); setTimeout(learnSideRefresh, 700); } }
   view.addEventListener("click", function (e) {
@@ -2676,38 +2490,6 @@
     }
   });
   view.addEventListener("change", function (e) { if (e.target.matches && e.target.matches("[data-learn-jump]") && e.target.value) location.hash = "#/learn/" + encodeURIComponent(e.target.value) + "?s=1"; });
-  // ---------- the Today plan's Challenge (one item: due for review, or from the weakest concept) ----------
-  function viewChallenge() {
-    var lv = Number(route.q && route.q.get("level")) || 1;
-    view.innerHTML = '<div class="page full"><div class="col"><div class="card card-pad" aria-busy="true"><p class="muted">Finding your challenge…</p></div></div></div>';
-    learnApi("/today?level=" + lv).then(function (t) {
-      var ch = t.challenge;
-      var html = '<div class="page full"><div class="col challenge-page"><div class="crumbs"><a href="#/home">Home</a>' + icon("chevRight") + "<span>Challenge</span></div>";
-      if (!ch) { view.innerHTML = html + '<div class="card empty">' + icon("trophy") + '<div><p>Nothing to challenge you with right now: nothing is due and this level\'s concepts are going well.</p><a class="btn sm" href="#/home">Back to today\'s plan ' + icon("chevRight") + "</a></div></div></div></div>"; return; }
-      S.challenge = ch;
-      html += '<section class="card card-pad ch-intro"><div class="eyebrow">' + (ch.why === "due" ? "Due for review" : "Your weakest concept in this level") + "</div><h1 class=\"h3\">" + esc(ch.name) + '</h1><p class="muted small">Answer it, say how sure you are, and it is scheduled for the right day.</p></section>';
-      html += challengeItemHtml(ch);
-      view.innerHTML = html + '<div class="ch-done" aria-live="polite"></div></div></div>';
-      schemaMount(view);
-      var first = view.querySelector(".challenge-page input, .challenge-page textarea, .challenge-page select, .challenge-page [data-ch]"); if (first) first.focus();
-    }).catch(function (e) { view.innerHTML = '<div class="page full"><div class="card empty">' + esc(e.message) + "</div></div>"; });
-  }
-  function challengeItemHtml(ch) {
-    var it = ch.item, id = "ch";
-    if (ch.kind === "card") return xcardHtml(it, { challenge: true });
-    var body = "";
-    if (ch.kind === "predict") {
-      var opts = predictOptions(it);
-      body = '<div class="pq">' + esc(it.question) + "</div>" + (it.variant === "endstate" ? '<pre class="mcq-code">' + highlight(numberedScript(it.script)) + "</pre>" + (it.check_sql && it.mode !== "error" ? '<pre class="mcq-code">' + highlight(it.check_sql) + "</pre>" : "") : inputsHtml(it) + '<pre class="mcq-code">' + highlight(it.sql) + "</pre>") +
-        '<fieldset class="po-opts"><legend>Which result is right?</legend>' + opts.map(function (o, i) { return '<label class="po-opt"><input type="radio" name="ch-opt" value="' + i + '" data-right="' + (o.right ? 1 : 0) + '"><span class="po-l">' + "ABCD".charAt(i) + '</span><span class="po-body">' + (it.variant === "endstate" ? outcomeHtml(o.table) : miniTable(o.table)) + "</span></label>"; }).join("") + "</fieldset>";
-    } else if (it.type === "error" && spotBugUsable(it)) body = spotBugHtml(it, id);
-    else if (it.type === "blank") body = '<div class="fc-q">' + esc(it.prompt || "Fill in the blank") + '</div><pre class="mcq-code">' + highlight(it.sql) + '</pre><label class="fc-in"><span>Your answer for ___</span><input class="inp mono ch-blank" autocomplete="off" spellcheck="false"></label>';
-    else body = '<div class="fc-q">' + esc(it.front || it.prompt || "") + "</div>" + (it.wrong_sql ? '<pre class="mcq-code">' + highlight(it.wrong_sql) + "</pre>" : "") + '<div class="ch-back" hidden>' + (it.back ? "<p>" + esc(it.back) + "</p>" : "") + (it.parts ? '<pre class="mcq-code">' + highlight(it.parts.join("\n")) + "</pre>" : "") + (it.fixed_sql ? '<pre class="mcq-code">' + highlight(it.fixed_sql) + "</pre><p>" + esc(it.explanation || "") + "</p>" : "") + "</div>";
-    var self = ch.kind === "flashcard" && !(it.type === "blank" || (it.type === "error" && spotBugUsable(it)));
-    return '<section class="card card-pad ch-item" data-ch-kind="' + ch.kind + '">' + body + (it.type !== "keyword" ? tablesPanel(it.dataset, it.sql || it.fixed_sql || it.wrong_sql, false) : "") + confHtml(id) +
-      '<div class="actions">' + (self ? '<button type="button" class="btn primary" data-ch="reveal">Show the answer</button><span class="ch-grade" hidden><button type="button" class="btn ok" data-ch="right">' + icon("check") + 'I knew it</button><button type="button" class="btn" data-ch="wrong">' + icon("x") + "I didn't</button></span>" : '<button type="button" class="btn primary" data-ch="check">' + icon("checkCircle") + "Check</button>") +
-      '</div><div class="ch-out" aria-live="polite"></div></section>';
-  }
   function challengeAnswer(right, html) {
     var ch = S.challenge, sec = view.querySelector(".ch-item"), out = sec.querySelector(".ch-out");
     sec.querySelectorAll("input, textarea, select, [data-ch]").forEach(function (x) { x.disabled = true; });
@@ -2744,32 +2526,6 @@
 
   // ---------- the dashboard's Today plan ----------
   function isWeekend() { var d = new Date().getDay(); return d === 0 || d === 6; }
-  function todayHtml(lv) {
-    var T = S.learn.today;
-    if (!T || T.level !== lv) {
-      learnApi("/today?level=" + lv + "&weekend=" + (isWeekend() ? 1 : 0)).then(function (t) { S.learn.today = t; S.flashDue = t.flashcards.due; renderNav(); var box = $("#todayPlan"); if (box && route.name === "home") box.outerHTML = todayHtml(lv); }).catch(function (e) { var box = $("#todayPlan"); if (box) box.innerHTML = '<div class="err">' + esc(e.message) + "</div>"; });
-      return '<section class="card card-pad today" id="todayPlan" aria-busy="true"><div class="card-h"><h2 class="h3">' + icon("target") + 'Today</h2></div><p class="muted small">Loading your plan…</p></section>';
-    }
-    var st = streak(), goal = dailyGoal(), steps = [];
-    var fcRow = T.flashcards.due ? ["cards", "Memorize", plural(T.flashcards.due, "flashcard") + " due", "#/flashcards?study=1", "Review"]
-      : T.flashcards.newConcept ? ["cards", "Memorize", "New cards: " + T.flashcards.newConcept.name, "#/flashcards?concept=" + T.flashcards.newConcept.slug, "Start"]
-      : ["cards", "Memorize", "No flashcards due" + (T.flashcards.newConcept === null ? " (cards appear once approved)" : ""), null, null];
-    steps.push(fcRow);
-    steps.push(T.understand ? ["bulb", "Understand", "Next concept: " + T.understand.name, "#/concept/" + T.understand.slug + "?tab=understand", T.understand.stage === "started" ? "Continue" : "Open"] : ["bulb", "Understand", "Every concept of this level is understood", null, null]);
-    var rf = T.reflection;
-    steps.push(rf && rf.item && S.byId[rf.item] ? ["note", "Reflect", "One sentence on “" + S.byId[rf.item].title + "” (you " + (rf.result === "pass" ? "solved it" : "didn't solve it yet") + ")", "#/drill/" + rf.item + "?reflect=" + rf.result, "Reflect"]
-      : rf && rf.concept ? ["note", "Reflect", "Explain " + rf.name + " in one sentence", "#/concept/" + rf.concept + "?tab=reflect", "Reflect"] : ["note", "Reflect", "Nothing to reflect on yet", null, null]);
-    if (T.challenge) steps.push(["spark", "Challenge", (T.challenge.why === "due" ? "Due for review: " : "Your weakest concept: ") + T.challenge.name, "#/challenge?level=" + lv, "Start"]);
-    if (T.weekend) steps.push(T.transfer && T.transfer.id && S.byId[T.transfer.id] ? ["compass", "Transfer · weekend", S.byId[T.transfer.id].title + " (" + T.transfer.name + ")", href(S.byId[T.transfer.id]), "Try it"] : ["compass", "Transfer · weekend", "Finish a concept's practise set to unlock a transfer challenge", null, null]);
-    var html = '<section class="card card-pad today" id="todayPlan" aria-labelledby="today-h"><div class="card-h"><h2 class="h3" id="today-h">' + icon("target") + "Today</h2>" +
-      '<span class="muted small">Daily goal <b class="mono">' + Math.min(st.today, 99) + "/" + goal + '</b> · every stage counts</span><a class="more link" href="#/level/' + lv + '">Level ' + lv + " " + icon("chevRight") + "</a></div>" +
-      '<ul class="today-list">' + steps.map(function (s) {
-        return '<li><span class="ic">' + icon(s[0]) + '</span><span class="tl-main"><span class="eyebrow">' + esc(s[1]) + "</span><span>" + esc(s[2]) + "</span></span>" + (s[3] ? '<a class="btn sm" href="' + s[3] + '">' + esc(s[4]) + "</a>" : "") + "</li>";
-      }).join("") + "</ul>";
-    var prac = T.practise.map(function (id) { return S.byId[id]; }).filter(Boolean);
-    html += '<h3 class="today-sub">' + icon("play") + "Practise · " + plural(prac.length, "exercise") + '</h3>' + (prac.length ? '<div class="clist">' + prac.map(function (d) { return compactRow(d); }).join("") + "</div>" : '<p class="muted small">Every practise set in this level is done.</p>');
-    return html + "</section>";
-  }
 
   function parseRoute() {
     var h = (location.hash || "").replace(/^#\/?/, "").split("?")[0];
@@ -2782,8 +2538,9 @@
   }
   // the old view for a route (used by the router, and by a React page that hosts an old view)
   function viewFor(r) {
-    var V = { drills: viewDrills, drill: function () { viewDrill(r.args[0]); }, levels: viewLevels, level: function () { viewLevel(r.args[0]); }, mcqs: viewMcqs, mcq: function () { viewMcq(r.args[0]); },
-      quiz: function () { viewQuiz(r.args[0] || "mixed"); }, recent: viewRecent, interview: viewInterview, bookmarks: viewBookmarks, review: viewReviewMistakes, progress: viewProgress, concept: function () { viewConcept(r.args[0]); }, learn: function () { if (r.args[0]) viewLearnStep(r.args[0]); else viewLearn(); }, docs: viewDocs, help: viewHelp, flashcards: viewFlashcards, notes: viewNotes, licenses: viewLicenses, challenge: viewChallenge, preview: viewPreview, guide: function () { viewGuide(r.args[0], r.args[1]); } };
+    // the old views React still hosts (the other routes are React pages: web/src/bridge.jsx)
+    var V = { drills: viewDrills, levels: viewLevels, level: function () { viewLevel(r.args[0]); }, mcqs: viewMcqs, mcq: function () { viewMcq(r.args[0]); },
+      quiz: function () { viewQuiz(r.args[0] || "mixed"); }, recent: viewRecent, interview: viewInterview, bookmarks: viewBookmarks, review: viewReviewMistakes, progress: viewProgress, preview: viewPreview, guide: function () { viewGuide(r.args[0], r.args[1]); } };
     return V[r.name] || null;
   }
   function render() {
@@ -2796,13 +2553,11 @@
     renderChrome();
     $("#side").classList.remove("open"); $("#scrim").classList.remove("open");
     view = viewRoot;
-    var draw = viewFor(r), name = r.name;
-    if (!draw) { draw = viewHome; name = "home"; } // an unknown address shows Home
-    // React pages (web/, the Waffles front end) take the routes they own; every other route stays here
-    var R = window.SQLDrillsReact;
-    if (R) R.unmount();
-    if (R && R.has(name, "learner")) R.mount(name, view, { app: "learner", route: r, icon: icon });
-    else draw();
+    // React owns every route (it hosts the old views still in viewFor); an unknown address shows Home. The bridge is in
+    // the same bundle as this file, so it is always there by the time the router runs.
+    var R = window.SQLDrillsReact, name = R.has(r.name, "learner") ? r.name : "home";
+    R.unmount();
+    R.mount(name, view, { app: "learner", route: r, icon: icon });
     if (!same && !(r.name === "guide" && r.args[1])) viewRoot.scrollTop = 0;
   }
 
@@ -3019,7 +2774,7 @@
     spIsPhone: spIsPhone, dialect: dialect, quickCheck: quickCheck, itemsIn: itemsIn, drillEditorHtml: drillEditorHtml, drillWire: drillWire,
     refreshConcept: refreshConcept,
     // Phase 6: a React page that hosts an old view (render() takes #view back on every route change)
-    hostView: function (name, el) { view = el; (viewFor(route) || viewHome)(); }, takeConceptStale: function () { var v = !!viewConcept.stale; viewConcept.stale = false; return v; },
+    hostView: function (name, el) { view = el; viewFor(route)(); }, takeConceptStale: function () { var v = !!viewConcept.stale; viewConcept.stale = false; return v; },
   };
 
   // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
