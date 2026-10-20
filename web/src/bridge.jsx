@@ -19,9 +19,12 @@ import Create from "./pages/admin/Create.jsx";
 import Settings from "./pages/admin/Settings.jsx";
 import Backups from "./pages/admin/Backups.jsx";
 import Health from "./pages/admin/Health.jsx";
+import Overview from "./pages/admin/Overview.jsx";
+import Concepts from "./pages/admin/Concepts.jsx";
+import { ReviewPage, GeneratePage } from "./pages/admin/Hosted.jsx";
 
 // the routes React owns in each app (learner: index.html, admin: admin.html)
-export const PAGES = { learner: { licenses: Licenses, help: Help, docs: Docs, home: Home, learn: Learn, notes: Notes, flashcards: Flashcards, challenge: Challenge, concept: Concept, drill: Drill }, admin: { help: Help, create: Create, settings: Settings, backups: Backups, health: Health } };
+export const PAGES = { learner: { licenses: Licenses, help: Help, docs: Docs, home: Home, learn: Learn, notes: Notes, flashcards: Flashcards, challenge: Challenge, concept: Concept, drill: Drill }, admin: { help: Help, create: Create, settings: Settings, backups: Backups, health: Health, overview: Overview, concepts: Concepts, review: ReviewPage, generate: GeneratePage } };
 
 export function createBridge(pages = PAGES) {
   const byApp = pages.learner || pages.admin ? pages : { learner: pages }; // a flat map means the learner app
@@ -34,7 +37,7 @@ export function createBridge(pages = PAGES) {
       const Page = own(ctx.app)[name];
       view.innerHTML = "";
       const el = document.createElement("div");
-      el.className = "wf-root";
+      el.className = Page.hosted ? "wf-host" : "wf-root"; // a hosted old view keeps its own look
       el.setAttribute("data-route", name);
       view.appendChild(el);
       const root = createRoot(el);
