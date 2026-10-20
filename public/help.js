@@ -32,6 +32,8 @@
       text: "**SQL Explorer** at {{sqlpad_url}} is the free playground, started with the app. Pick a course database on the left (its tables and columns are listed), write any query and run it with Ctrl+Enter, then see the result as a table or a chart.\nIts connections to the course MySQL and PostgreSQL databases are read-only, so nothing you run there changes them." },
     { id: "docs", title: "Docs", shot: "docs.jpg", alt: "The Docs page",
       text: "**Docs** is the SQL reference:\n- every concept's lesson, A-Z and searchable, with an example you can edit and run;\n- one cheat sheet per level;\n- a MySQL vs PostgreSQL vs SQLite table of differences." },
+    { id: "keyboard", title: "Keyboard use",
+      text: "Everything works from the keyboard; a ring shows where you are while you use it.\n- The first **Tab** reaches **Skip to content**, which jumps past the menu to the page.\n- **Ctrl+K** (or **/**) puts you in the search: the arrow keys move through the results, **Enter** opens one, **Escape** closes the list.\n- In an exercise: **Ctrl+Enter** runs your query, **Ctrl+Shift+Enter** submits it, **Ctrl+I** asks for a hint, **Alt+←** and **Alt+→** open the previous and next exercise.\n- Flashcards: **Space** shows the answer, **Y** and **N** grade it, **Enter** checks a typed answer, **Backspace** takes back the last clause.\n- On a concept page the arrow keys, **Home** and **End** move between the stage tabs.\n- On a phone, the menu button opens the menu and **Escape** closes it." },
   ];
   var ADMIN = [
     { id: "generate", title: "Generate", shot: "admin-generate.jpg", alt: "Admin: Generate",
@@ -54,6 +56,8 @@
       text: "- Generator: {{generator}}.\n- Reviewer: {{reviewer}}.\n- Tie-breaker: {{tiebreaker}}.\nOne provider generates, a different one reviews (never the generator reviewing itself), and real SQL decides. Learner hints use {{hint_model}}." },
     { id: "spend", title: "The AI spend log", shot: "admin-overview.jpg", alt: "Admin: Overview with the AI spend",
       text: "Every AI call is logged with its provider, model, tokens and cost. The Overview's AI generation card shows the total ({{spend_total}} over {{spend_calls}} calls since the log began) and the cost per model." },
+    { id: "keyboard", title: "Keyboard use",
+      text: "The admin works from the keyboard too:\n- The first **Tab** reaches **Skip to content**; **Ctrl+K** puts you in the search (the arrow keys move through the results, **Enter** opens one, **Escape** closes the list).\n- In the **review queue**: **J** and **K** go to the next and previous item, **S** skips; on a reference answer the number keys tick A, B or C, **Shift+A** uses all of them, **Enter** saves and **U** leaves it unchecked; on a draft **Y** approves and **R** rejects.\n- Dialogs (confirmations, the editor, imports) take the focus, close with **Escape** and give the focus back." },
   ];
   // MySQL 8 · PostgreSQL · SQLite (the engines the course uses): the differences learners meet most
   var DIFFS = [

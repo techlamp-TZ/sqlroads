@@ -12,7 +12,8 @@
     "icons": "node tools/build-icons.mjs",
     "check:scss": "node tools/check-scss.mjs",
     "storybook": "storybook dev -p 6006 --no-open",
-    "build-storybook": "storybook build -o storybook-static --quiet"
+    "build-storybook": "storybook build -o storybook-static --quiet",
+    "audit:pages": "node tools/axe-pages.mjs"
   },
   "devDependencies": {
     "@emotion/react": "11.14.0",
