@@ -2222,12 +2222,20 @@
     renderNav();
     $("#side").classList.remove("open"); $("#scrim").classList.remove("open");
     view.scrollTop = 0;
+    // React pages (web/, the Waffles front end) take the admin routes they own; every other route stays here
+    var R = window.SQLDrillsReact;
+    if (R) R.unmount();
+    if (R && R.has(route.name, "admin")) { R.mount(route.name, view, { app: "admin", route: route, icon: icon }); return; }
     ({ overview: viewOverview, generate: viewGenerate, review: viewReview, mcqs: viewMcqs, drills: viewDrills, recent: viewRecent, learners: viewLearners, settings: viewSettings,
       library: viewLibrary, item: viewItem, health: viewHealth, backups: viewBackups, concepts: viewConcepts, create: viewCreate, help: viewHelp }[route.name] || viewOverview)();
   }
+  // the React bundle loads after this script: if it owns the page already on screen, hand that page over
+  var booted = false;
+  window.addEventListener("sqldrills:react-ready", function () { if (booted && window.SQLDrillsReact.has(route.name, "admin")) render(); });
   api("/topics").then(function (m) {
     META = m;
     window.addEventListener("hashchange", render);
+    booted = true;
     render();
     refreshCounts();
   }).catch(fail);

@@ -2778,7 +2778,7 @@
     // React pages (web/, the Waffles front end) take the routes they own; every other route stays here
     var R = window.SQLDrillsReact;
     if (R) R.unmount();
-    if (R && R.has(r.name)) R.mount(r.name, view, { route: r, icon: icon });
+    if (R && R.has(r.name, "learner")) R.mount(r.name, view, { app: "learner", route: r, icon: icon });
     else (V[r.name] || viewHome)();
     if (!same && !(r.name === "guide" && r.args[1])) view.scrollTop = 0;
   }
@@ -2973,6 +2973,7 @@
     resultTable: resultTable, diffTables: diffTables, miniTable: miniTable,
     xcardHtml: xcardHtml, cardsInProgress: cardsInProgress,
     highlight: highlight, icon: icon, esc: esc,
+    api: api, rail: rail, emptyStage: emptyStage, levelOf: levelOf, levels: function () { return S.levels; },
     get booted() { return booted; },
   };
 

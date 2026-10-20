@@ -13,7 +13,7 @@ const tags = [
   `<script type="module" src="/app/${entry.file}"></script>`,
 ].join("\n");
 const START = "<!-- waffles:start -->", END = "<!-- waffles:end -->";
-for (const page of ["index.html"]) {
+for (const page of ["index.html", "admin.html"]) {
   const file = pub + page;
   let html = fs.readFileSync(file, "utf8");
   const eol = html.includes("\r\n") ? "\r\n" : "\n";

@@ -7,15 +7,18 @@ import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import Licenses from "./pages/Licenses.jsx";
 
-export const PAGES = { licenses: Licenses };
+// the routes React owns in each app (learner: index.html, admin: admin.html)
+export const PAGES = { learner: { licenses: Licenses }, admin: {} };
 
 export function createBridge(pages = PAGES) {
+  const byApp = pages.learner || pages.admin ? pages : { learner: pages }; // a flat map means the learner app
+  const own = (app) => byApp[app || "learner"] || {};
   let current = null;
   return {
-    has: (name) => Object.prototype.hasOwnProperty.call(pages, name),
+    has: (name, app) => Object.prototype.hasOwnProperty.call(own(app), name),
     mount(name, view, ctx = {}) {
       this.unmount();
-      const Page = pages[name];
+      const Page = own(ctx.app)[name];
       view.innerHTML = "";
       const el = document.createElement("div");
       el.className = "wf-root";

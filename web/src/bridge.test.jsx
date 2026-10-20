@@ -8,12 +8,16 @@ describe("bridge", () => {
   let view;
   beforeEach(() => { document.body.innerHTML = '<div id="view"><div class="loading">old page</div></div>'; view = document.getElementById("view"); });
 
-  test("owns only the routes it has pages for", () => {
-    const b = createBridge();
-    expect(b.has("licenses")).toBe(true);
-    expect(b.has("home")).toBe(false);
+  test("owns only the routes it has pages for, per app", () => {
+    const b = createBridge({ learner: { probe: Probe }, admin: { other: Probe } });
+    expect(b.has("probe")).toBe(true); // no app named: the learner app
+    expect(b.has("probe", "learner")).toBe(true);
+    expect(b.has("probe", "admin")).toBe(false);
+    expect(b.has("other", "admin")).toBe(true);
     expect(b.has("toString")).toBe(false);
-    expect(Object.keys(PAGES)).toEqual(["licenses"]);
+    expect(createBridge().has("licenses")).toBe(true);
+    expect(createBridge().has("licenses", "admin")).toBe(false);
+    expect(Object.keys(PAGES.learner)).toEqual(["licenses"]);
   });
 
   test("mount renders synchronously into #view, replacing the old page", () => {
