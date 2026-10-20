@@ -54,7 +54,8 @@ test("no hard-coded colour in web/src outside the generated tokens", () => {
   const hits = [];
   // (tests are left out: they feed literal colours to the colour utilities on purpose)
   for (const f of files(path.join(WEB, "src")).filter((f) => /\.(js|jsx|ts|tsx|scss|css)$/.test(f) && !/[\\/]__tests__[\\/]|\.test\./.test(f))) {
-    fs.readFileSync(f, "utf8").split("\n").forEach((line, i) => { if (COLOUR.test(line.replace(/\/\/.*$/, ""))) hits.push(path.relative(ROOT, f) + ":" + (i + 1) + "  " + line.trim()); });
+    // split on \r?\n: on a CRLF checkout (core.autocrlf=true) a trailing \r would stop the comment strip at the line end
+    fs.readFileSync(f, "utf8").split(/\r?\n/).forEach((line, i) => { if (COLOUR.test(line.replace(/\/\/.*$/, ""))) hits.push(path.relative(ROOT, f) + ":" + (i + 1) + "  " + line.trim()); });
   }
   assert.deepStrictEqual(hits, []);
 });
