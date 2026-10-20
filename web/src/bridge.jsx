@@ -7,9 +7,10 @@ import { createRoot } from "react-dom/client";
 import { flushSync } from "react-dom";
 import Licenses from "./pages/Licenses.jsx";
 import Help from "./pages/Help.jsx";
+import Docs from "./pages/Docs.jsx";
 
 // the routes React owns in each app (learner: index.html, admin: admin.html)
-export const PAGES = { learner: { licenses: Licenses, help: Help }, admin: { help: Help } };
+export const PAGES = { learner: { licenses: Licenses, help: Help, docs: Docs }, admin: { help: Help } };
 
 export function createBridge(pages = PAGES) {
   const byApp = pages.learner || pages.admin ? pages : { learner: pages }; // a flat map means the learner app
