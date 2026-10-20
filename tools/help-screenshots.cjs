@@ -46,14 +46,14 @@ if (/:4000\b/.test(BASE)) { console.error("Run this against a server on a copy o
     const ex = (lib.items || lib).find((d) => d.level === 2 && d.check === "solution" && d.dataset);
     await shot("schema.jpg", "/#/drill/" + ex.id, { wait: "#sql", pause: 2000 });
     await shot("docs.jpg", "/#/docs?t=az&c=" + concept, { wait: ".wf-doc-body .ln-try, .doc-body .ln-try" });
-    await shot("admin-generate.jpg", "/admin#/generate", { admin: true, wait: "#view .page" });
+    await shot("admin-generate.jpg", "/admin#/generate", { admin: true, wait: "#view .page, #view .wf-main" });
     await shot("admin-create.jpg", "/admin#/create", { admin: true, wait: "#c-type" });
-    await shot("admin-review.jpg", "/admin#/review", { admin: true, wait: "#view .page", pause: 2500 });
-    await shot("admin-fillgaps.jpg", "/admin#/generate?kind=stage&level=1", { admin: true, wait: "#view .page", pause: 2500 });
-    await shot("admin-concepts.jpg", "/admin#/concepts", { admin: true, wait: "#view .page", pause: 2500 });
-    await shot("admin-health.jpg", "/admin#/health", { admin: true, wait: "#view .page", pause: 2000 });
-    await shot("admin-backups.jpg", "/admin#/backups", { admin: true, wait: "#view .page" });
-    await shot("admin-settings.jpg", "/admin#/settings", { admin: true, wait: "#view .page", pause: 2500 });
+    await shot("admin-review.jpg", "/admin#/review", { admin: true, wait: "#view .page, #view .wf-main", pause: 2500 });
+    await shot("admin-fillgaps.jpg", "/admin#/generate?kind=stage&level=1", { admin: true, wait: "#view .page, #view .wf-main", pause: 2500 });
+    await shot("admin-concepts.jpg", "/admin#/concepts", { admin: true, wait: "#view .page, #view .wf-main", pause: 2500 });
+    await shot("admin-health.jpg", "/admin#/health", { admin: true, wait: "#view .page, #view .wf-main", pause: 2000 });
+    await shot("admin-backups.jpg", "/admin#/backups", { admin: true, wait: "#view .page, #view .wf-main" });
+    await shot("admin-settings.jpg", "/admin#/settings", { admin: true, wait: "#view .page, #view .wf-main", pause: 2500 });
     await shot("admin-overview.jpg", "/admin#/overview", { admin: true, wait: ".spend", element: ".spend", before: async () => {} });
     // SQLPad: only looked at
     await p.goto(SQLPAD + "/", { waitUntil: "networkidle2" }); await sleep(2500);
