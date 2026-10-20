@@ -33,7 +33,7 @@ if (/:4000\b/.test(BASE)) { console.error("Run this against a server on a copy o
     const concept = "where-filter-intro";
     // a note on the copy, so My notes isn't empty
     await fetch(BASE + "/api/learn/reflections", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ concept, explain: "WHERE keeps only the rows whose condition is true.", confidence: 4 }) });
-    await shot("concept.jpg", "/#/concept/" + concept + "?tab=memorize", { wait: ".concept-head" });
+    await shot("concept.jpg", "/#/concept/" + concept + "?tab=memorize", { wait: ".concept-head, .wf-concept-head" });
     await shot("learn.jpg", "/#/learn/" + concept + "?s=2", { wait: ".ln-try", before: async () => { await p.click("[data-ex-run]"); await sleep(800); } });
     await shot("home.jpg", "/#/home", { wait: ".page, .wf-main" });
     await shot("flashcards.jpg", "/#/flashcards?concept=" + concept, { wait: ".fc-page, .wf-fc-page" });
