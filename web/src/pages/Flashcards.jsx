@@ -133,6 +133,7 @@ function Shell({ F, icon, children }) {
   const c = F.cards[F.i];
   return (
     <div className="wf-lw-page"><div className="wf-fc-page">
+      <h1 className="wf-sr-only">Flashcards</h1>{/* the session's page heading (the card's text is the visible focus) */}
       <nav className="wf-crumbs" aria-label="Breadcrumb">
         {F.slug ? <a href={"#/concept/" + F.slug + "?tab=memorize"}>{(c && c.conceptName) || "Concept"}</a> : <a href="#/flashcards">Flashcard library</a>}
         <OldIcon icon={icon} name="chevRight" /><span>Flashcards</span>
