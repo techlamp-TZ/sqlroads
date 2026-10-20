@@ -1,0 +1,42 @@
+// Library health: outcome bars, the check list, near-duplicate pairs, setup lists (palette colours from the tokens)
+@use "../../tokens/tokens.scss" as *;
+
+.wf-h-run { display: flex; align-items: center; gap: $wf-space-12; flex-wrap: wrap; margin-bottom: $wf-space-12; }
+.wf-outcome { margin: $wf-space-4 0 $wf-space-16; }
+.wf-ob { display: flex; height: 10px; border-radius: $wf-radius-small; overflow: hidden; background: $wf-surface-raised; }
+.wf-ol { list-style: none; margin: $wf-space-8 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: $wf-space-4 $wf-space-16; font-size: $wf-font-size-200; color: $wf-text-muted;
+  i { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: $wf-space-4; vertical-align: -1px; }
+  .wf-tot { color: $wf-text; font-weight: $wf-font-weight-bold; }
+}
+.wf-seg-ok { background: $wf-color-green; }
+.wf-seg-failed { background: $wf-color-red; }
+.wf-seg-self { background: $wf-color-orange; }
+.wf-seg-dependent { background: $wf-color-blue; }
+.wf-seg-noref { background: $wf-color-grey-400; }
+.wf-seg-selfchk { background: $wf-color-purple; }
+.wf-seg-todo { background: $wf-border; }
+
+.wf-h-list { list-style: none; margin: 0; padding: 0;
+  a { display: flex; justify-content: space-between; gap: $wf-space-12; padding: $wf-space-8 $wf-space-2; border-top: 1px solid $wf-border; color: $wf-text; text-decoration: none; }
+  li:first-child a { border-top: 0; }
+  a:hover { color: $wf-accent-text; text-decoration: underline; }
+}
+.wf-h-n { font-weight: $wf-font-weight-bold; min-width: 2.5em; text-align: right;
+  &.bad { color: $wf-bad-text; } &.ok { color: $wf-ok-text; } &.info { color: $wf-text-muted; }
+}
+.wf-link { color: $wf-accent-text; font-weight: $wf-font-weight-bold; }
+.wf-help-line { margin: 0 0 $wf-space-12; }
+
+.wf-pair { border: 1px solid $wf-border; border-radius: $wf-radius-small; padding: $wf-space-12 $wf-space-16; margin-bottom: $wf-space-12; display: flex; flex-direction: column; gap: $wf-space-12; }
+.wf-pair-h { display: flex; gap: $wf-space-12; align-items: center; font-size: $wf-font-size-200; }
+.wf-pair-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: $wf-space-12; @include wf-below(md) { grid-template-columns: minmax(0, 1fr); } }
+.wf-pair-side { background: $wf-surface-raised; border-radius: $wf-radius-small; padding: $wf-space-8 $wf-space-12; overflow-wrap: anywhere;
+  p { margin: $wf-space-4 0 0; color: $wf-text-muted; }
+  a { color: $wf-accent-text; }
+}
+.wf-flag { display: inline-block; font-size: $wf-font-size-100; font-weight: $wf-font-weight-bold; padding: 2px $wf-space-8; border-radius: $wf-radius-small; background: $wf-surface-raised; color: $wf-warn-text; box-shadow: inset 0 0 0 1px $wf-border; }
+.wf-pager-row { display: flex; align-items: center; gap: $wf-space-8; flex-wrap: wrap; padding-top: $wf-space-12; border-top: 1px solid $wf-border; font-size: $wf-font-size-200; color: $wf-text-muted; }
+.wf-setup { padding: $wf-space-12 0; border-top: 1px solid $wf-border; a { color: $wf-accent-text; } }
+.wf-mini { list-style: none; margin: $wf-space-8 0 0 $wf-space-16; padding: 0; display: flex; flex-direction: column; gap: $wf-space-4; font-size: $wf-font-size-200; }
+// links inside a line of text are underlined (also in the shared reference-answers card)
+.wf-tot a, #refsCard p a { color: $wf-accent-text; text-decoration: underline; }
