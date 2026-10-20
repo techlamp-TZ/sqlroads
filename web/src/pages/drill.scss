@@ -1,0 +1,35 @@
+// The exercise page: head, the split (task | editor), notes, the level's nearby exercises (on the tokens)
+@use "../tokens/tokens.scss" as *;
+
+.wf-drill { max-width: 1640px; margin: 0 auto; display: flex; flex-direction: column; gap: $wf-space-12; }
+.wf-dhead { display: flex; align-items: flex-start; gap: $wf-space-16;
+  h1 { font-size: $wf-font-size-650; margin: $wf-space-4 0 $wf-space-8; @include wf-below(md) { font-size: $wf-font-size-600; } }
+  @include wf-below(md) { flex-wrap: wrap; }
+}
+.wf-dacts { margin-left: auto; flex: none; @include wf-below(md) { margin-left: 0; } }
+.wf-dmeta { display: flex; align-items: center; gap: $wf-space-8; flex-wrap: wrap; }
+.wf-dset { display: inline-flex; align-items: center; gap: $wf-space-4; font-size: $wf-font-size-200; color: $wf-text-muted; svg { width: 15px; height: 15px; } }
+.wf-tag { display: inline-flex; align-items: center; gap: $wf-space-4; padding: 0 $wf-space-8; border-radius: $wf-radius-small; box-shadow: inset 0 0 0 1px $wf-border-strong; font-size: $wf-font-size-200; font-weight: $wf-font-weight-bold; line-height: 22px; svg { width: 14px; height: 14px; } }
+.wf-tag-plain { box-shadow: none; background: $wf-surface-raised; font-weight: 400; }
+.wf-self-tag { color: $wf-warn-text; box-shadow: inset 0 0 0 1px $wf-warn-text; }
+
+.wf-ex-split { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: $wf-space-16; align-items: start;
+  @media (max-width: 1000px) { display: flex; flex-direction: column; }
+}
+.wf-ws-left, .wf-ws-right { display: grid; gap: $wf-space-12; min-width: 0; align-content: start; }
+.wf-self-note { display: flex; gap: $wf-space-12; align-items: flex-start; background: $wf-surface; border-radius: $wf-radius-small; padding: $wf-space-12 $wf-space-16; font-size: $wf-font-size-200;
+  box-shadow: inset 4px 0 0 $wf-warn-text, 0 0 0 1px $wf-border;
+  > svg { width: 22px; height: 22px; color: $wf-warn-text; flex: none; }
+  &.wf-nc-note { box-shadow: inset 4px 0 0 $wf-border-strong, 0 0 0 1px $wf-border; > svg { color: $wf-text-muted; } }
+}
+.wf-h3-sm { font-size: $wf-font-size-300; margin-bottom: $wf-space-8; svg { width: 18px; height: 18px; } }
+.wf-mini-list { display: flex; flex-direction: column; gap: 2px; max-height: 340px; overflow: auto; margin-bottom: $wf-space-8;
+  a { display: flex; align-items: center; gap: $wf-space-8; padding: $wf-space-4 $wf-space-8; border-radius: $wf-radius-small; color: $wf-text; font-size: $wf-font-size-200; text-decoration: none; min-height: 36px; }
+  a:hover { background: $wf-surface-raised; }
+  a.on { background: $wf-surface-raised; color: $wf-accent-text; font-weight: $wf-font-weight-bold; box-shadow: inset 3px 0 0 $wf-accent; }
+  span:last-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+.wf-mn { width: 24px; height: 24px; border-radius: 50%; background: $wf-surface-raised; display: grid; place-items: center; font-size: $wf-font-size-100; font-weight: $wf-font-weight-bold; flex: none; color: $wf-text-muted;
+  &.done { color: $wf-ok-text; box-shadow: inset 0 0 0 1px $wf-ok-text; }
+  svg { width: 12px; height: 12px; }
+}
