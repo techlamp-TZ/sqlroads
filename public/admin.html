@@ -8,6 +8,44 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <script>try { if (localStorage.getItem("sqldrills.theme.v2") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
+<style>
+  /* boot fallback: shown in place of "Loading…" when the bundle cannot run (no dependency on the bundle's CSS) */
+  .boot-fail { max-width: 520px; margin: 48px auto; padding: 24px; border: 1px solid #c3cbdb; border-radius: 12px; background: #ffffff; color: #1b2540; font: 16px/1.5 "IBM Plex Sans", Arial, sans-serif; }
+  .boot-fail p { margin: 0 0 16px; color: #3a4663; }
+  .boot-fail .boot-fail-h { margin: 0 0 6px; line-height: 1.3; font-size: 19px; font-weight: 700; color: #1b2540; }
+  .boot-fail button { font: inherit; font-weight: 600; padding: 8px 20px; border: 0; border-radius: 8px; background: #1d4ed8; color: #ffffff; cursor: pointer; }
+  .boot-fail button:focus-visible { outline: 2px solid #1d4ed8; outline-offset: 2px; }
+  :root[data-theme="dark"].boot-failed body { background: #0b1324; }
+  :root[data-theme="dark"] .boot-fail { background: #15213a; border-color: #34425f; color: #e8edf7; }
+  :root[data-theme="dark"] .boot-fail p { color: #c5cde0; }
+  :root[data-theme="dark"] .boot-fail .boot-fail-h { color: #e8edf7; }
+  :root[data-theme="dark"] .boot-fail button { background: #9cc3ff; color: #0b1324; }
+  :root[data-theme="dark"] .boot-fail button:focus-visible { outline-color: #9cc3ff; }
+</style>
+<script>
+  // boot fallback: if the bundle fails to load, throws while starting, or nothing has replaced #bootLoading after
+  // 10 s, show a message and a Reload button there. A page the app draws later (it empties #view) removes it.
+  (function () {
+    var shown = false;
+    function show() {
+      var el = document.getElementById("bootLoading");
+      if (shown || !el) return;
+      shown = true;
+      var box = document.createElement("div");
+      box.className = "boot-fail"; box.id = "bootFail"; box.setAttribute("role", "alert");
+      var h = document.querySelector("h1") ? "p" : "h1"; // the page heading when the page has none (the learner app)
+      box.innerHTML = "<" + h + ' class="boot-fail-h">The page could not load.</' + h + ">" + '<p>Check that SQL Drills is running (npm start), then reload the page.</p><button type="button">Reload</button>';
+      box.querySelector("button").onclick = function () { location.reload(); };
+      el.parentNode.replaceChild(box, el);
+      document.documentElement.classList.add("boot-failed");
+      new MutationObserver(function (m, o) { if (!document.getElementById("bootFail")) { document.documentElement.classList.remove("boot-failed"); o.disconnect(); } }).observe(document.body, { childList: true, subtree: true });
+    }
+    // capture: the bundle tag's onerror dispatches this event on the <script> element itself, not on window
+    window.addEventListener("sqldrills:react-failed", show, true);
+    window.addEventListener("error", function (e) { if (e && e.filename && e.filename.indexOf("/app/assets/") > -1) show(); });
+    setTimeout(show, 10000);
+  })();
+</script>
 <!-- waffles:start -->
 <link rel="stylesheet" href="/app/assets/app-styles-B2q8GBUu.css">
 <link rel="stylesheet" href="/app/assets/admin-styles-Cuan_hk5.css">
@@ -44,7 +82,7 @@
       <a class="btn primary gen-btn" href="#/generate" aria-label="Generate content"><span data-icon="spark"></span><span>Generate content</span></a>
       <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode"></button>
     </header>
-    <main class="body" id="view" tabindex="-1"><div class="loading">Loading…</div></main>
+    <main class="body" id="view" tabindex="-1"><div class="loading" id="bootLoading">Loading…</div></main>
   </div>
 </div>
 <dialog class="modal" id="modal"><div id="modalBody"></div></dialog>
