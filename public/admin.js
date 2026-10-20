@@ -998,11 +998,11 @@
       var live = all.filter(function (m) { return m.status === "published"; }).length;
       var html = '<div class="page admin"><div class="col"><div class="hero"><div><div class="eyebrow">MCQ bank</div><h2 class="h1">' + live + " live questions</h2><p>" + all.length + " in total: built-in, generated and added. Edit any of them, hide the ones you don't want, or add your own.</p></div></div>";
       html += '<div class="toolbar"><label class="search-inline">' + icon("search") + '<input id="mq" value="' + esc(mcqF.q) + '" placeholder="Search questions and options…"></label>' +
-        '<select class="inp" id="mt"><option value="">All levels</option>' + levelOptions().map(function (o) { return '<option value="' + o[0] + '"' + (String(mcqF.level) === String(o[0]) ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>" +
-        '<select class="inp" id="ms">' + [["", "Any status"], ["published", "Live"], ["hidden", "Hidden"], ["draft", "Draft"], ["rejected", "Rejected"]].map(function (o) { return '<option value="' + o[0] + '"' + (mcqF.status === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select>" +
-        '<select class="inp" id="mo">' + [["", "Any origin"], ["built-in", "Built-in"], ["generated", "Generated"], ["mine", "Mine (created by hand)"], ["added", "Added by hand"]].map(function (o) { return '<option value="' + o[0] + '"' + (mcqF.origin === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select>" +
+        '<select class="inp" id="mt" aria-label="Level"><option value="">All levels</option>' + levelOptions().map(function (o) { return '<option value="' + o[0] + '"' + (String(mcqF.level) === String(o[0]) ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>" +
+        '<select class="inp" id="ms" aria-label="Status">' + [["", "Any status"], ["published", "Live"], ["hidden", "Hidden"], ["draft", "Draft"], ["rejected", "Rejected"]].map(function (o) { return '<option value="' + o[0] + '"' + (mcqF.status === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select>" +
+        '<select class="inp" id="mo" aria-label="Origin">' + [["", "Any origin"], ["built-in", "Built-in"], ["generated", "Generated"], ["mine", "Mine (created by hand)"], ["added", "Added by hand"]].map(function (o) { return '<option value="' + o[0] + '"' + (mcqF.origin === o[0] ? " selected" : "") + ">" + o[1] + "</option>"; }).join("") + "</select>" +
         '<button class="btn primary" data-act="new">' + icon("plus") + "New question</button></div>";
-      html += '<section class="card"><table class="admin-t"><thead><tr><th>Question</th><th class="hide-sm">Level</th><th class="hide-sm">Difficulty</th><th class="hide-sm">Origin</th><th>Status</th><th></th></tr></thead><tbody>' +
+      html += '<section class="card"><table class="admin-t"><thead><tr><th>Question</th><th class="hide-sm">Level</th><th class="hide-sm">Difficulty</th><th class="hide-sm">Origin</th><th>Status</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>' +
         (list.length ? list.map(function (m) {
           var isB = m.origin === "built-in";
           return '<tr data-id="' + esc(m.id) + '"><td class="q"><div><b>' + esc(m.q) + '</b></div><div class="muted small">Answer: ' + esc(m.options[m.answer]) + "</div></td><td class=\"hide-sm\">" + esc(levelLabel(itemLevel(m))) + '</td><td class="hide-sm">' + esc(m.diff) + '</td><td class="hide-sm">' + esc(originLabel(m.origin)) + (m.edited ? ' <span class="muted small">(edited)</span>' : "") + '</td><td><span class="sbadge ' + m.status + '">' + (m.status === "published" ? "live" : m.status) + '</span></td><td class="acts">' +
@@ -1037,11 +1037,11 @@
       var list = r[0], lib = r[1];
       var html = '<div class="page admin"><div class="col"><div class="hero"><div><div class="eyebrow">Extra drills</div><h2 class="h1">' + plural(list.filter(function (d) { return d.status === "published"; }).length, "live extra drill") + "</h2><p>Drills you add or generate go into the level you choose, ordered by difficulty, and learners' answers are checked against the solution. The built-in exercises (read-only here) are summarised by level below.</p></div></div>";
       html += '<div class="actions"><button class="btn primary" data-act="new">' + icon("plus") + 'New drill</button><a class="btn" href="#/generate?kind=drill">' + icon("spark") + "Generate drills</a></div>";
-      html += '<section class="card"><div class="card-pad" style="padding-bottom:0"><div class="card-h"><h3>' + icon("code") + "Extra drills (" + list.length + ')</h3></div></div><table class="admin-t"><thead><tr><th>Drill</th><th class="hide-sm">Level</th><th class="hide-sm">Practice database</th><th class="hide-sm">Checks</th><th>Status</th><th></th></tr></thead><tbody>' +
+      html += '<section class="card"><div class="card-pad" style="padding-bottom:0"><div class="card-h"><h3>' + icon("code") + "Extra drills (" + list.length + ')</h3></div></div><table class="admin-t"><thead><tr><th>Drill</th><th class="hide-sm">Level</th><th class="hide-sm">Practice database</th><th class="hide-sm">Checks</th><th>Status</th><th><span class="sr-only">Actions</span></th></tr></thead><tbody>' +
         (list.length ? list.map(function (d) {
           return '<tr data-id="' + esc(d.id) + '"><td class="q"><div><b>' + esc(d.data.title) + '</b></div><div class="muted small">' + esc(d.data.task) + '</div></td><td class="hide-sm">' + esc(levelLabel(itemLevel(d.data))) + " · " + esc(d.data.diff) + '</td><td class="hide-sm">' + esc(datasetLabel(d.data)) + '</td><td class="hide-sm">' + vbadge(d.verify) + '</td><td><span class="sbadge ' + d.status + '">' + (d.status === "published" ? "live" : d.status) + '</span></td><td class="acts">' +
-            '<button class="btn sm" data-act="edit">' + icon("edit") + "</button> " + (d.status === "published" ? '<button class="btn sm" data-act="unpublish" title="Take offline">' + icon("eyeOff") + "</button> " : '<button class="btn sm" data-act="publish" title="Publish">' + icon("eye") + "</button> ") +
-            '<button class="btn sm danger" data-act="delete">' + icon("trash") + "</button></td></tr>";
+            '<button class="btn sm" data-act="edit" aria-label="Edit" title="Edit">' + icon("edit") + "</button> " + (d.status === "published" ? '<button class="btn sm" data-act="unpublish" title="Take offline">' + icon("eyeOff") + "</button> " : '<button class="btn sm" data-act="publish" title="Publish">' + icon("eye") + "</button> ") +
+            '<button class="btn sm danger" data-act="delete" aria-label="Delete" title="Delete">' + icon("trash") + "</button></td></tr>";
         }).join("") : '<tr><td colspan="6" class="empty-sm">No extra drills yet.</td></tr>') + "</tbody></table></section>";
       html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("levels") + "All exercises by level</h3></div>" + levelsTable(lib) + "</section></div></div>";
       view.innerHTML = html;
@@ -1512,7 +1512,7 @@
       var html = '<div class="page admin"><div class="col"><div class="hero"><div><div class="eyebrow">Library</div><h2 class="h1">' + plural(lib.total, "exercise") + " in " + lib.levels.length + ' levels</h2><p>Every exercise learners can practise. Filter, search, and open one to see its prompt, solution and where it came from.</p></div>' +
         '<div class="actions"><a class="btn" href="#/drills">' + icon("code") + "Drills added in admin (" + extra.length + ')</a><a class="btn primary" href="#/generate">' + icon("spark") + "Generate</a></div></div>";
       var sel = function (id, label, opts, val) { return '<label class="sr-only" for="' + id + '">' + label + '</label><select class="inp" id="' + id + '" data-f="' + id.slice(2) + '">' + opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (String(o[0]) === String(val) ? " selected" : "") + ">" + esc(o[1]) + "</option>"; }).join("") + "</select>"; };
-      html += '<form class="toolbar" id="libForm" role="search"><label class="search-inline"><span class="sr-only">Search the library</span>' + icon("search") + '<input id="lfq" name="q" value="' + esc(f.q) + '" placeholder="Search titles, prompts, tables…"></label>' +
+      html += '<form class="toolbar" id="libForm" role="search" aria-label="Search the library"><label class="search-inline"><span class="sr-only">Search the library</span>' + icon("search") + '<input id="lfq" name="q" value="' + esc(f.q) + '" placeholder="Search titles, prompts, tables…"></label>' +
         sel("lflevel", "Level", [["", "All levels"]].concat(lib.levels.map(function (L) { return [L.n, L.n + " · " + L.title + " (" + L.total + ")"]; })), f.level) +
         sel("lfdiff", "Difficulty", [["", "Any difficulty"], ["easy", "Easy"], ["medium", "Medium"], ["hard", "Hard"]], f.diff) +
         sel("lfcheck", "Checking", [["", "Any checking"], ["auto", "Auto-checked"], ["self", "Self-check"]], f.check) +
@@ -1580,7 +1580,7 @@
   sIn.addEventListener("keydown", function (e) {
     if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); if (!sHits.length) return; sActive = (sActive + (e.key === "ArrowDown" ? 1 : -1) + sHits.length) % sHits.length; paintActive(); }
     else if (e.key === "Enter") { e.preventDefault(); if (sHits.length && !sOut.hidden) openHit(sActive); else if (sIn.value.trim()) { location.hash = "#/library?q=" + encodeURIComponent(sIn.value.trim()); closeSearch(); } }
-    else if (e.key === "Escape") { closeSearch(); sIn.blur(); }
+    else if (e.key === "Escape") { e.preventDefault(); closeSearch(); } // the list closes; focus stays in the box
   });
   sOut.addEventListener("mousedown", function (e) { var b = e.target.closest('[role="option"]'); if (b) { e.preventDefault(); openHit(Number(b.getAttribute("data-k"))); } });
   document.addEventListener("click", function (e) { if (!e.target.closest("#searchWrap")) closeSearch(); });
@@ -2233,12 +2233,22 @@
   // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
   function scrollersFocusable() {
     [].forEach.call(document.querySelectorAll(".tbl-wrap, .table-wrap, .grid-wrap, .result-box"), function (el) {
+      if (el.closest('[aria-hidden="true"]')) return; // e.g. the editor's highlight layer behind the text box
       var over = el.scrollWidth > el.clientWidth + 1, ours = el.hasAttribute("data-scroll-focus");
       if (over && !el.hasAttribute("tabindex")) { el.setAttribute("tabindex", "0"); el.setAttribute("data-scroll-focus", el.hasAttribute("role") ? "" : "role"); if (!el.hasAttribute("role")) { el.setAttribute("role", "group"); if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Table, scrolls sideways"); } }
       else if (!over && ours) { el.removeAttribute("tabindex"); if (el.getAttribute("data-scroll-focus") === "role") { el.removeAttribute("role"); if (el.getAttribute("aria-label") === "Table, scrolls sideways") el.removeAttribute("aria-label"); } el.removeAttribute("data-scroll-focus"); }
     });
   }
   (function () { var t; var later = function () { clearTimeout(t); t = setTimeout(scrollersFocusable, 80); }; new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); window.addEventListener("resize", later); })();
+  // ---------- keyboard: the skip link (the hash holds the route, so it moves focus, not the address), the phone menu ----------
+  (function () {
+    var skip = document.querySelector(".skip");
+    if (skip) skip.addEventListener("click", function (e) { e.preventDefault(); var v = document.getElementById("view"); v.focus(); v.scrollIntoView({ block: "start" }); });
+    var side = $("#side"), scrim = $("#scrim"), mb = $("#menuBtn");
+    var closeMenu = function (back) { side.classList.remove("open"); scrim.classList.remove("open"); if (back) mb.focus(); };
+    mb.addEventListener("click", function () { setTimeout(function () { var first = side.querySelector("#nav a"); if (side.classList.contains("open") && first) first.focus(); }, 0); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && side.classList.contains("open")) { e.preventDefault(); closeMenu(true); } });
+  })();
   // ---------- shared with the React pages (web/src/admin): the one copy of each piece stays here ----------
   window.SQLDrillsAdmin = {
     api: api, toast: toast, askConfirm: askConfirm, confirmClick: confirmClick, esc: esc, icon: icon, fmtDate: fmtDate, plural: plural,

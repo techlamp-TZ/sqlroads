@@ -148,7 +148,7 @@ pre.sol { margin: 0; padding: 12px 14px; background: var(--soft); border-radius:
 .dbadge { display: inline-flex; align-items: center; height: 22px; padding: 0 8px; border-radius: 6px; font-size: 11.5px; font-weight: 600; white-space: nowrap; }
 .dbadge.easy { background: var(--ok-soft); color: var(--ok-ink); } .dbadge.medium { background: var(--warn-soft); color: var(--warn-ink); } .dbadge.hard { background: var(--bad-soft); color: var(--bad-ink); }
 @media (max-width: 900px) {
-  .admin-title { display: none; }
+  .admin-title { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } /* hidden, still the page's h1 */
   .gen-btn span:last-child { display: none; }
   .gen-btn { width: 42px; padding: 0; justify-content: center; }
 }

@@ -15,17 +15,18 @@
 </script>
 <!-- waffles:start -->
 <link rel="stylesheet" href="/app/assets/main-QgOmLnHE.css">
-<script type="module" src="/app/assets/main-BvCZ370F.js" onerror="window.SQLDrillsReactFailed=true;dispatchEvent(new Event('sqldrills:react-failed'))"></script>
+<script type="module" src="/app/assets/main-9xj5IeGX.js" onerror="window.SQLDrillsReactFailed=true;dispatchEvent(new Event('sqldrills:react-failed'))"></script>
 <!-- waffles:end -->
 </head>
 <body>
+<a class="skip" href="#view">Skip to content</a>
 <div class="shell" id="shell">
   <aside class="side" id="side" aria-label="Main navigation">
     <a class="brand" href="#/home">
       <span class="brand-mark" data-icon="db"></span>
       <span class="brand-txt"><strong>SQL Drills</strong><small>Practice · Build Skills · Grow</small></span>
     </a>
-    <nav class="nav" id="nav"></nav>
+    <nav class="nav" id="nav" aria-label="Main"></nav>
     <div class="side-streak" id="sideStreak"></div>
   </aside>
   <div class="scrim" id="scrim"></div>
@@ -35,9 +36,9 @@
       <button class="top-menu" id="menuBtn" aria-label="Open navigation"><span data-icon="menu"></span></button>
       <div class="search" id="searchWrap">
         <span data-icon="search"></span>
-        <input id="searchInput" type="text" placeholder="Search drills, topics, or keywords…" autocomplete="off" aria-label="Search drills">
+        <input id="searchInput" type="text" role="combobox" placeholder="Search drills, topics, or keywords…" autocomplete="off" aria-label="Search drills" aria-controls="searchResults" aria-expanded="false" aria-autocomplete="list">
         <kbd>Ctrl + K</kbd>
-        <div class="search-results" id="searchResults" hidden></div>
+        <div class="search-results" id="searchResults" role="listbox" aria-label="Search results" hidden></div>
       </div>
       <div class="top-stats" id="topStats"></div>
       <a class="icon-btn help-btn" id="helpBtn" href="#/help" aria-label="How to use this page" title="How to use this page"><span data-icon="help"></span></a>
@@ -50,7 +51,7 @@
         <span class="avatar" id="avatar">S</span>
       </a>
     </header>
-    <div class="body" id="view" tabindex="-1"><div class="loading">Loading drills…</div></div>
+    <main class="body" id="view" tabindex="-1"><div class="loading">Loading drills…</div></main>
     <footer class="app-foot"><a href="#/licenses">Licenses</a></footer>
   </div>
 </div>

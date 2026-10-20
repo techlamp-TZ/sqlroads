@@ -580,7 +580,7 @@
   function levelCard(L) {
     var list = itemsIn(L.n), done = list.filter(isDone).length, cur = currentLevel() === L.n, sp = levelSplit(list);
     return '<a class="card level-card' + (cur ? " current" : "") + (levelIsComplete(L.n, list, done) ? " complete" : "") + '" href="#/level/' + L.n + '">' +
-      '<div class="lc-top"><span class="lc-n">' + (levelIsComplete(L.n, list, done) ? icon("check") : L.n) + '</span><div><h3>' + esc(L.title) + "</h3>" + (cur ? '<span class="pill prog">Current level</span>' : "") + "</div></div>" +
+      '<div class="lc-top"><span class="lc-n">' + (levelIsComplete(L.n, list, done) ? icon("check") : L.n) + '</span><div><h2 class="lc-h">' + esc(L.title) + "</h2>" + (cur ? '<span class="pill prog">Current level</span>' : "") + "</div></div>" +
       '<p class="muted small">' + esc(L.blurb) + "</p>" +
       '<div class="lc-split"><span class="e">' + sp.easy + ' easy</span><span class="m">' + sp.medium + ' medium</span><span class="h">' + sp.hard + " hard</span></div>" +
       (L.sections ? '<div class="lc-sections">' + L.sections.map(function (s) { return "<span>" + esc(s.title) + " · " + list.filter(function (i) { return i.section === s.key; }).length + "</span>"; }).join("") + "</div>" : "") +
@@ -625,7 +625,7 @@
     html += todayHtml(lv);
     var cont = nextItem(), lvl = itemsIn(cont ? cont.level : lv), from = cont ? lvl.indexOf(cont) + 1 : 0;
     var up = [];
-    if (up.length) html += '<section aria-labelledby="upnext-h"><div class="card-h"><h3 id="upnext-h">' + icon("play") + "Up next in " + esc(levelName(cont ? cont.level : lv)) + '</h3><a class="more link" href="#/level/' + (cont ? cont.level : lv) + '">Open level ' + icon("chevRight") + '</a></div><div class="legend-row">' + checkLegend() + '</div><div class="clist card">' + up.map(function (d) { return compactRow(d); }).join("") + "</div></section>";
+    if (up.length) html += '<section aria-labelledby="upnext-h"><div class="card-h"><h2 class="rail-h" id="upnext-h">' + icon("play") + "Up next in " + esc(levelName(cont ? cont.level : lv)) + '</h2><a class="more link" href="#/level/' + (cont ? cont.level : lv) + '">Open level ' + icon("chevRight") + '</a></div><div class="legend-row">' + checkLegend() + '</div><div class="clist card">' + up.map(function (d) { return compactRow(d); }).join("") + "</div></section>";
     html += quizPicker();
     if (!viewHome.busy) { viewHome.busy = true; setTimeout(function () { loadReview().then(function () { viewHome.busy = false; }); }, 0); }
     html += "</div>" + rail() + "</div>";
@@ -656,12 +656,12 @@
     var html = '<div class="page"><div class="col"><div class="crumbs"><a href="#/levels">Levels</a>' + icon("chevRight") + "<span>Level " + n + "</span></div>";
     html += '<div class="level-head card card-pad">' + ring(list.length ? done / list.length : 0, 96, 10, pct(done, list.length) + "%") +
       '<div><div class="eyebrow">Level ' + n + " of " + S.levels.length + "</div><h1>" + esc(L.title) + '</h1><p class="muted">' + esc(L.blurb) + '</p><div class="lc-split"><span class="e">' + sp.easy + ' easy</span><span class="m">' + sp.medium + ' medium</span><span class="h">' + sp.hard + " hard</span></div>" + levelSummary(list) + "</div>" +
-      '<div class="acts">' + (list.filter(function (i) { return !isDone(i); })[0] ? '<a class="btn primary" href="' + href(list.filter(function (i) { return !isDone(i); })[0]) + '">' + icon("play") + (done ? "Continue" : "Start") + "</a>" : "") + (n > 1 ? '<a class="btn" href="#/level/' + (n - 1) + '">' + icon("chevLeft") + "</a>" : "") + (n < S.levels.length ? '<a class="btn" href="#/level/' + (n + 1) + '">' + icon("chevRight") + "</a>" : "") + "</div></div>";
+      '<div class="acts">' + (list.filter(function (i) { return !isDone(i); })[0] ? '<a class="btn primary" href="' + href(list.filter(function (i) { return !isDone(i); })[0]) + '">' + icon("play") + (done ? "Continue" : "Start") + "</a>" : "") + (n > 1 ? '<a class="btn" href="#/level/' + (n - 1) + '" aria-label="Previous level">' + icon("chevLeft") + "</a>" : "") + (n < S.levels.length ? '<a class="btn" href="#/level/' + (n + 1) + '" aria-label="Next level">' + icon("chevRight") + "</a>" : "") + "</div></div>";
     html += levelComplete(n, list, done, quiz) || '<div id="lvComplete"></div>';
     html += levelConceptsHtml(n);
     html += '<div class="tabs"><button data-ltab="ex" class="' + (tab === "ex" ? "on" : "") + '">' + icon("list") + "Exercises (" + list.length + ")</button>" + (quiz.length ? '<button data-ltab="quiz" class="' + (tab === "quiz" ? "on" : "") + '">' + icon("checkCircle") + "Multiple choice (" + quiz.length + ")</button>" : "") + "</div>";
     if (tab === "quiz") {
-      html += '<section class="card card-pad quiz-intro"><div><h3>Test yourself on ' + esc(L.title) + '</h3><p class="muted">' + plural(quiz.length, "multiple-choice question") + " · " + quiz.filter(isDone).length + ' answered correctly. A quiz picks up to 10.</p></div><a class="btn primary" href="#/quiz/level-' + n + '">' + icon("play") + "Start quiz</a></section>";
+      html += '<section class="card card-pad quiz-intro"><div><h2 class="qi-h">Test yourself on ' + esc(L.title) + '</h2><p class="muted">' + plural(quiz.length, "multiple-choice question") + " · " + quiz.filter(isDone).length + ' answered correctly. A quiz picks up to 10.</p></div><a class="btn primary" href="#/quiz/level-' + n + '">' + icon("play") + "Start quiz</a></section>";
       html += '<div class="dlist">' + quiz.map(function (m) { return row(m); }).join("") + "</div>";
     } else {
       var inSection = L.sections && f.section !== "all" ? list.filter(function (i) { return i.section === f.section; }) : list;
@@ -689,10 +689,10 @@
         }
         return head + row(d, d.seq, true);
       }).join("") + "</div>";
-      if (pages > 1) html += '<div class="pager">' + '<button data-lpage="' + (f.page - 1) + '"' + (f.page <= 0 ? " disabled" : "") + ">" + icon("chevLeft") + "</button>" +
+      if (pages > 1) html += '<div class="pager">' + '<button data-lpage="' + (f.page - 1) + '" aria-label="Previous page"' + (f.page <= 0 ? " disabled" : "") + ">" + icon("chevLeft") + "</button>" +
         Array.from({ length: pages }, function (_, i) { return '<button data-lpage="' + i + '" class="' + (i === f.page ? "on" : "") + '">' + (i + 1) + "</button>"; }).join("") +
-        '<button data-lpage="' + (f.page + 1) + '"' + (f.page >= pages - 1 ? " disabled" : "") + ">" + icon("chevRight") + '</button><span class="info">' + (f.page * size + 1) + "–" + Math.min(shownAll.length, (f.page + 1) * size) + " of " + shownAll.length + "</span></div>";
-      if (quiz.length) html += '<section class="card card-pad quiz-intro level-quiz" aria-labelledby="lq-h"><div><h3 id="lq-h">' + icon("checkCircle") + "Level quiz</h3>" +
+        '<button data-lpage="' + (f.page + 1) + '" aria-label="Next page"' + (f.page >= pages - 1 ? " disabled" : "") + ">" + icon("chevRight") + '</button><span class="info">' + (f.page * size + 1) + "–" + Math.min(shownAll.length, (f.page + 1) * size) + " of " + shownAll.length + "</span></div>";
+      if (quiz.length) html += '<section class="card card-pad quiz-intro level-quiz" aria-labelledby="lq-h"><div><h2 class="qi-h" id="lq-h">' + icon("checkCircle") + "Level quiz</h2>" +
         '<p class="muted">' + Math.min(10, quiz.length) + " multiple-choice questions from Level " + n + (quiz.length < 10 ? " (all of this level's questions)" : "") + ". Score 70% or more to pass" + (S.quizPassed && S.quizPassed[n] ? '. <b class="ok-txt">Passed ✓</b>' : ".") + '</p></div><a class="btn primary" href="#/quiz/level-' + n + '">' + icon("play") + (S.quizPassed && S.quizPassed[n] ? "Take it again" : "Start the level quiz") + "</a></section>";
     }
     html += "</div>" + rail() + "</div>";
@@ -726,9 +726,9 @@
       return compactRow(d).replace('<div class="cmain">', '<div class="cmain"><span class="rv-meta">Review ' + e.stage + " of " + e.of + " · " + esc(e.reason) + " · " + when + "</span>");
     };
     var html = '<div class="page"><div class="col"><div><div class="eyebrow">Review mistakes</div><div class="hero"><div><h1>Review mistakes</h1><p>Exercises you got wrong, or solved with a hint, come back after ' + days.join(", ").replace(/, (\d+)$/, " and $1") + " days. Solve one without a hint when it is due to move it on; the clean solve at the " + days[days.length - 1] + "-day review takes it off this list.</p></div></div></div>";
-    html += '<section aria-labelledby="rv-due"><div class="card-h"><h3 id="rv-due">' + icon("reset") + "Due now <span class=\"mono muted\">" + R.due.length + "</span></h3></div>" +
+    html += '<section aria-labelledby="rv-due"><div class="card-h"><h2 class="rail-h" id="rv-due">' + icon("reset") + "Due now <span class=\"mono muted\">" + R.due.length + "</span></h2></div>" +
       (R.due.length ? '<div class="clist card">' + R.due.map(function (e) { return rowOf(e, true); }).join("") + "</div>" : '<div class="card empty">' + icon("check") + "<div><p>Nothing to review right now." + (R.upcoming.length ? " The next one is due " + new Date(R.upcoming[0].due_at).toLocaleDateString(undefined, { day: "numeric", month: "long" }) + "." : " Exercises you get wrong, or solve with a hint, appear here.") + '</p><a class="btn sm" href="#/home">Practise from today\'s plan ' + icon("chevRight") + "</a></div></div>") + "</section>";
-    if (R.upcoming.length) html += '<section aria-labelledby="rv-up"><div class="card-h"><h3 id="rv-up">' + icon("clock") + "Coming up <span class=\"mono muted\">" + R.upcoming.length + '</span></h3></div><div class="clist card">' + R.upcoming.map(function (e) { return rowOf(e, false); }).join("") + "</div></section>";
+    if (R.upcoming.length) html += '<section aria-labelledby="rv-up"><div class="card-h"><h2 class="rail-h" id="rv-up">' + icon("clock") + "Coming up <span class=\"mono muted\">" + R.upcoming.length + '</span></h2></div><div class="clist card">' + R.upcoming.map(function (e) { return rowOf(e, false); }).join("") + "</div></section>";
     html += "</div>" + rail() + "</div>";
     view.innerHTML = html;
     if (!viewReviewMistakes.busy) { viewReviewMistakes.busy = true; loadReview().then(function () { viewReviewMistakes.busy = false; }); }
@@ -846,7 +846,7 @@
       var byLevel = {};
       g.items.forEach(function (d) { byLevel[d.level] = (byLevel[d.level] || 0) + 1; });
       var shown = g.items.slice(0, 50);
-      html += '<section class="recent-day"><div class="card-h"><h3>' + icon("new") + fmtDate(g.at) + ' <span class="muted small">' + plural(g.items.length, "item") + " · " + g.items.filter(function (d) { return d.kind === "mcq"; }).length + " MCQs</span></h3></div>" +
+      html += '<section class="recent-day"><div class="card-h"><h2 class="rail-h">' + icon("new") + fmtDate(g.at) + ' <span class="muted small">' + plural(g.items.length, "item") + " · " + g.items.filter(function (d) { return d.kind === "mcq"; }).length + " MCQs</span></h2></div>" +
         '<div class="f-chips" style="margin-bottom:10px">' + Object.keys(byLevel).map(Number).sort(function (a, b) { return a - b; }).map(function (n) { return '<a class="chip" href="#/level/' + n + '">Level ' + n + " · " + byLevel[n] + "</a>"; }).join("") + "</div>" +
         '<div class="dlist">' + shown.map(function (d) { return row(d); }).join("") + "</div>" + (g.items.length > shown.length ? '<p class="muted small">…and ' + (g.items.length - shown.length) + ' more: open a level above, or use All Exercises sorted by "Newest first".</p>' : "") + "</section>";
     });
@@ -878,7 +878,7 @@
     if (d.check === "run") html += '<div class="self-note nc-note">' + icon("bulb") + "<div><strong>Practice · not checked.</strong> This drill doesn't have a reference answer yet, so your result isn't compared with anything: it counts as done as soon as your query runs without an error. Read your result against the task to judge it yourself.</div></div>";
     if (d.check === "self") html += '<div class="self-note">' + icon("selfcheck") + "<div><strong>Self-check exercise.</strong> This one can't be marked automatically (it changes structure, needs judgement, or is about understanding). Do it, compare with the expected result and the solution, then press <b>Mark as done</b>.</div></div>";
     html += schemaPanel(server ? { kind: "server", item: d.id, dialect: dialect() } : { kind: "sqlite", key: d.dataset }, { insert: true, open: !spIsPhone(), cls: "ws-schema", hint: "click a name to insert it" }) +
-      '<section class="card card-pad ws-levels"><div class="card-h"><h3>' + icon("levels") + esc(levelName(d.level)) + '</h3></div><div class="mini-list">' +
+      '<section class="card card-pad ws-levels"><div class="card-h"><h2 class="rail-h">' + icon("levels") + esc(levelName(d.level)) + '</h2></div><div class="mini-list">' +
       nearS.map(function (x) { return '<a href="' + href(x) + '" class="' + (x === d ? "on" : "") + '"' + (x === d ? ' aria-current="page"' : "") + '><span class="mn' + (isDone(x) ? " done" : "") + '">' + (isDone(x) ? icon("check") : x.seq) + "</span><span>" + esc(x.title) + "</span></a>"; }).join("") +
       '</div><a class="link" href="#/level/' + d.level + '" style="margin-top:8px">Whole level (' + lvlS.length + ") " + icon("chevRight") + "</a></section>";
     html += '</div><div class="ws-right">';
@@ -952,7 +952,7 @@
       Object.keys(SP).forEach(function (k) { if (SP[k].src.item === d.id) SP[k].fallback = ex.tables_text || ""; });
       var extra = "";
       var hints = [ex.hint1, ex.hint2, ex.hint3].filter(Boolean);
-      if (hints.length) extra += '<section class="card card-pad"><div class="card-h"><h3>' + icon("bulb") + 'Hints</h3></div><div id="courseHints"></div><button class="btn sm" data-act="course-hint" data-n="0">Show hint 1 of ' + hints.length + "</button></section>";
+      if (hints.length) extra += '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("bulb") + 'Hints</h2></div><div id="courseHints"></div><button class="btn sm" data-act="course-hint" data-n="0">Show hint 1 of ' + hints.length + "</button></section>";
       if (ex.expected_text) extra += '<section class="card card-pad"><details' + (d.check === "self" ? " open" : "") + '><summary class="card-h" style="margin:0"><h3 style="display:inline-flex">' + icon("table") + 'Expected result</h3></summary><pre class="course-pre mono">' + esc(ex.expected_text) + "</pre></details></section>";
       if (ex.after_text) extra += '<section class="card card-pad"><details><summary class="card-h" style="margin:0"><h3 style="display:inline-flex">' + icon("tips") + 'Common mistakes & checklist</h3></summary><pre class="course-pre">' + esc(ex.after_text) + "</pre></details></section>";
       if (ex.has_cleanup) extra += '<div class="actions-row"><button class="btn sm" data-act="cleanup">' + icon("reset") + "Undo this exercise's changes</button></div>";
@@ -1374,12 +1374,12 @@
       var n = days[localDay(dd)] || 0;
       cells.push('<i class="' + (n ? "l" + Math.min(4, Math.ceil(n / 2)) : "") + '" title="' + dd.toDateString() + ": " + plural(n, "completion") + '"></i>');
     }
-    html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("chart") + 'Activity <span class="muted small">(last 18 weeks)</span></h3></div><div class="heat">' + cells.join("") + '</div><div class="heat-legend">Less <i style="background:var(--soft)"></i><i style="background:#bcd3ff"></i><i style="background:#7fa9ff"></i><i style="background:#3d7cff"></i><i style="background:#1453d6"></i> More</div></section>';
-    html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("levels") + "By level</h3></div>" + S.levels.map(function (L) { var l = itemsIn(L.n); return progRow("Level " + L.n + " · " + L.title, l.filter(isDone).length, l.length, "#/level/" + L.n); }).join("") + "</section>";
-    html += '<div class="two"><section class="card card-pad"><div class="card-h"><h3>' + icon("gauge") + "By difficulty</h3></div>" + DIFF.map(function (df) { var l = S.items.filter(function (d) { return d.diff === df; }); return progRow(DIFF_LABEL[df], l.filter(isDone).length, l.length, "#/drills?diff=" + df); }).join("") + "</section>";
-    html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("checkCircle") + "Multiple choice</h3></div>" + S.levels.map(function (L) { var l = mcqsIn([L.n]); return l.length ? progRow("Level " + L.n, l.filter(isDone).length, l.length, "#/quiz/level-" + L.n) : ""; }).join("") + "</section></div>";
+    html += '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("chart") + 'Activity <span class="muted small">(last 18 weeks)</span></h2></div><div class="heat">' + cells.join("") + '</div><div class="heat-legend">Less <i style="background:var(--soft)"></i><i style="background:#bcd3ff"></i><i style="background:#7fa9ff"></i><i style="background:#3d7cff"></i><i style="background:#1453d6"></i> More</div></section>';
+    html += '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("levels") + "By level</h2></div>" + S.levels.map(function (L) { var l = itemsIn(L.n); return progRow("Level " + L.n + " · " + L.title, l.filter(isDone).length, l.length, "#/level/" + L.n); }).join("") + "</section>";
+    html += '<div class="two"><section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("gauge") + "By difficulty</h2></div>" + DIFF.map(function (df) { var l = S.items.filter(function (d) { return d.diff === df; }); return progRow(DIFF_LABEL[df], l.filter(isDone).length, l.length, "#/drills?diff=" + df); }).join("") + "</section>";
+    html += '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("checkCircle") + "Multiple choice</h2></div>" + S.levels.map(function (L) { var l = mcqsIn([L.n]); return l.length ? progRow("Level " + L.n, l.filter(isDone).length, l.length, "#/quiz/level-" + L.n) : ""; }).join("") + "</section></div>";
     var recent = S.activity.slice(-10).reverse().map(function (a) { var it = a.id && (a.id.indexOf("mcq:") === 0 ? S.byMcq[a.id.slice(4)] : S.byId[a.id]); return it ? { d: it, at: a.at } : null; }).filter(Boolean);
-    if (recent.length) html += '<section class="card card-pad"><div class="card-h"><h3>' + icon("clock") + 'Recently completed</h3></div><div class="mini-list">' + recent.map(function (r) { return '<a href="' + href(r.d) + '"><span class="mn done">' + icon("check") + "</span><span>" + esc(r.d.title) + ' <span class="muted small">· ' + esc(levelName(r.d.level)) + " · " + fmtDate(r.at) + "</span></span></a>"; }).join("") + "</div></section>";
+    if (recent.length) html += '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("clock") + 'Recently completed</h2></div><div class="mini-list">' + recent.map(function (r) { return '<a href="' + href(r.d) + '"><span class="mn done">' + icon("check") + "</span><span>" + esc(r.d.title) + ' <span class="muted small">· ' + esc(levelName(r.d.level)) + " · " + fmtDate(r.at) + "</span></span></a>"; }).join("") + "</div></section>";
     html += "</div>" + rail() + "</div>";
     view.innerHTML = html;
   }
@@ -1392,15 +1392,15 @@
   var guideList = null;
   function viewGuide(section, item) {
     section = section || "commands";
-    view.innerHTML = '<div class="page full"><div class="col"><div><div class="eyebrow">SQL Guide</div><div class="hero"><div><h1>SQL reference</h1><p>Common commands with examples, practice tips, and the "Start Here" guides.</p></div></div></div><div class="guide"><nav class="card guide-nav" id="guideNav"></nav><div class="col" id="guideBody"></div></div></div></div>';
+    view.innerHTML = '<div class="page full"><div class="col"><div><div class="eyebrow">SQL Guide</div><div class="hero"><div><h1>SQL reference</h1><p>Common commands with examples, practice tips, and the "Start Here" guides.</p></div></div></div><div class="guide"><nav class="card guide-nav" id="guideNav" aria-label="Guide sections"></nav><div class="col" id="guideBody"></div></div></div></div>';
     function nav() {
-      $("#guideNav").innerHTML = "<h4>Reference</h4>" + '<a href="#/guide/commands" class="' + (section === "commands" ? "on" : "") + '">Common SQL commands</a><a href="#/guide/tips" class="' + (section === "tips" ? "on" : "") + '">Practice tips</a>' +
-        (guideList && guideList.length ? "<h4>Start here</h4>" + guideList.map(function (g) { return '<a href="#/guide/doc/' + encodeURIComponent(g.name) + '" class="' + (section === "doc" && item === g.name ? "on" : "") + '">' + esc(g.title) + "</a>"; }).join("") : "");
+      $("#guideNav").innerHTML = '<h2 class="gn-h">Reference</h2>' + '<a href="#/guide/commands" class="' + (section === "commands" ? "on" : "") + '">Common SQL commands</a><a href="#/guide/tips" class="' + (section === "tips" ? "on" : "") + '">Practice tips</a>' +
+        (guideList && guideList.length ? '<h2 class="gn-h">Start here</h2>' + guideList.map(function (g) { return '<a href="#/guide/doc/' + encodeURIComponent(g.name) + '" class="' + (section === "doc" && item === g.name ? "on" : "") + '">' + esc(g.title) + "</a>"; }).join("") : "");
     }
     if (!guideList) api("/api/course/guides").then(function (l) { guideList = l; nav(); }).catch(function () { guideList = []; });
     nav();
     var body = $("#guideBody");
-    if (section === "tips") body.innerHTML = '<section class="card card-pad"><div class="card-h"><h3>' + icon("tips") + 'Practice tips</h3></div><ol class="tips">' + TIPS.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ol></section>";
+    if (section === "tips") body.innerHTML = '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("tips") + 'Practice tips</h2></div><ol class="tips">' + TIPS.map(function (t) { return "<li>" + esc(t) + "</li>"; }).join("") + "</ol></section>";
     else if (section === "doc") {
       body.innerHTML = '<section class="card card-pad"><p class="muted">Loading…</p></section>';
       api("/api/course/guides/" + encodeURIComponent(item)).then(function (g) { body.innerHTML = '<section class="card card-pad"><h2 style="margin-bottom:12px">' + esc(g.title) + '</h2><div class="md">' + renderMarkdown(g.markdown) + "</div></section>"; }).catch(function (e) { body.innerHTML = '<div class="err">' + esc(e.message) + "</div>"; });
@@ -1412,7 +1412,7 @@
 
   // --- multiple choice: quick check, one question, quizzes
   function quizPicker() {
-    return '<section class="card card-pad"><div class="card-h"><h3>' + icon("checkCircle") + 'Quick quiz</h3>' + (route.name === "mcqs" ? '<span class="muted small">Pick a level</span>' : '<a class="more link" href="#/mcqs">All ' + S.mcqs.length + " MCQs " + icon("chevRight") + "</a>") + "</div>" +
+    return '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("checkCircle") + 'Quick quiz</h2>' + (route.name === "mcqs" ? '<span class="muted small">Pick a level</span>' : '<a class="more link" href="#/mcqs">All ' + S.mcqs.length + " MCQs " + icon("chevRight") + "</a>") + "</div>" +
       '<div class="f-chips"><a class="chip on" href="#/quiz/mixed">' + icon("spark") + "Mixed (10 questions)</a>" + S.levels.filter(function (L) { return mcqsIn([L.n]).length; }).map(function (L) { return '<a class="chip" href="#/quiz/level-' + L.n + '">' + L.n + " · " + esc(L.title) + "</a>"; }).join("") + "</div></section>";
   }
   function quickCheck(d) {
@@ -1421,7 +1421,7 @@
     var rnd = seeded(d.id), mixed = pool.slice();
     for (var i = mixed.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)); var t = mixed[i]; mixed[i] = mixed[j]; mixed[j] = t; }
     var pick = mixed.filter(function (m) { return !isDone(m); }).concat(mixed.filter(isDone)).slice(0, 3);
-    return '<section class="card card-pad quick-check" id="quick-check"><div class="card-h"><h3>' + icon("checkCircle") + 'Quick check <span class="tag plain mcq-tag">Multiple choice</span></h3><a class="more link" href="#/quiz/level-' + d.level + '">Full quiz ' + icon("chevRight") + "</a></div>" +
+    return '<section class="card card-pad quick-check" id="quick-check"><div class="card-h"><h2 class="rail-h">' + icon("checkCircle") + 'Quick check <span class="tag plain mcq-tag">Multiple choice</span></h2><a class="more link" href="#/quiz/level-' + d.level + '">Full quiz ' + icon("chevRight") + "</a></div>" +
       '<p class="muted small" style="margin:-4px 0 14px">' + pick.length + " questions on " + esc(levelOf(d.level).title) + ".</p>" +
       pick.map(function (m, k) { return '<div class="qc-item"><div class="qc-n">Question ' + (k + 1) + " of " + pick.length + "</div>" + mcqBlock(m, false, true) + "</div>"; }).join("") + "</section>";
   }
@@ -1439,7 +1439,7 @@
       '<div class="acts"><button class="btn' + (S.bookmarks[m.key] ? " ghost-accent" : "") + '" data-bm-btn="' + m.key + '">' + icon("bookmark") + (S.bookmarks[m.key] ? "Bookmarked" : "Bookmark") + "</button>" +
       (prev ? '<a class="btn" href="' + href(prev) + '" aria-label="Previous question">' + icon("chevLeft") + "</a>" : "") + (next ? '<a class="btn" href="' + href(next) + '">Next ' + icon("chevRight") + "</a>" : "") + "</div></div>";
     html += '<section class="card card-pad">' + mcqBlock(m, false) + "</section>";
-    html += '<section class="card card-pad quiz-intro"><div><h3>Quiz yourself on ' + esc(levelOf(m.level).title) + '</h3><p class="muted">Up to 10 questions in a row, with a score at the end.</p></div><a class="btn" href="#/quiz/level-' + m.level + '">' + icon("play") + "Start quiz</a></section>";
+    html += '<section class="card card-pad quiz-intro"><div><h2 class="qi-h">Quiz yourself on ' + esc(levelOf(m.level).title) + '</h2><p class="muted">Up to 10 questions in a row, with a score at the end.</p></div><a class="btn" href="#/quiz/level-' + m.level + '">' + icon("play") + "Start quiz</a></section>";
     html += "</div>" + rail() + "</div>";
     view.innerHTML = html;
   }
@@ -1573,7 +1573,7 @@
     if (!L) { loadLevelLearn(n, function () { if (route.name === "level" && Number(route.args[0]) === n) { var box = $("#lvConcepts"); if (box) box.outerHTML = levelConceptsHtml(n); var lc = $("#lvComplete"); if (lc) lc.outerHTML = levelComplete(n, itemsIn(n), itemsIn(n).filter(isDone).length, mcqsIn([n])) || '<div id="lvComplete"></div>'; } }); return '<section class="card card-pad" id="lvConcepts" aria-busy="true"><p class="muted small">Loading concepts…</p></section>'; }
     if (L.error) return '<section class="card card-pad" id="lvConcepts"><div class="err">Couldn\'t load the concepts: ' + esc(L.error) + "</div></section>";
     var need = Math.ceil(L.total * 0.8);
-    return '<section class="card card-pad lv-concepts" id="lvConcepts" aria-labelledby="lvc-h"><div class="card-h"><h3 id="lvc-h">' + icon("layers") + "Concepts</h3>" +
+    return '<section class="card card-pad lv-concepts" id="lvConcepts" aria-labelledby="lvc-h"><div class="card-h"><h2 class="rail-h" id="lvc-h">' + icon("layers") + "Concepts</h2>" +
       '<span class="muted small lvc-sum"><b class="mono">' + L.masteredCount + "</b> of " + L.total + " mastered · " + need + " needed to complete the level</span></div>" +
       '<p class="muted small lvc-legend">Each ring has five parts: ' + STAGES.map(function (k) { return STAGE_LABEL[k]; }).join(" → ") + ". Open a concept to work through them.</p>" +
       '<ol class="concept-list">' + L.concepts.map(function (c) {
@@ -1702,7 +1702,7 @@
       var mc = (c.mcqs.memorize || []).filter(function (id) { return S.byMcq[id]; });
       if (!c.flashcards.length) return emptyStage("cards", "No flashcards for this concept yet: they appear here once they are approved.", mc.length ? null : tabAction(c, "understand", "Go to Understand")) + mcqLinks(mc, "Quick check");
       var due = c.flashcards.filter(function (f) { return f.state && f.state.due_at <= new Date().toISOString(); }).length, fresh = c.flashcards.filter(function (f) { return !f.state; }).length;
-      return '<div class="card card-pad"><div class="card-h"><h3>' + icon("cards") + "Flashcards</h3></div>" +
+      return '<div class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("cards") + "Flashcards</h2></div>" +
         '<p class="muted">Cards come back after 1, 3, 7 and 14 days; a wrong answer brings a card back tomorrow. Mastery needs every card at the 3-day gap or better.</p>' +
         '<div class="fc-stats"><span><b class="mono">' + c.flashcards.length + "</b> cards</span><span><b class=\"mono\">" + k.flash.atLeast3 + "</b> at 3 days or more</span><span><b class=\"mono\">" + due + "</b> due</span><span><b class=\"mono\">" + fresh + "</b> new</span></div>" +
         '<div class="actions"><a class="btn primary" href="#/flashcards?concept=' + esc(c.slug) + '"' + (due + fresh ? "" : ' aria-disabled="true"') + ">" + icon("play") + (due + fresh ? "Start a session (" + (due + fresh) + " cards)" : "Nothing due: practise anyway") + "</a></div>" +
@@ -1712,10 +1712,10 @@
     }
     if (tab === "understand") {
       var seen = k.understand.seen, mu = (c.mcqs.understand || []).filter(function (id) { return S.byMcq[id]; });
-      var html = '<div class="card card-pad concept-card"><div class="card-h"><h3>' + icon("bulb") + "Concept card</h3>" + (seen ? '<span class="pill done">' + icon("check") + "Read</span>" : "") + "</div>" +
+      var html = '<div class="card card-pad concept-card"><div class="card-h"><h2 class="rail-h">' + icon("bulb") + "Concept card</h2>" + (seen ? '<span class="pill done">' + icon("check") + "Read</span>" : "") + "</div>" +
         '<p class="cc-sum">' + esc(c.summary || "") + "</p>" + (keywordsOf(c).length ? '<div class="cc-keys">' + keywordsOf(c).map(function (w) { return '<span class="tag mono">' + esc(w) + "</span>"; }).join("") + "</div>" : "") +
         exampleOf(c) + (seen ? "" : '<div class="actions"><button class="btn ok" data-concept-seen="' + esc(c.slug) + '">' + icon("check") + "I've read this</button></div>") + "</div>";
-      html += '<div class="card-h"><h3>' + icon("target") + "Predict the output</h3><span class=\"muted small\">" + k.understand.correct + " of " + c.predicts.length + " right" + (c.predicts.length ? " · " + Math.min(2, c.predicts.length) + " needed" : "") + "</span></div>";
+      html += '<div class="card-h"><h2 class="rail-h">' + icon("target") + "Predict the output</h2><span class=\"muted small\">" + k.understand.correct + " of " + c.predicts.length + " right" + (c.predicts.length ? " · " + Math.min(2, c.predicts.length) + " needed" : "") + "</span></div>";
       html += c.predicts.length ? c.predicts.map(predictCard).join("") : emptyStage("target", "No predict-the-output items for this concept yet: they appear here once they are approved.", tabAction(c, c.level === 14 ? "transfer" : "practise", c.level === 14 ? "Go to Transfer" : "Go to Practise"));
       var xcs = (c.cards || []).filter(function (x) { return window.Cards && Cards.STANDALONE.indexOf(x.card_type) > -1; });
       return html + mcqLinks(mu, "Why and what happens") + (xcs.length ? '<div class="card-h xc-sec"><h3>' + icon("layers") + 'More practice</h3><span class="muted small">Optional: doesn\'t count towards mastery</span></div>' + xcs.map(function (x) { return xcardHtml(x); }).join("") : "");
@@ -1723,22 +1723,22 @@
     if (tab === "practise") {
       if (c.level === 14) return emptyStage("play", "Level 14 has no separate practise: its exercises are project tasks, under Transfer.", tabAction(c, "transfer", "Go to Transfer"));
       if (!c.practiseSet.length) return emptyStage("play", "No exercises are tagged with this concept yet.", ["#/level/" + c.level, "Open the Level " + c.level + " exercises"]);
-      return '<section class="card card-pad"><div class="card-h"><h3>' + icon("play") + 'Practise set</h3><span class="muted small">Easy → Medium → Hard · ' + k.practise.setDone + " of " + k.practise.set + " done</span></div>" +
+      return '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("play") + 'Practise set</h2><span class="muted small">Easy → Medium → Hard · ' + k.practise.setDone + " of " + k.practise.set + " done</span></div>" +
         '<p class="muted small">Solve these ' + c.practiseSet.length + (k.practise.hardInSet ? " (one of them Hard)" : "") + " for mastery; finishing them unlocks Transfer.</p>" +
         '<div class="clist">' + itemRows(c.practiseSet) + "</div></section>" +
-        (c.practiseMore.length ? '<section class="card card-pad"><div class="card-h"><h3>' + icon("list") + 'More practice</h3><span class="muted small">' + c.practiseMore.length + " exercises, easiest first</span></div><div class=\"clist\">" + itemRows(c.practiseMore.slice(0, S.morePractice === c.slug ? 1e4 : 10)) + "</div>" +
+        (c.practiseMore.length ? '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("list") + 'More practice</h2><span class="muted small">' + c.practiseMore.length + " exercises, easiest first</span></div><div class=\"clist\">" + itemRows(c.practiseMore.slice(0, S.morePractice === c.slug ? 1e4 : 10)) + "</div>" +
           (c.practiseMore.length > 10 && S.morePractice !== c.slug ? '<div class="actions"><button class="btn sm" data-more-practice="' + esc(c.slug) + '">Show all ' + c.practiseMore.length + "</button></div>" : "") + "</section>" : "");
     }
     if (tab === "reflect") {
       return reflectForm({ concept: c.slug, title: "Reflect on " + c.name, prompt: "Explain " + c.name + " in one sentence, in your own words" }) +
-        '<div class="card-h"><h3>' + icon("note") + 'Your reflections</h3><a class="more link" href="#/notes">All my notes ' + icon("chevRight") + "</a></div>" +
+        '<div class="card-h"><h2 class="rail-h">' + icon("note") + 'Your reflections</h2><a class="more link" href="#/notes">All my notes ' + icon("chevRight") + "</a></div>" +
         (c.reflections.length ? c.reflections.map(noteCard).join("") : emptyStage("note", "Nothing yet. Write one sentence in the box above, or solve an exercise: a short Reflect box then asks for one, and it lands here and in My notes.", c.level === 14 ? tabAction(c, "transfer", "Go to Transfer") : tabAction(c, "practise", "Go to Practise")));
     }
     // transfer
     var nextC = c.siblings[c.siblings.map(function (x) { return x.slug; }).indexOf(c.slug) + 1];
     if (!c.transferItems.length) return emptyStage("compass", c.level === 14 ? "No project tasks are tagged with this concept." : "No transfer task for this concept yet: one appears here once it is approved.", nextC ? ["#/concept/" + encodeURIComponent(nextC.slug), "Next concept: " + nextC.name] : ["#/level/" + c.level, "Back to Level " + c.level]);
     if (!c.transferUnlocked) return '<section class="card card-pad locked-stage">' + icon("lock") + "<div><h3>Transfer is locked</h3><p class=\"muted\">It unlocks when you finish the practise set: " + k.practise.setDone + " of " + k.practise.set + ' done.</p><a class="btn primary" href="#/concept/' + esc(c.slug) + '?tab=practise">Go to the practise set</a></div></section>';
-    return '<section class="card card-pad"><div class="card-h"><h3>' + icon("compass") + (c.level === 14 ? "Project tasks" : "Transfer tasks") + '</h3><span class="muted small">' + k.transfer.passed + " passed" + (c.level === 14 ? " · 2 needed for mastery" : " · 1 needed for mastery") + "</span></div>" +
+    return '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("compass") + (c.level === 14 ? "Project tasks" : "Transfer tasks") + '</h2><span class="muted small">' + k.transfer.passed + " passed" + (c.level === 14 ? " · 2 needed for mastery" : " · 1 needed for mastery") + "</span></div>" +
       '<p class="muted small">' + (c.level === 14 ? "Use the concept inside a realistic project." : "The concept on a new dataset, as a business question. If one fails, this concept's practise set comes back in Review mistakes.") + '</p><div class="clist">' + itemRows(c.transferItems.slice(0, 60)) + "</div>" +
       transferSchemas(c.transferItems) +
       (c.transferItems.length > 60 ? '<p class="muted small">' + (c.transferItems.length - 60) + ' more in <a href="#/level/' + c.level + '">the level list</a>.</p>' : "") + "</section>";
@@ -1755,7 +1755,7 @@
   function tabAction(c, tab, label) { return ["#/concept/" + encodeURIComponent(c.slug) + "?tab=" + tab, label]; }
   function mcqLinks(ids, label) {
     if (!ids.length) return "";
-    return '<section class="card card-pad"><div class="card-h"><h3>' + icon("checkCircle") + esc(label) + '</h3><span class="muted small">' + plural(ids.length, "multiple-choice question") + '</span></div><div class="clist">' + ids.map(function (id) { return compactRow(S.byMcq[id]); }).join("") + "</div></section>";
+    return '<section class="card card-pad"><div class="card-h"><h2 class="rail-h">' + icon("checkCircle") + esc(label) + '</h2><span class="muted small">' + plural(ids.length, "multiple-choice question") + '</span></div><div class="clist">' + ids.map(function (id) { return compactRow(S.byMcq[id]); }).join("") + "</div></section>";
   }
   function cardFront(f) { return f.type === "keyword" ? f.front : f.type === "blank" ? (f.prompt || "Fill in the blank") + ": " + f.sql : f.type === "order" ? (f.prompt || "Put the clauses in order") + " (" + f.parts.length + " parts)" : (f.prompt || "Spot the error") + ": " + String(f.wrong_sql || "").split("\n")[0]; }
   function exampleOf(c) {
@@ -1848,7 +1848,7 @@
   function reflectForm(o) {
     var id = "rf" + Math.random().toString(36).slice(2, 7);
     return '<section class="card card-pad reflect" data-reflect="' + esc(o.item || "") + '" data-rconcept="' + esc(o.concept || "") + '" data-result="' + esc(o.result || "") + '" aria-labelledby="' + id + '-h">' +
-      '<div class="card-h"><h3 id="' + id + '-h">' + icon("note") + esc(o.title || "Reflect") + '</h3><span class="muted small">Optional · saved in My notes</span>' + (o.item ? '<button class="more link" data-reflect-skip aria-label="Skip the reflection">' + icon("x") + "</button>" : "") + "</div>" +
+      '<div class="card-h"><h2 class="rail-h" id="' + id + '-h">' + icon("note") + esc(o.title || "Reflect") + '</h2><span class="muted small">Optional · saved in My notes</span>' + (o.item ? '<button class="more link" data-reflect-skip aria-label="Skip the reflection">' + icon("x") + "</button>" : "") + "</div>" +
       '<label class="rf-field"><span>' + esc(o.prompt || "Explain your query in one sentence") + '</span><textarea rows="2" class="rf-explain" maxlength="1000"></textarea></label>' +
       (o.result === "fail" ? '<label class="rf-field"><span>What was your mistake?</span><textarea rows="2" class="rf-mistake" maxlength="1000"></textarea></label>' : "") +
       '<fieldset class="rf-conf"><legend>How confident are you?</legend>' + [1, 2, 3, 4, 5].map(function (n) { return '<label><input type="radio" name="' + id + '-conf" value="' + n + '"><span>' + n + "</span></label>"; }).join("") + '<span class="muted small">1 = guessing · 5 = could teach it</span></fieldset>' +
@@ -1896,7 +1896,7 @@
       .then(function (r) {
         learnEvent("reflection", r.id);
         viewConcept.stale = true; S.learn.levels = {};
-        box.innerHTML = '<div class="card-h"><h3>' + icon("checkCircle") + 'Saved to My notes</h3><a class="more link" href="#/notes">My notes ' + icon("chevRight") + "</a></div>" +
+        box.innerHTML = '<div class="card-h"><h2 class="rail-h">' + icon("checkCircle") + 'Saved to My notes</h2><a class="more link" href="#/notes">My notes ' + icon("chevRight") + "</a></div>" +
           '<p class="muted small">' + (r.concepts.length ? "Counts as the reflection for " + plural(r.concepts.length, "concept") + "." : "") + "</p>" +
           (r.feedback ? '<div class="rf-feedback"><div class="muted small">AI feedback</div><p>' + esc(r.feedback) + "</p></div>" : r.feedbackError ? '<p class="muted small">' + esc(r.feedbackError) + "</p>" : "");
         if (route.name === "concept") refreshConcept(route.args[0]);
@@ -2951,23 +2951,24 @@
   var sIn = $("#searchInput"), sOut = $("#searchResults"), sActive = 0, sHits = [];
   function search(q) {
     q = q.trim().toLowerCase();
-    if (q.length < 2) { sOut.hidden = true; return; }
+    if (q.length < 2) { sClose(); return; }
     sHits = S.items.concat(S.mcqs).filter(function (d) { return d.hay.indexOf(q) > -1; }).slice(0, 30);
     sActive = 0;
-    sOut.innerHTML = sHits.length ? sHits.map(function (d, i) { return '<button data-i="' + i + '" class="' + (i ? "" : "on") + '"><div class="sr-path">' + esc(levelName(d.level)) + (d.kind === "mcq" ? " › Multiple choice" : "") + '</div><div class="sr-t">' + esc(d.title) + "</div></button>"; }).join("") : '<div class="sr-empty">Nothing matches “' + esc(q) + "”.</div>";
-    sOut.hidden = false;
+    sOut.innerHTML = sHits.length ? sHits.map(function (d, i) { return '<button type="button" role="option" id="sr-' + i + '" aria-selected="' + (i ? "false" : "true") + '" tabindex="-1" data-i="' + i + '" class="' + (i ? "" : "on") + '"><div class="sr-path">' + esc(levelName(d.level)) + (d.kind === "mcq" ? " › Multiple choice" : "") + '</div><div class="sr-t">' + esc(d.title) + "</div></button>"; }).join("") : '<div class="sr-empty">Nothing matches “' + esc(q) + "”.</div>";
+    sOut.hidden = false; sIn.setAttribute("aria-expanded", "true"); if (sHits.length) sIn.setAttribute("aria-activedescendant", "sr-0"); else sIn.removeAttribute("aria-activedescendant");
   }
+  function sClose() { sOut.hidden = true; sIn.setAttribute("aria-expanded", "false"); sIn.removeAttribute("aria-activedescendant"); }
   function pick(i) { var d = sHits[i]; if (!d) return; sOut.hidden = true; sIn.value = ""; sIn.blur(); location.hash = href(d); }
   sIn.addEventListener("input", function () { search(sIn.value); });
   sIn.addEventListener("focus", function () { search(sIn.value); });
   sIn.addEventListener("keydown", function (e) {
     var items = sOut.querySelectorAll("button");
-    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); sActive = Math.max(0, Math.min(items.length - 1, sActive + (e.key === "ArrowDown" ? 1 : -1))); items.forEach(function (b, i) { b.classList.toggle("on", i === sActive); }); if (items[sActive]) items[sActive].scrollIntoView({ block: "nearest" }); }
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); sActive = Math.max(0, Math.min(items.length - 1, sActive + (e.key === "ArrowDown" ? 1 : -1))); items.forEach(function (b, i) { b.classList.toggle("on", i === sActive); b.setAttribute("aria-selected", String(i === sActive)); }); if (items[sActive]) { items[sActive].scrollIntoView({ block: "nearest" }); sIn.setAttribute("aria-activedescendant", "sr-" + sActive); } }
     else if (e.key === "Enter") pick(sActive);
-    else if (e.key === "Escape") { sOut.hidden = true; sIn.blur(); }
+    else if (e.key === "Escape") { e.preventDefault(); sClose(); } // the list closes; focus stays in the box
   });
   sOut.addEventListener("mousedown", function (e) { var b = e.target.closest("button"); if (b) { e.preventDefault(); pick(Number(b.getAttribute("data-i"))); } });
-  document.addEventListener("click", function (e) { if (!e.target.closest("#searchWrap")) sOut.hidden = true; });
+  document.addEventListener("click", function (e) { if (!e.target.closest("#searchWrap")) sClose(); });
   document.addEventListener("keydown", function (e) { if (((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") || (e.key === "/" && !e.target.closest("input,textarea,select"))) { e.preventDefault(); sIn.focus(); sIn.select(); } });
   $("#menuBtn").addEventListener("click", function () { $("#side").classList.add("open"); $("#scrim").classList.add("open"); });
   $("#scrim").addEventListener("click", function () { $("#side").classList.remove("open"); $("#scrim").classList.remove("open"); });
@@ -3014,13 +3015,23 @@
 
   // ---------- a table box that scrolls sideways can be reached and scrolled by keyboard (WCAG 2.1.1) ----------
   function scrollersFocusable() {
-    [].forEach.call(document.querySelectorAll(".tbl-wrap, .table-wrap, .grid-wrap, .result-box"), function (el) {
+    [].forEach.call(document.querySelectorAll(".tbl-wrap, .table-wrap, .grid-wrap, .result-box, pre"), function (el) {
+      if (el.closest('[aria-hidden="true"]')) return; // e.g. the editor's highlight layer behind the text box
       var over = el.scrollWidth > el.clientWidth + 1, ours = el.hasAttribute("data-scroll-focus");
-      if (over && !el.hasAttribute("tabindex")) { el.setAttribute("tabindex", "0"); el.setAttribute("data-scroll-focus", el.hasAttribute("role") ? "" : "role"); if (!el.hasAttribute("role")) { el.setAttribute("role", "group"); if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", "Table, scrolls sideways"); } }
-      else if (!over && ours) { el.removeAttribute("tabindex"); if (el.getAttribute("data-scroll-focus") === "role") { el.removeAttribute("role"); if (el.getAttribute("aria-label") === "Table, scrolls sideways") el.removeAttribute("aria-label"); } el.removeAttribute("data-scroll-focus"); }
+      if (over && !el.hasAttribute("tabindex")) { el.setAttribute("tabindex", "0"); el.setAttribute("data-scroll-focus", el.hasAttribute("role") ? "" : "role"); if (!el.hasAttribute("role")) { el.setAttribute("role", "group"); if (!el.hasAttribute("aria-label")) el.setAttribute("aria-label", el.tagName === "PRE" ? "Code, scrolls sideways" : "Table, scrolls sideways"); } }
+      else if (!over && ours) { el.removeAttribute("tabindex"); if (el.getAttribute("data-scroll-focus") === "role") { el.removeAttribute("role"); if (/, scrolls sideways$/.test(el.getAttribute("aria-label") || "")) el.removeAttribute("aria-label"); } el.removeAttribute("data-scroll-focus"); }
     });
   }
   (function () { var t; var later = function () { clearTimeout(t); t = setTimeout(scrollersFocusable, 80); }; new MutationObserver(later).observe(document.body, { childList: true, subtree: true }); window.addEventListener("resize", later); })();
+  // ---------- keyboard: the skip link (the hash holds the route, so it moves focus, not the address), the phone menu ----------
+  (function () {
+    var skip = document.querySelector(".skip");
+    if (skip) skip.addEventListener("click", function (e) { e.preventDefault(); var v = document.getElementById("view"); v.focus(); v.scrollIntoView({ block: "start" }); });
+    var side = $("#side"), scrim = $("#scrim"), mb = $("#menuBtn");
+    var closeMenu = function (back) { side.classList.remove("open"); scrim.classList.remove("open"); if (back) mb.focus(); };
+    mb.addEventListener("click", function () { setTimeout(function () { var first = side.querySelector("#nav a"); if (side.classList.contains("open") && first) first.focus(); }, 0); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape" && side.classList.contains("open")) { e.preventDefault(); closeMenu(true); } });
+  })();
   // ---------- boot ----------
   // the React bundle (a module script, so it runs after this one) owns some routes: the first render waits for it,
   // so an owned page is not drawn (and fetched) twice; a bundle that fails to load, or takes over 4 s, leaves the old page

@@ -12,7 +12,7 @@
 <script>try { if (localStorage.getItem("sqldrills.theme.v2") === "dark") document.documentElement.setAttribute("data-theme", "dark"); } catch (e) {}</script>
 <!-- waffles:start -->
 <link rel="stylesheet" href="/app/assets/main-QgOmLnHE.css">
-<script type="module" src="/app/assets/main-BvCZ370F.js" onerror="window.SQLDrillsReactFailed=true;dispatchEvent(new Event('sqldrills:react-failed'))"></script>
+<script type="module" src="/app/assets/main-9xj5IeGX.js" onerror="window.SQLDrillsReactFailed=true;dispatchEvent(new Event('sqldrills:react-failed'))"></script>
 <!-- waffles:end -->
 </head>
 <body class="admin-app">
@@ -23,7 +23,7 @@
       <span class="brand-mark" data-icon="db"></span>
       <span class="brand-txt"><strong>SQL Drills</strong><small>Admin · Content studio</small></span>
     </a>
-    <nav class="nav admin-nav" id="nav"></nav>
+    <nav class="nav admin-nav" id="nav" aria-label="Admin"></nav>
     <div class="side-foot">
       <div class="local"><span class="dot" aria-hidden="true"></span><span><strong>Local only</strong> · <span class="mono">127.0.0.1</span></span></div>
       <a class="side-link" href="/#/home"><span data-icon="external"></span>Open the learner app</a>
@@ -34,14 +34,14 @@
     <header class="top admin-top">
       <button class="top-menu" id="menuBtn" aria-label="Open navigation"><span data-icon="menu"></span></button>
       <h1 class="admin-title" id="pageTitle">Overview</h1>
-      <div class="search admin-search" id="searchWrap" role="search">
+      <div class="search admin-search" id="searchWrap" role="search" aria-label="Search the admin">
         <span data-icon="search"></span>
-        <input id="searchInput" type="search" placeholder="Search exercises, MCQs, levels…" autocomplete="off" aria-label="Search exercises, MCQs and levels" aria-controls="searchResults" aria-expanded="false" aria-autocomplete="list">
+        <input id="searchInput" type="search" role="combobox" placeholder="Search exercises, MCQs, levels…" autocomplete="off" aria-label="Search exercises, MCQs and levels" aria-controls="searchResults" aria-expanded="false" aria-autocomplete="list">
         <kbd>Ctrl K</kbd>
         <div class="search-results" id="searchResults" role="listbox" aria-label="Search results" hidden></div>
       </div>
       <a class="icon-btn help-btn" id="helpBtn" href="#/help" aria-label="How to use this page" title="How to use this page"><span data-icon="help"></span></a>
-      <a class="btn primary gen-btn" href="#/generate"><span data-icon="spark"></span><span>Generate content</span></a>
+      <a class="btn primary gen-btn" href="#/generate" aria-label="Generate content"><span data-icon="spark"></span><span>Generate content</span></a>
       <button class="icon-btn" id="themeBtn" aria-label="Toggle dark mode"></button>
     </header>
     <main class="body" id="view" tabindex="-1"><div class="loading">Loading…</div></main>
