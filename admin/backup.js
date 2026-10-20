@@ -89,12 +89,37 @@ function create(label = "manual") {
   ].concat(images)));
   return describe(name);
 }
+// read one entry without loading the whole zip: the end record, the central directory, then that entry only
+function readEntry(file, want) {
+  const fd = fs.openSync(file, "r");
+  try {
+    const size = fs.fstatSync(fd).size, read = (pos, len) => { const b = Buffer.alloc(len); fs.readSync(fd, b, 0, len, pos); return b; };
+    const tailLen = Math.min(size, 22 + 0xffff), tail = read(size - tailLen, tailLen);
+    const end = tail.lastIndexOf(Buffer.from([0x50, 0x4b, 0x05, 0x06]));
+    if (end < 0) throw new Error("Not a zip file");
+    const cen = read(tail.readUInt32LE(end + 16), tail.readUInt32LE(end + 12)), n = tail.readUInt16LE(end + 10);
+    for (let k = 0, p = 0; k < n; k++) {
+      const method = cen.readUInt16LE(p + 10), comp = cen.readUInt32LE(p + 20), nameLen = cen.readUInt16LE(p + 28), extra = cen.readUInt16LE(p + 30), comment = cen.readUInt16LE(p + 32), local = cen.readUInt32LE(p + 42);
+      if (cen.slice(p + 46, p + 46 + nameLen).toString() === want) {
+        const head = read(local, 30), data = read(local + 30 + head.readUInt16LE(26) + head.readUInt16LE(28), comp);
+        return method === 8 ? zlib.inflateRawSync(data) : data;
+      }
+      p += 46 + nameLen + extra + comment;
+    }
+    return null;
+  } finally { fs.closeSync(fd); }
+}
+const described = new Map(); // name -> { key, value }; a backup file never changes, so size + mtime is enough
 function describe(name) {
   const file = path.join(DIR, name);
-  const st = fs.statSync(file);
+  const st = fs.statSync(file), key = st.size + ":" + st.mtimeMs;
+  const hit = described.get(name);
+  if (hit && hit.key === key) return hit.value;
   let manifest = {};
-  try { manifest = JSON.parse(unzip(fs.readFileSync(file))["manifest.json"].toString()); } catch { /* foreign zip */ }
-  return { name, bytes: st.size, created_at: manifest.created_at || st.mtime.toISOString(), label: manifest.label || "", exercises: manifest.exercises };
+  try { manifest = JSON.parse(readEntry(file, "manifest.json").toString()); } catch { /* foreign zip */ }
+  const value = { name, bytes: st.size, created_at: manifest.created_at || st.mtime.toISOString(), label: manifest.label || "", exercises: manifest.exercises };
+  described.set(name, { key, value });
+  return value;
 }
 function list() {
   if (!fs.existsSync(DIR)) return [];
