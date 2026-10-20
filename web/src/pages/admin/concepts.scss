@@ -1,0 +1,20 @@
+// Admin Concepts: the coverage table, its form and items rows, level picker (on the tokens)
+@use "../../tokens/tokens.scss" as *;
+
+.wf-intro-2 { display: block; margin-top: $wf-space-8; }
+.wf-lvl-pick { align-self: flex-start; }
+.wf-seg-gap { display: inline-block; min-width: 18px; padding: 0 4px; border-radius: 9px; background: $wf-bad; color: $wf-on-bad; font-size: $wf-font-size-100; font-weight: $wf-font-weight-bold; text-align: center; }
+.wf-lcov-t { td.n { vertical-align: top; } }
+.wf-lc-name { min-width: 220px; white-space: normal; }
+.wf-lc-gap { background: $wf-surface-raised; }
+.wf-lc-flag { display: block; font-size: $wf-font-size-100; font-weight: $wf-font-weight-bold; color: $wf-bad-text; }
+.wf-lc-sub { display: block; font-size: $wf-font-size-100; color: $wf-text-muted; }
+.wf-lc-ok { color: $wf-ok-text; font-weight: $wf-font-weight-bold; }
+.wf-lc-na { color: $wf-text-muted; }
+.wf-lc-form { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: $wf-space-8 $wf-space-12; align-items: end;
+  .wf-field { font-size: $wf-font-size-200; font-weight: $wf-font-weight-bold; }
+  .wf-actions { grid-column: 1 / -1; }
+  @include wf-below(md) { grid-template-columns: minmax(0, 1fr); }
+}
+.wf-lead-0 { margin: 0 0 $wf-space-8; }
+.wf-lc-items .stage-pick-one select, .wf-lc-items select.inp { min-height: 32px; }
